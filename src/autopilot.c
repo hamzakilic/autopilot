@@ -25,10 +25,11 @@ int main(void) {
 	}
 
 
-
-	if(atp_pilot_create()){
+    atp_pilot *pilot;
+	if(atp_pilot_create(&pilot)){
        return EXIT_FAILURE;
 	}
+
    getchar();
 
 	return EXIT_SUCCESS;

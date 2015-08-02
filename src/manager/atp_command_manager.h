@@ -19,7 +19,7 @@ typedef struct {
 
 em_uint32  atp_command_manager_create(atp_command_manager ** controller);
 em_uint32  atp_command_manager_destroy(atp_command_manager * controller);
-em_uint32  atp_command_manager_add(atp_command command,atp_command_manager *to);
+em_uint32  atp_command_manager_add(atp_command *command,atp_command_manager *to);
 
 
 #endif /* ATP_COMMAND_MANAGER_H_ */

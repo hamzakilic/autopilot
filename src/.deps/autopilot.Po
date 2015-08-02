@@ -91,7 +91,7 @@ autopilot.o: autopilot.c \
  manager/atp_command_manager.h manager/../common/atp_queue.h \
  manager/../command/atp_command.h \
  manager/../command/../common/atp_common.h manager/../thread/atp_thread.h \
- log/atp_log.h
+ manager/atp_command_listener.h log/atp_log.h
 
 /work/raspberrypi/toolchainraspi/rootfs/include/stdc-predef.h:
 
@@ -286,5 +286,7 @@ manager/../command/atp_command.h:
 manager/../command/../common/atp_common.h:
 
 manager/../thread/atp_thread.h:
+
+manager/atp_command_listener.h:
 
 log/atp_log.h:
