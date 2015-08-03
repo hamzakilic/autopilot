@@ -14,6 +14,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+
+#define COMPILE_TEST_CODES
+
 #define COMPILE_MODULE_GPS_NEO_6V
 #define COMPILE_A2212_MOTORS_AND_ESC
 #define COMPILE_LOG_UDP

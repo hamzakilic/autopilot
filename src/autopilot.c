@@ -14,6 +14,8 @@
 #include "manager/atp_pilot.h"
 #include "log/atp_log.h"
 
+#ifndef COMPILE_TEST_CODES
+
 int main(void) {
 
 
@@ -34,3 +36,4 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
+#endif

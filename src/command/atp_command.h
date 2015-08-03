@@ -17,5 +17,6 @@ typedef struct {
 }atp_command;
 
 
+#define ATP_COMMAND_TEST 1
 
 #endif /* ATP_COMMAND_H_ */

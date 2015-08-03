@@ -92,11 +92,11 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_autopilot_OBJECTS = autopilot.$(OBJEXT) atp_pilot.$(OBJEXT) \
-	atp_command_manager.$(OBJEXT) atp_command_listener.$(OBJEXT) \
-	atp_input.$(OBJEXT) atp_service_system.$(OBJEXT) \
-	atp_services_gps.$(OBJEXT) atp_log.$(OBJEXT) \
-	atp_thread.$(OBJEXT) atp_queue.$(OBJEXT) \
+am_autopilot_OBJECTS = autopilot.$(OBJEXT) autopilot_test.$(OBJEXT) \
+	atp_pilot.$(OBJEXT) atp_command_manager.$(OBJEXT) \
+	atp_command_listener.$(OBJEXT) atp_input.$(OBJEXT) \
+	atp_service_system.$(OBJEXT) atp_services_gps.$(OBJEXT) \
+	atp_log.$(OBJEXT) atp_thread.$(OBJEXT) atp_queue.$(OBJEXT) \
 	atp_motor_controller.$(OBJEXT) atp_motor.$(OBJEXT)
 autopilot_OBJECTS = $(am_autopilot_OBJECTS)
 autopilot_LDADD = $(LDADD)
@@ -255,7 +255,7 @@ target_vendor = raspi
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-autopilot_SOURCES = autopilot.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c
+autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c
 AM_CFLAGS = -I/work/projects/tobor/libtobor_io/include 
 AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread
 all: all-am
@@ -357,6 +357,7 @@ include ./$(DEPDIR)/atp_service_system.Po
 include ./$(DEPDIR)/atp_services_gps.Po
 include ./$(DEPDIR)/atp_thread.Po
 include ./$(DEPDIR)/autopilot.Po
+include ./$(DEPDIR)/autopilot_test.Po
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

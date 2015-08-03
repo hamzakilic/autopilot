@@ -40,7 +40,7 @@ em_uint32 atp_pilot_create(atp_pilot **pilot){
 
 
 em_uint32 atp_pilot_start(atp_pilot *pilot){
-     atp_pilot_data *pilot_data=(atp_pilot_data)pilot->private_data;
+     atp_pilot_data *pilot_data=(atp_pilot_data *)pilot->private_data;
 
      //create input
 	em_uint32 err=0;

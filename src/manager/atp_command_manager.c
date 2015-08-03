@@ -27,6 +27,10 @@ em_uint32  atp_command_manager_add(atp_command *command,atp_command_manager *to)
 
 
 void process_command(atp_command *command){
+	if(command->type==ATP_COMMAND_TEST)
+	{
+		puts((char *)command->data);
+	}
 //komutları nasıl işleyecek, motorcontroller ihtiyacı var vesaireye ihtiyacı var
 }
 
@@ -42,7 +46,7 @@ void* process_queue_start(void *arg){
 		 	process_command(queue_item);
 		}else{
 			atp_thread_unlock(&data->thread_lock);
-		em_io_delay_microseconds(1000);
+		    em_io_delay_microseconds(1000);
 		}
 	}
 
