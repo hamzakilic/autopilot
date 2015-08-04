@@ -11,9 +11,11 @@
 #include "../common/atp_common.h"
 
 
+typedef void (*destroy_command_func )(void *);
 typedef struct {
     em_uint16 type;
     void *data;
+    destroy_command_func destroy;
 }atp_command;
 
 

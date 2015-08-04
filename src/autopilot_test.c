@@ -52,13 +52,22 @@ int test_atp_queue(){
 	return EXIT_SUCCESS;
 }
 
-int test_atp_command_listener(){
+int test_atp_command_manager(){
 	puts("Starting atp_command_manager");
     atp_command_manager *manager;
     if(atp_command_manager_create(&manager))
     	return FATAL;
-
-    //atp_command_manager_add()
+    atp_command *command=atp_malloc(sizeof(atp_command));
+    command->destroy=NULL;
+    const char * command_text="atp_command for atp_command_manager";
+    command->data=(void *)command_text;
+    if(atp_command_manager_add(command,manager))
+    	return FATAL;
+    puts("you must see command text as");
+    puts(command_text);
+    em_io_delay_microseconds(1000000);
+    if(atp_command_manager_destroy(manager))
+    	return FATAL;
 	puts("Ending atp_command_manager");
 	return EXIT_SUCCESS;
 }
@@ -71,6 +80,11 @@ int main(void) {
 	   return EXIT_FAILURE;
    }
 
+   if(test_atp_command_manager())
+   {
+	   puts("Failed atp_command_manager");
+	   return EXIT_FAILURE;
+   }
 
 	return EXIT_SUCCESS;
 }

@@ -30,7 +30,11 @@ void process_command(atp_command *command){
 	if(command->type==ATP_COMMAND_TEST)
 	{
 		puts((char *)command->data);
+
 	}
+	if(command->destroy)
+		command->destroy(command->data);
+	atp_free(command);
 //komutları nasıl işleyecek, motorcontroller ihtiyacı var vesaireye ihtiyacı var
 }
 
