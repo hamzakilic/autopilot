@@ -58,6 +58,7 @@ int test_atp_command_manager(){
     if(atp_command_manager_create(&manager))
     	return FATAL;
     atp_command *command=atp_malloc(sizeof(atp_command));
+    command->type=ATP_COMMAND_TEST;
     command->destroy=NULL;
     const char * command_text="atp_command for atp_command_manager";
     command->data=(void *)command_text;
@@ -70,6 +71,27 @@ int test_atp_command_manager(){
     	return FATAL;
 	puts("Ending atp_command_manager");
 	return EXIT_SUCCESS;
+}
+
+int test_atp_command_listener(){
+	puts("Starting atp_command_listener");
+	 atp_command_manager *manager;
+	    if(atp_command_manager_create(&manager))
+	    	return FATAL;
+	 atp_command_listener *listener;
+	   	if(atp_command_listener_create(&listener,manager))
+	   		return FATAL;
+	   	puts("waiting for commands:");
+	   	puts("press any key to finish");
+	   	getchar();
+	   	if(atp_command_listener_destroy(listener))
+	   		return FATAL;
+	   	if(atp_command_manager_destroy(manager))
+	   		return FATAL;
+	   	puts("Ending atp_command_listener");
+   return EXIT_SUCCESS;
+
+
 }
 
 
@@ -85,8 +107,13 @@ int main(void) {
 	   puts("Failed atp_command_manager");
 	   return EXIT_FAILURE;
    }
+   if(test_atp_command_listener())
+   {
+	   puts("Failed atp_command_listener");
+	   return EXIT_FAILURE;
+   }
 
-	return EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }
 #endif
 

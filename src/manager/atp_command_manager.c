@@ -29,6 +29,7 @@ em_uint32  atp_command_manager_add(atp_command *command,atp_command_manager *to)
 void process_command(atp_command *command){
 	if(command->type==ATP_COMMAND_TEST)
 	{
+		//puts("command test camed");
 		puts((char *)command->data);
 
 	}

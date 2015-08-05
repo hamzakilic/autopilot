@@ -51,11 +51,11 @@ void atp_log(atp_log_data *log){
 	if(log->type==ATP_LOG_ERROR)
 			printf("Error->");
 
-	if(log->type==ATP_LOG_DATA_TYPE_FLOAT)
+	if(log->data_type==ATP_LOG_DATA_TYPE_FLOAT)
 				printf("Data Type Is Float->");
-	if(log->type==ATP_LOG_DATA_TYPE_INT)
+	if(log->data_type==ATP_LOG_DATA_TYPE_INT)
 					printf("Data Type Is Int->");
-	if(log->type==ATP_LOG_DATA_TYPE_STRING)
+	if(log->data_type==ATP_LOG_DATA_TYPE_STRING)
 					printf("Data Type Is String->");
 
 
@@ -82,7 +82,7 @@ void atp_log(atp_log_data *log){
 	buf_temp[7]=hash>>24;
 	memcpy(buf_temp+8,log->data,log->data_len);
 	em_int32 err=0;
-	err=sendto(clients[0].socket_descriptior,buf_temp,8,0,(struct sockaddr *)&(clients[0].client_address),sizeof(struct sockaddr_in));
+	err=sendto(clients[0].socket_descriptior,buf_temp,8+log->data_len,0,(struct sockaddr *)&(clients[0].client_address),sizeof(struct sockaddr_in));
 	if(err==-1){
 	  perror(strerror(errno));
 
@@ -120,7 +120,7 @@ atp_log_data* atp_log_create_string(em_uint8 log_type, const char *fmt,...){
 		log->data_len=vsnprintf(buffer,255,fmt,arg);
 		va_end(arg);
 		log->data=buffer;
-
+        log->data_type=ATP_LOG_DATA_TYPE_STRING;
 
   return log;
 

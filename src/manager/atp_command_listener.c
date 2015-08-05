@@ -42,18 +42,79 @@ static void  atp_create_socket(atp_command_listener_data *data){
 
 
 }
+
+void delete_string(void *data)
+{
+	atp_free(data);
+}
+
+atp_command *parse_command(em_byte *data,em_int32 len)
+{
+
+	if(len<2)
+      return NULL;
+	em_int32 counter;
+	atp_command *command=atp_malloc(sizeof(atp_command));
+	memcpy(&command->type,data,2);
+	em_uint32 length;
+	      if(len<6)//no lenght found, not a valid command
+	      {
+	    	  atp_log(atp_log_create_string(ATP_LOG_FATAL,"Not a valid command no length:\n"));
+	    	  atp_free(command);
+	    	  return NULL;
+	      }
+
+	      memcpy(&length,data+2,4);
+          //printf("length is %d\n",length);
+	      em_int32 hash;
+	      if(len<10)//no hash found,not a valid command
+	      {
+	    	  atp_log(atp_log_create_string(ATP_LOG_FATAL,"Not a valid command no hash:\n"));
+	    	  atp_free(command);
+	    	  return NULL;
+	      }
+	      memcpy(&hash,data+6,4);
+          //printf("hash is %d\n",hash);
+	      em_int32 calculated_hash=0;
+	      for(counter=0;counter<6;++counter)
+	    	  calculated_hash+=data[counter];
+	      //printf("calculated hash is %d\n",calculated_hash);
+	      if(calculated_hash!=hash)//not a valid command
+	      {
+	    	  atp_log(atp_log_create_string(ATP_LOG_FATAL,"Not a valid command hashes not equal:\n"));
+	    	  atp_free(command);
+	    	  return NULL;
+	      }
+
+	if(command->type==ATP_COMMAND_TEST)
+	{
+       em_uint8 *data_string=atp_malloc(sizeof(em_uint8)*length);
+       memcpy(data_string,data+10,length);
+       command->data=data_string;
+       command->destroy=delete_string;
+       return command;
+	}
+	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Not a valid command no compatible command found:\n"));
+	atp_free(command);
+	return NULL;
+}
+
 void * read_commands(void *arg){
 	atp_command_listener_data *data=arg;
 	em_byte bytes[1024];
 	em_int32 len=sizeof(data->cliaddr);
 	while(data->work){
-
+       // puts("Debug->Waitig for receive command from socket");
 		em_int32 received_size= recvfrom(data->sockfd,bytes,1024,0,(struct sockaddr *)&data->cliaddr,&len);
 		if(received_size>0){
-		//create command
-		//push to command_manager
+			atp_command *command=parse_command(bytes,received_size);
+			if(command)
+				atp_command_manager_add(command,data->command_manager);
+
+
 		}
 	}
+	return 0;
 }
 
 em_uint32 atp_command_listener_create(atp_command_listener **command_listener,atp_command_manager *command_manager){

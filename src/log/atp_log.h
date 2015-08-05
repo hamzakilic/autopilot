@@ -23,8 +23,6 @@
 #define ATP_LOG_DATA_TYPE_FLOAT 0x04
 
 
-
-
 typedef struct{
 	em_uint8 type;
 	em_uint16 data_type;// data type
