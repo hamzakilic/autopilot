@@ -19,9 +19,20 @@ typedef struct {
 }atp_command;
 
 
+typedef struct {
+	em_byte *data;
+}atp_command_test;
 
+typedef struct{
+
+}atp_command_motor;
+
+typedef struct{
+
+}atp_command_camera_control;
 
 
 #define ATP_COMMAND_TEST 1
+#define ATP_COMMAND_MOTOR 2
 
 #endif /* ATP_COMMAND_H_ */

@@ -43,9 +43,11 @@ static void  atp_create_socket(atp_command_listener_data *data){
 
 }
 
-void delete_string(void *data)
+void delete_command_test(void *data)
 {
-	atp_free(data);
+	atp_command_test *temp=(atp_command_test *)data;
+	atp_free(temp->data);
+	atp_free(temp);
 }
 
 atp_command *parse_command(em_byte *data,em_int32 len)
@@ -88,10 +90,13 @@ atp_command *parse_command(em_byte *data,em_int32 len)
 
 	if(command->type==ATP_COMMAND_TEST)
 	{
+	  atp_command_test *command_test=atp_malloc(sizeof(atp_command_test));
+
        em_uint8 *data_string=atp_malloc(sizeof(em_uint8)*length);
        memcpy(data_string,data+10,length);
-       command->data=data_string;
-       command->destroy=delete_string;
+       command_test->data=data_string;
+       command->data=command_test;
+       command->destroy=delete_command_test;
        return command;
 	}
 	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Not a valid command no compatible command found:\n"));

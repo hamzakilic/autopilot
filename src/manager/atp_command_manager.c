@@ -12,6 +12,8 @@ typedef struct {
   atp_thread_id thread_id;
   em_uint32 work;
   void *thread_lock;
+  process_command_func process_command;
+//  atp_pilot *pilot;
 
 }controller_data;
 
@@ -26,29 +28,19 @@ em_uint32  atp_command_manager_add(atp_command *command,atp_command_manager *to)
 }
 
 
-void process_command(atp_command *command){
-	if(command->type==ATP_COMMAND_TEST)
-	{
-		//puts("command test camed");
-		puts((char *)command->data);
 
-	}
-	if(command->destroy)
-		command->destroy(command->data);
-	atp_free(command);
-//komutları nasıl işleyecek, motorcontroller ihtiyacı var vesaireye ihtiyacı var
-}
+
 
 void* process_queue_start(void *arg){
 	controller_data *data=(controller_data *)arg;
 
-
 	while(data->work){
 		atp_thread_lock(&data->thread_lock);
 		if(atp_queue_count(data->queue)){
+			puts("data is founded processing");
 		 	atp_command *queue_item=(atp_command *) atp_queue_pop(data->queue);
 		 	atp_thread_unlock(&data->thread_lock);
-		 	process_command(queue_item);
+		 	data->process_command(queue_item);
 		}else{
 			atp_thread_unlock(&data->thread_lock);
 		    em_io_delay_microseconds(1000);
@@ -59,11 +51,12 @@ void* process_queue_start(void *arg){
 }
 
 
-em_uint32  atp_command_manager_create(atp_command_manager ** controller){
+em_uint32  atp_command_manager_create(atp_command_manager ** controller,process_command_func func){
 	atp_command_manager * temp= atp_malloc(sizeof(atp_command_manager));
     controller_data *temp_data=  atp_malloc(sizeof(controller_data));
     temp->private_data=temp_data;
     temp_data->queue= atp_queue_create();
+    temp_data->process_command=func;
     *controller=temp;
     temp_data->work=1;
     atp_thread_create_lock(&temp_data->thread_lock);

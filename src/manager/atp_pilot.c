@@ -14,28 +14,51 @@ typedef struct {
 	em_uint32 motor_controller_started;
 }atp_pilot_data;
 
-static atp_pilot_data *data=0;
+static atp_pilot_data *pilot_data=0;
 
 em_uint32 atp_pilot_create(atp_pilot **pilot){
 
-    if(data!=0)
+    if(pilot_data!=0)
     {
     	atp_log(atp_log_create_string(ATP_LOG_FATAL,"AllReady Created Pilot\n"));
     	return ATP_ERROR_PILOT_CREATED_ALLREADY;
     }
     //create necessary structures and reset their values
-    data=atp_malloc(sizeof(atp_pilot_data));
-    data->command_listener=NULL;
-    data->command_manager=NULL;
-    data->input=NULL;
-    data->service_system_started=0;
-    data->motor_controller_started=0;
+    pilot_data=atp_malloc(sizeof(atp_pilot_data));
+    pilot_data->command_listener=NULL;
+    pilot_data->command_manager=NULL;
+    pilot_data->input=NULL;
+    pilot_data->service_system_started=0;
+    pilot_data->motor_controller_started=0;
     atp_pilot * pilot_temp=atp_malloc(sizeof(atp_pilot));
     *pilot=pilot_temp;
-    pilot_temp->private_data=data;
+    pilot_temp->private_data=pilot_data;
     atp_log(atp_log_create_string(ATP_LOG_INFO,"Create Pilot Success \n"));
 
     return ATP_SUCCESS;
+}
+
+
+void process_command(atp_command *command){
+	if(command->type==ATP_COMMAND_TEST)
+	{
+		//puts("command test camed");
+		atp_command_test *command_test=(atp_command_test *)command->data;
+		puts(command_test->data);
+	}
+	if(command->type==ATP_COMMAND_MOTOR)
+	{
+       atp_command_motor *motor_control=(atp_command_motor *)command->data;
+       if(pilot_data!=0){
+    	   //buradan herşeyi artık kontrol etmek mümkün
+       }
+
+
+	}
+	if(command->destroy)
+		command->destroy(command->data);
+	atp_free(command);
+
 }
 
 
@@ -58,7 +81,7 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 	    //create command manager
         err=0;
         if(pilot_data->command_manager==NULL)
-	    err=atp_command_manager_create(&pilot_data->command_manager);
+        err=atp_command_manager_create(&pilot_data->command_manager,process_command);
 	    if(err){
 	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Command Manager System Failed Error:%u\n",err));
 	    	    	return ATP_ERROR_START_COMMANDMANAGER;
@@ -113,7 +136,7 @@ em_uint32 atp_pilot_stop(atp_pilot *pilot){
 	//stop command listener
 	em_uint32 err=0;
 	        if(pilot_data->command_listener)
-		    err=atp_command_listener_destroy(&pilot_data->command_listener);
+		    err=atp_command_listener_destroy(pilot_data->command_listener);
 		    if(err)
 		    {
 		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Destroy Command Listener Failed Error:%u\n",err));
@@ -126,7 +149,7 @@ em_uint32 atp_pilot_stop(atp_pilot *pilot){
 		    //stop command manager
             err=0;
             if(pilot_data->command_manager)
-		    err=atp_command_manager_destroy(&pilot_data->command_manager);
+		    err=atp_command_manager_destroy(pilot_data->command_manager);
 		    		    if(err)
 		    		    {
 		    		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Destroy Command Manager Failed Error:%u\n",err));
@@ -173,7 +196,6 @@ em_uint32 atp_pilot_destroy(atp_pilot *pilot){
 	if(pilot)
 	atp_free(pilot);
 	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Pilot Success \n"));
-
 
 return ATP_SUCCESS;
 }
