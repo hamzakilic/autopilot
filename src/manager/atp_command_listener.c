@@ -104,16 +104,16 @@ atp_command *parse_command(em_byte *data,em_int32 len)
        command->destroy=delete_command_test;
        return command;
 	}
-	if(command->type==ATP_COMMAND_MOTOR && length==4*sizeof(em_int32)){
+	if(command->type==ATP_COMMAND_MOTOR && length==4*sizeof(em_uint16)){
 
       atp_command_motor *command_motor=atp_malloc(sizeof(atp_command_motor));
 
-      em_int32 *data_motors=atp_malloc(sizeof(em_uint8)*length);
+      em_uint16 *data_motors=atp_malloc(sizeof(em_uint8)*length);
              atp_copy(data_motors,data+10,length);
-             command_motor->value_front_left=data_motors[0];
-             command_motor->value_front_right=data_motors[1];
-             command_motor->value_back_left=data_motors[2];
-             command_motor->value_back_right=data_motors[3];
+             command_motor->values[0]=data_motors[0];
+             command_motor->values[1]=data_motors[1];
+             command_motor->values[2]=data_motors[2];
+             command_motor->values[3]=data_motors[3];
              atp_free(data_motors);//must delete, dont forget
              command->data=command_motor;
              command->destroy=delete_command_motor;

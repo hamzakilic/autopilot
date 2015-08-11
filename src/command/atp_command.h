@@ -24,10 +24,7 @@ typedef struct {
 }atp_command_test;
 
 typedef struct{
-  em_int32 value_front_left;
-  em_int32 value_front_right;
-  em_int32 value_back_left;
-  em_int32 value_back_right;
+  em_uint16 values[4];
 }atp_command_motor;
 
 typedef struct{

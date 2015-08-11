@@ -48,22 +48,22 @@ em_uint32 set_value(em_uint16 value,em_uint8 pin_number)
 }
 
 
-em_uint32 atp_motor_create(struct atp_motor **motor,em_uint8 number,em_uint8 pin_number){
-	struct atp_motor *temp= atp_malloc(sizeof(struct atp_motor));
+em_uint32 atp_motor_create(atp_motor **motor,em_uint8 number,em_uint8 pin_number){
+	atp_motor *temp= atp_malloc(sizeof(atp_motor));
 	temp->number=number;
 	temp->pin_number=pin_number;
 	*motor=temp;
 	return ATP_SUCCESS;
 }
-em_uint32 atp_motor_destroy(struct atp_motor *motor){
+em_uint32 atp_motor_destroy(atp_motor *motor){
 	atp_free(motor);
 	return ATP_SUCCESS;
 }
-em_uint32 atp_motor_calibrate(struct atp_motor *motor){
+em_uint32 atp_motor_calibrate(atp_motor *motor){
   return ATP_SUCCESS;
 }
 
-em_uint32 atp_motor_start(struct atp_motor *motor){
+em_uint32 atp_motor_start(atp_motor *motor){
 	em_uint32 err;
      err=set_value(MIN_SIGNAL_STOP,motor->pin_number);
      if(err)
@@ -71,14 +71,14 @@ em_uint32 atp_motor_start(struct atp_motor *motor){
      return ATP_SUCCESS;
 
 }
-em_uint32 atp_motor_stop(struct atp_motor *motor){
+em_uint32 atp_motor_stop(atp_motor *motor){
 	em_uint32 err;
 		     err=set_value(MIN_SIGNAL_STOP,motor->pin_number);
 		     if(err)
 		    	 return err;
 		     return ATP_SUCCESS;
 }
-em_uint32 atp_motor_set_power(struct atp_motor *motor,em_uint16 power_level){
+em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 	         em_uint32 err;
 	         if(power_level>1000)
 	        	 power_level=1000;

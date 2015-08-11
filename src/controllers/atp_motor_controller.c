@@ -139,7 +139,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 	        	return err;
 	        }
 
-	    struct atp_motor ** motors=NULL;
+	   atp_motor ** motors=NULL;
         motors=atp_malloc(ATP_MOTORS_COUNT*sizeof(struct atp_motor*));
 
        err=atp_motor_create(&motors[ATP_MOTOR_FRONT_RIGHT],ATP_MOTOR_FRONT_RIGHT,0);
@@ -206,7 +206,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 }
 em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
 
-   struct atp_motor **motors=(struct atp_motor**)motor_controller->private_data;
+   atp_motor **motors=(struct atp_motor**)motor_controller->private_data;
 
 	if(motors!=NULL){
 		em_uint8 index;
@@ -219,6 +219,20 @@ em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
        atp_free(motors);
 	}
 	atp_free(motor_controller);
+	return ATP_SUCCESS;
+}
+
+
+em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller,em_uint16 *values){
+
+	atp_motor **motors=(struct atp_motor**)motor_controller->private_data;
+	if(motors!=NULL)
+	{
+		em_uint8 index;
+		for_each_motors(){
+			atp_motor_set_power(motors[index],values[index]);
+		}
+	}
 	return ATP_SUCCESS;
 }
 

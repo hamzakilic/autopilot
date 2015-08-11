@@ -133,6 +133,11 @@ int test_atp_command_listener(){
 
 }
 
+int test_atp_command_motor(){
+     return EXIT_SUCCESS;
+}
+
+
 
 int main(void) {
    puts("Starting Test");

@@ -51,6 +51,8 @@ void process_command(atp_command *command){
        atp_command_motor *motor_control=(atp_command_motor *)command->data;
        if(pilot_data!=0){
 
+    	   atp_motor_controller_set_values(pilot_data->motor_controller,motor_control->values);
+         // pilot_data->motor_controller
        }
 
 
