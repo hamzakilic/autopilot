@@ -11,7 +11,7 @@ typedef struct {
 	atp_command_manager *command_manager;
 	atp_command_listener *command_listener;
 	em_uint32 service_system_started;
-	em_uint32 motor_controller_started;
+	atp_motor_controller *motor_controller;
 }atp_pilot_data;
 
 static atp_pilot_data *pilot_data=0;
@@ -29,7 +29,7 @@ em_uint32 atp_pilot_create(atp_pilot **pilot){
     pilot_data->command_manager=NULL;
     pilot_data->input=NULL;
     pilot_data->service_system_started=0;
-    pilot_data->motor_controller_started=0;
+    pilot_data->motor_controller=NULL;
     atp_pilot * pilot_temp=atp_malloc(sizeof(atp_pilot));
     *pilot=pilot_temp;
     pilot_temp->private_data=pilot_data;
@@ -50,7 +50,7 @@ void process_command(atp_command *command){
 	{
        atp_command_motor *motor_control=(atp_command_motor *)command->data;
        if(pilot_data!=0){
-    	   //buradan herşeyi artık kontrol etmek mümkün
+
        }
 
 
@@ -116,15 +116,15 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 
 	    //create motor controllers
 	    err=0;
-	    if(pilot_data->motor_controller_started==0)
-	    err=atp_motor_controller_start(pilot_data->input);
+	    if(pilot_data->motor_controller==NULL)
+	    err=atp_motor_controller_create(pilot_data->input,&pilot_data->motor_controller);
 
 	    if(err){
 
 	        	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Motor Controllers Failed Error:%u\n",err));
 	        	return ATP_ERROR_START_SERVICE_SYSTEM;
 	        }else{
-	        	pilot_data->motor_controller_started=1;
+
 	        	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Motor Controllers Success \n"));
 	        }
 	    return ATP_SUCCESS;
@@ -175,8 +175,8 @@ if(err)
 
 //stop motor controller
 err=0;
-if(pilot_data->motor_controller_started)
-	err=atp_motor_controller_stop();
+if(pilot_data->motor_controller)
+	err=atp_motor_controller_destroy(pilot_data->motor_controller);
 
 if(err)
 		    		    {

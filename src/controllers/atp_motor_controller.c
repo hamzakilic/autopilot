@@ -124,8 +124,8 @@ static em_uint32 init_pca9685(){
 
 #define for_each_motors()  for(index=0;index<ATP_MOTORS_COUNT;++index)
 
-static struct atp_motor ** motors=NULL;
-em_uint32  atp_motor_controller_start(atp_input *input){
+
+em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **motor_controller){
 
 	em_uint32 err;
 
@@ -138,28 +138,41 @@ em_uint32  atp_motor_controller_start(atp_input *input){
 	        if(err){
 	        	return err;
 	        }
+
+	    struct atp_motor ** motors=NULL;
         motors=atp_malloc(ATP_MOTORS_COUNT*sizeof(struct atp_motor*));
 
        err=atp_motor_create(&motors[ATP_MOTOR_FRONT_RIGHT],ATP_MOTOR_FRONT_RIGHT,0);
        if(err){
          atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_RIGHT,err));
+         atp_free(motors);
          return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
 
        err=atp_motor_create(&motors[ATP_MOTOR_BACK_RIGHT],ATP_MOTOR_BACK_RIGHT,1);
        if(err){
         atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_BACK_RIGHT,err));
+        atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
+                 atp_free(motors);
+
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
        err=atp_motor_create(&motors[ATP_MOTOR_BACK_LEFT],ATP_MOTOR_BACK_LEFT,2);
        if(err){
          atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_BACK_LEFT,err));
+         atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
+         atp_free(motors[ATP_MOTOR_BACK_RIGHT]);
+         atp_free(motors);
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
 
        err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],ATP_MOTOR_FRONT_LEFT,3);
        if(err){
        atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_LEFT,err));
+       atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
+               atp_free(motors[ATP_MOTOR_BACK_RIGHT]);
+               atp_free(motors[ATP_MOTOR_BACK_LEFT]);
+       atp_free(motors);
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
       }
 
@@ -170,16 +183,30 @@ em_uint32  atp_motor_controller_start(atp_input *input){
            err=atp_motor_start(motors[index]);
            if(err){
         	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Motor %u  failed Errno:%u\n",index,err));
+        	   atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
+        	   atp_free(motors[ATP_MOTOR_BACK_RIGHT]);
+        	   atp_free(motors[ATP_MOTOR_FRONT_LEFT]);
+        	   atp_free(motors[ATP_MOTOR_BACK_LEFT]);
+        	   atp_free(motors);
         	   return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
            }
         }
 
+
+
+
+
+        atp_motor_controller *controller=atp_malloc(sizeof(atp_motor_controller));
+       	*motor_controller=controller;
+       	controller->private_data=motors;
+
+
         return ATP_SUCCESS;
 
 }
-em_uint32 atp_motor_controller_stop(){
+em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
 
-
+   struct atp_motor **motors=(struct atp_motor**)motor_controller->private_data;
 
 	if(motors!=NULL){
 		em_uint8 index;
@@ -191,6 +218,7 @@ em_uint32 atp_motor_controller_stop(){
 				}
        atp_free(motors);
 	}
+	atp_free(motor_controller);
 	return ATP_SUCCESS;
 }
 

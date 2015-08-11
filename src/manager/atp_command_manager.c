@@ -13,7 +13,7 @@ typedef struct {
   em_uint32 work;
   void *thread_lock;
   process_command_func process_command;
-//  atp_pilot *pilot;
+
 
 }controller_data;
 
@@ -37,7 +37,7 @@ void* process_queue_start(void *arg){
 	while(data->work){
 		atp_thread_lock(&data->thread_lock);
 		if(atp_queue_count(data->queue)){
-			puts("data is founded processing");
+			//puts("data is founded processing");
 		 	atp_command *queue_item=(atp_command *) atp_queue_pop(data->queue);
 		 	atp_thread_unlock(&data->thread_lock);
 		 	data->process_command(queue_item);

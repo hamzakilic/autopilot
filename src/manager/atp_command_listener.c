@@ -50,6 +50,11 @@ void delete_command_test(void *data)
 	atp_free(temp);
 }
 
+void delete_command_motor(void *data){
+	atp_command_motor *motor=(atp_command_motor*)data;
+	atp_free(motor);
+}
+
 atp_command *parse_command(em_byte *data,em_int32 len)
 {
 
@@ -57,7 +62,7 @@ atp_command *parse_command(em_byte *data,em_int32 len)
       return NULL;
 	em_int32 counter;
 	atp_command *command=atp_malloc(sizeof(atp_command));
-	memcpy(&command->type,data,2);
+	atp_copy(&command->type,data,2);
 	em_uint32 length;
 	      if(len<6)//no lenght found, not a valid command
 	      {
@@ -66,7 +71,7 @@ atp_command *parse_command(em_byte *data,em_int32 len)
 	    	  return NULL;
 	      }
 
-	      memcpy(&length,data+2,4);
+	      atp_copy(&length,data+2,4);
           //printf("length is %d\n",length);
 	      em_int32 hash;
 	      if(len<10)//no hash found,not a valid command
@@ -75,7 +80,7 @@ atp_command *parse_command(em_byte *data,em_int32 len)
 	    	  atp_free(command);
 	    	  return NULL;
 	      }
-	      memcpy(&hash,data+6,4);
+	      atp_copy(&hash,data+6,4);
           //printf("hash is %d\n",hash);
 	      em_int32 calculated_hash=0;
 	      for(counter=0;counter<6;++counter)
@@ -93,11 +98,26 @@ atp_command *parse_command(em_byte *data,em_int32 len)
 	  atp_command_test *command_test=atp_malloc(sizeof(atp_command_test));
 
        em_uint8 *data_string=atp_malloc(sizeof(em_uint8)*length);
-       memcpy(data_string,data+10,length);
+       atp_copy(data_string,data+10,length);
        command_test->data=data_string;
        command->data=command_test;
        command->destroy=delete_command_test;
        return command;
+	}
+	if(command->type==ATP_COMMAND_MOTOR && length==4*sizeof(em_int32)){
+
+      atp_command_motor *command_motor=atp_malloc(sizeof(atp_command_motor));
+
+      em_int32 *data_motors=atp_malloc(sizeof(em_uint8)*length);
+             atp_copy(data_motors,data+10,length);
+             command_motor->value_front_left=data_motors[0];
+             command_motor->value_front_right=data_motors[1];
+             command_motor->value_back_left=data_motors[2];
+             command_motor->value_back_right=data_motors[3];
+             atp_free(data_motors);//must delete, dont forget
+             command->data=command_motor;
+             command->destroy=delete_command_motor;
+             return command;
 	}
 	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Not a valid command no compatible command found:\n"));
 	atp_free(command);

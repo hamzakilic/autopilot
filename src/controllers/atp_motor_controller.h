@@ -24,8 +24,13 @@
 #define ATP_MOTOR_MAX_POWER 1000
 #define ATP_MOTOR_MIN_POWER 0
 
-em_uint32  atp_motor_controller_start(atp_input *input);
-em_uint32 atp_motor_controller_stop();
+typedef struct{
+	void *private_data;
+}atp_motor_controller;
+
+
+em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **motor_controller);
+em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller);
 
 
 
