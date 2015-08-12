@@ -206,7 +206,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 }
 em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
 
-   atp_motor **motors=(struct atp_motor**)motor_controller->private_data;
+   atp_motor **motors=(atp_motor**)motor_controller->private_data;
 
 	if(motors!=NULL){
 		em_uint8 index;
@@ -225,7 +225,7 @@ em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
 
 em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller,em_uint16 *values){
 
-	atp_motor **motors=(struct atp_motor**)motor_controller->private_data;
+	atp_motor **motors=(atp_motor**)motor_controller->private_data;
 	if(motors!=NULL)
 	{
 		em_uint8 index;

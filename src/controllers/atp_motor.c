@@ -83,9 +83,13 @@ em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 	         if(power_level>1000)
 	        	 power_level=1000;
              power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_STOP)*power_level/1000.0f;
+#ifdef COMPILE_TEST_CODES
+             printf("setting motor %d value:%d",motor->pin_number,power_level);
+#else
 		     err=set_value(power_level,motor->pin_number);
 		     if(err)
 		    	 return err;
+#endif
 		     return ATP_SUCCESS;
 }
 #endif

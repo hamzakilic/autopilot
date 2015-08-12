@@ -40,15 +40,31 @@ em_uint32 atp_thread_create_lock(void **lock_key){
 
 }
 em_uint32 atp_thread_lock(void ** lock_key){
-	pthread_mutex_lock(*lock_key);
+	em_uint32 err= pthread_mutex_lock(*lock_key);
+	if(err){
+		   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Mutex Lock Failed Error:%u\n",err));
+		   return ATP_ERROR_MUTEX_LOCK;
+	   }
+	return ATP_SUCCESS;
 
 }
 em_uint32 atp_thread_unlock(void **lock_key){
-	pthread_mutex_unlock(*lock_key);
+
+	em_uint32 err= pthread_mutex_unlock(*lock_key);
+	if(err){
+		   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Mutex Unlock Failed Error:%u\n",err));
+		   return ATP_ERROR_MUTEX_UNLOCK;
+	   }
+	return ATP_SUCCESS;
 
 }
 em_uint32 atp_thread_destory_lock(void **lock_key){
-  pthread_mutex_destroy(*lock_key);
+  em_int32 err=pthread_mutex_destroy(*lock_key);
+  if(err){
+  	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Mutex Destroy Failed Error:%u\n",err));
+  	   return ATP_ERROR_MUTEX_DESTROY;
+     }
   atp_free(*lock_key);
+  return ATP_SUCCESS;
 }
 
