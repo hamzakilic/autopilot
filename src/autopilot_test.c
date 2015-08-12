@@ -48,32 +48,14 @@ int test_atp_queue(){
     	return FATAL;
     atp_queue_destroy(queue);
 	puts("Ending atp_queue");
-
+    puts("******************************************************");
 	return EXIT_SUCCESS;
 }
 
 
 
 
-//burası pilot.c dosyası içindeki fonksiyonun hemen hemen aynısı
-void process_command_test(atp_command *command){
-	//puts("processing test command");
-	if(command->type==ATP_COMMAND_TEST)
-	{
-		//puts("command test camed");
-		atp_command_test *command_test=(atp_command_test *)command->data;
-		puts(command_test->data);
-	}
-	if(command->type==ATP_COMMAND_MOTOR)
-	{
-       atp_command_motor *motor_control=(atp_command_motor *)command->data;
-
-	}
-	if(command->destroy)
-		command->destroy(command->data);
-	atp_free(command);
-
-}
+extern void process_command(atp_command *command);
 
 void destroy_atp_command_test(void * command)
 {
@@ -86,7 +68,7 @@ void destroy_atp_command_test(void * command)
 int test_atp_command_manager(){
 	puts("Starting atp_command_manager");
     atp_command_manager *manager;
-    if(atp_command_manager_create(&manager,process_command_test))
+    if(atp_command_manager_create(&manager,process_command))
     	return FATAL;
     atp_command *command=atp_malloc(sizeof(atp_command));
     command->type=ATP_COMMAND_TEST;
@@ -108,14 +90,16 @@ int test_atp_command_manager(){
     if(atp_command_manager_destroy(manager))
     	return FATAL;
 	puts("Ending atp_command_manager");
+	puts("******************************************************");
 	return EXIT_SUCCESS;
 }
 
 
 int test_atp_command_listener(){
 	puts("Starting atp_command_listener");
+	puts("it can only test command_test, you cannot see other commands");
 	 atp_command_manager *manager;
-	    if(atp_command_manager_create(&manager,process_command_test))
+	    if(atp_command_manager_create(&manager,process_command))
 	    	return FATAL;
 	 atp_command_listener *listener;
 	   	if(atp_command_listener_create(&listener,manager))
@@ -128,9 +112,31 @@ int test_atp_command_listener(){
 	   	if(atp_command_manager_destroy(manager))
 	   		return FATAL;
 	   	puts("Ending atp_command_listener");
+	   	puts("******************************************************");
    return EXIT_SUCCESS;
 
 
+}
+
+int test_pilot(){
+	puts("Starting test pilot");
+   atp_pilot *pilot;
+   if(atp_pilot_create(&pilot)){
+	   return FATAL;
+   }
+   if(atp_pilot_start(pilot))
+   {
+	   return FATAL;
+   }
+   puts("waiting for commands:");
+   puts("press any key to finish");
+   if(atp_pilot_stop(pilot))
+	   return FATAL;
+   if(atp_pilot_destroy(pilot))
+	   return FATAL;
+   puts("Ending test pilot");
+   puts("******************************************************");
+   return EXIT_SUCCESS;
 }
 
 
@@ -138,6 +144,11 @@ int test_atp_command_listener(){
 
 int main(void) {
    puts("Starting Test");
+   em_uint32 err;
+  	if((err=em_io_initialize(0))){
+  		puts("Hardware Initialize Failed Error");
+  		return ATP_ERROR_HARDWARE_INITIALIZE;
+  	}
    if(test_atp_queue()){
 	   puts("Failed atp_queue");
 	   return EXIT_FAILURE;
@@ -153,7 +164,10 @@ int main(void) {
 	   puts("Failed atp_command_listener");
 	   return EXIT_FAILURE;
    }
-
+   if(test_pilot()){
+	   puts("Failed atp_pilot");
+	   return EXIT_FAILURE;
+   }
    return EXIT_SUCCESS;
 }
 #endif

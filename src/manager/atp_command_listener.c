@@ -111,6 +111,9 @@ atp_command *parse_command(em_byte *data,em_int32 len)
        command_test->data=data_string;
        command->data=command_test;
        command->destroy=delete_command_test;
+#ifdef COMPILE_TEST_CODES
+       puts("returning test command");
+#endif
        return command;
 	}
 	if(command->type==ATP_COMMAND_MOTOR && length==4*sizeof(em_uint16)){

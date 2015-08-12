@@ -40,26 +40,32 @@ em_uint32 atp_pilot_create(atp_pilot **pilot){
 
 
 void process_command(atp_command *command){
+
 	if(command->type==ATP_COMMAND_TEST)
 	{
+
 	    atp_command_test *command_test=(atp_command_test *)command->data;
 		#ifdef COMPILE_TEST_CODES
 		puts(command_test->data);
 		#endif
 	}
-	puts("command type must be here");
+
 	if(command->type==ATP_COMMAND_MOTOR)
 	{
-		puts("motor 1");
+
        atp_command_motor *motor_control=(atp_command_motor *)command->data;
        if(pilot_data!=0){
-           puts("motor 2");
-    	   atp_motor_controller_set_values(pilot_data->motor_controller,motor_control->values);
+           atp_motor_controller_set_values(pilot_data->motor_controller,motor_control->values);
 
+       }else{
+			#ifdef COMPILE_TEST_CODES
+            printf("pilot_data is null, cannot process atp_command_motor\n");
+			#endif
        }
 
 
 	}
+
 	if(command->destroy)
 		command->destroy(command->data);
 	atp_free(command);

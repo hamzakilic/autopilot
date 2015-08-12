@@ -224,7 +224,7 @@ em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
 
 
 em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller,em_uint16 *values){
-
+    puts("motor values setting");
 	atp_motor **motors=(atp_motor**)motor_controller->private_data;
 	if(motors!=NULL)
 	{
