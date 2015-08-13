@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 
-#define COMPILE_TEST_CODES
+#define COMPILE_TEST_CODES2
 
 #define COMPILE_MODULE_GPS_NEO_6V
 #define COMPILE_A2212_MOTORS_AND_ESC

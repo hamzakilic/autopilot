@@ -192,14 +192,9 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
            }
         }
 
-
-
-
-
         atp_motor_controller *controller=atp_malloc(sizeof(atp_motor_controller));
        	*motor_controller=controller;
        	controller->private_data=motors;
-
 
         return ATP_SUCCESS;
 
@@ -224,7 +219,7 @@ em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller){
 
 
 em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller,em_uint16 *values){
-    puts("motor values setting");
+
 	atp_motor **motors=(atp_motor**)motor_controller->private_data;
 	if(motors!=NULL)
 	{

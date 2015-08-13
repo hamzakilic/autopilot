@@ -44,6 +44,7 @@ void initialize_clients(const char * host,em_uint16 port){
 #endif
 
 void atp_log(atp_log_data *log){
+#ifdef COMPILE_TEST_CODES
 	if(log->type==ATP_LOG_INFO)
 		printf("Info->");
 	if(log->type==ATP_LOG_FATAL)
@@ -61,6 +62,7 @@ void atp_log(atp_log_data *log){
 
 	printf("Data Len %u->",log->data_len);
 	printf(log->data);
+#endif
 #ifdef COMPILE_LOG_UDP
 	if(!initialized_clients){
 		initialize_clients("192.168.2.138",9999);

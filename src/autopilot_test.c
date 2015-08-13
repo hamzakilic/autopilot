@@ -107,6 +107,7 @@ int test_atp_command_listener(){
 	   	puts("waiting for commands:");
 	   	puts("press any key to finish");
 	   	getchar();
+	   	getchar();
 	   	if(atp_command_listener_destroy(listener))
 	   		return FATAL;
 	   	if(atp_command_manager_destroy(manager))
@@ -130,6 +131,8 @@ int test_pilot(){
    }
    puts("waiting for commands:");
    puts("press any key to finish");
+   getchar();
+   getchar();
    if(atp_pilot_stop(pilot))
 	   return FATAL;
    if(atp_pilot_destroy(pilot))

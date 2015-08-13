@@ -31,6 +31,11 @@ int main(void) {
 	if(atp_pilot_create(&pilot)){
        return EXIT_FAILURE;
 	}
+	if(atp_pilot_start(pilot))
+	{
+		return EXIT_FAILURE;
+	}
+
 
    getchar();
 
