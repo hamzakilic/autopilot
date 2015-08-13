@@ -37,7 +37,7 @@ void initialize_clients(const char * host,em_uint16 port){
 	clients[0].client_port=port;
 	clients[0].client_address.sin_addr.s_addr=inet_addr(host);
     initialized_clients=1;
-    printf("debugger-> initialized2\n");
+
 
 }
 
@@ -66,7 +66,7 @@ void atp_log(atp_log_data *log){
 #ifdef COMPILE_LOG_UDP
 	if(!initialized_clients){
 		initialize_clients("192.168.2.138",9999);
-		printf("debugger-> initialized1\n");
+
 	}
 	em_uint8 buf_temp[8+log->data_len];
 	buf_temp[0]=log->type;
@@ -87,7 +87,6 @@ void atp_log(atp_log_data *log){
 	err=sendto(clients[0].socket_descriptior,buf_temp,8+log->data_len,0,(struct sockaddr *)&(clients[0].client_address),sizeof(struct sockaddr_in));
 	if(err==-1){
 	  perror(strerror(errno));
-
 
 	}
 
