@@ -118,9 +118,12 @@ atp_log_data* atp_log_create_string(em_uint8 log_type, const char *fmt,...){
 	    va_list arg;
 		va_start(arg, fmt);
 		char *buffer=atp_malloc(sizeof(char)*255);
+		atp_fill_zero(buffer,255);
 		log->data_len=vsnprintf(buffer,255,fmt,arg);
+		//log->data_len+=1;//null character
 		va_end(arg);
 		log->data=buffer;
+		//printf("%s",buffer);
         log->data_type=ATP_LOG_DATA_TYPE_STRING;
 
   return log;
