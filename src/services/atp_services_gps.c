@@ -264,15 +264,15 @@ CFG-USB - 06 1B 6C 00 46 15 A6 01 00 00 00 00 64 00 00 01 75 2D 62 6C 6F 78 20 4
 }
 
 atp_queue *packet_queue;
-void * process_queue_lock;
+static void * process_queue_lock;
 
 
 void add_process_queue(const struct ubx *packet){
 	struct ubx *temp=atp_malloc(sizeof(struct ubx));
 	memcpy(temp,packet,sizeof(struct ubx));
-   atp_thread_lock(&process_queue_lock);
+   atp_thread_lock(process_queue_lock);
    atp_queue_push(packet_queue,(void *)temp);
-   atp_thread_unlock(&process_queue_lock);
+   atp_thread_unlock(process_queue_lock);
 }
 
 void *process_packet_queue(void *ptr){
@@ -282,10 +282,10 @@ void *process_packet_queue(void *ptr){
 			em_io_delay_microseconds(10000);
 			continue;
 		}
-		atp_thread_lock(&process_queue_lock);
+		atp_thread_lock(process_queue_lock);
         struct ubx *packet=(struct ubx  *)atp_queue_pop(packet_queue);
-        atp_thread_unlock(&process_queue_lock);
-		print(packet);
+        atp_thread_unlock(process_queue_lock);
+		//print(packet);
 							em_uint8 clk_a,clk_b;
 							calculate_packet_ck(packet,&clk_a,&clk_b);
 							if(packet->clk_a==clk_a && packet->clk_b==clk_b ){
@@ -455,6 +455,7 @@ em_uint32 atp_services_gps_destroy(atp_services_gps **address) {
     atp_thread_join(&thread_communication_id);
     atp_thread_join(&thread_queue_id);
     atp_queue_destroy(packet_queue);
+    atp_thread_destory_lock(process_queue_lock);
 	return ATP_SUCCESS;
 }
 

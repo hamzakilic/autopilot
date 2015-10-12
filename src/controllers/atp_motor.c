@@ -12,8 +12,8 @@
 #define MIN_SIGNAL_CALIBRATE 700
 #define MAX_SIGNAL_CALIBRATE 2000
 
-#define MIN_SIGNAL_STOP 700
-#define MAX_SIGNAL_WORK 1750
+#define MIN_SIGNAL_WORK 700
+#define MAX_SIGNAL_WORK 1700
 
 
 
@@ -48,11 +48,14 @@ em_uint32 set_value(em_uint16 value,em_uint8 pin_number)
 }
 
 
-em_uint32 atp_motor_create(atp_motor **motor,em_uint8 number,em_uint8 pin_number){
+em_uint32 atp_motor_create(atp_motor **motor,em_uint8 number,em_uint8 raspi_pin_number,em_uint8 pwm_pin_number){
 	atp_motor *temp= atp_malloc(sizeof(atp_motor));
 	temp->number=number;
-	temp->pin_number=pin_number;
+	temp->raspi_pin_number=raspi_pin_number;
+	temp->pwm_pin_number=pwm_pin_number;
 	*motor=temp;
+	em_io_gpio_mode(temp->raspi_pin_number,EM_MODE_GPIO_OUT);
+	em_io_gpio_write(temp->raspi_pin_number,EM_GPIO_LOW);
 	return ATP_SUCCESS;
 }
 em_uint32 atp_motor_destroy(atp_motor *motor){
@@ -65,28 +68,47 @@ em_uint32 atp_motor_calibrate(atp_motor *motor){
 
 em_uint32 atp_motor_start(atp_motor *motor){
 	em_uint32 err;
-     err=set_value(MIN_SIGNAL_STOP,motor->pin_number);
-     if(err)
-    	 return err;
+
+
+
+     em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_LOW);
+
+     err=set_value(MAX_SIGNAL_CALIBRATE,motor->pwm_pin_number);
+          if(err)
+         	 return err;
+     em_io_delay_microseconds(2000000);
+
+     em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_HIGH);
+
+     em_io_delay_microseconds(3000000);
+
+     err=set_value(MIN_SIGNAL_CALIBRATE,motor->pwm_pin_number);
+          if(err)
+         	 return err;
+
+     em_io_delay_microseconds(3000000);
+     err=set_value(800,motor->pwm_pin_number);
+
      return ATP_SUCCESS;
 
 }
 em_uint32 atp_motor_stop(atp_motor *motor){
 	em_uint32 err;
-		     err=set_value(MIN_SIGNAL_STOP,motor->pin_number);
+		     err=set_value(MIN_SIGNAL_WORK,motor->pwm_pin_number);
 		     if(err)
 		    	 return err;
+		     em_io_gpio_mode(motor->raspi_pin_number,EM_GPIO_LOW);
 		     return ATP_SUCCESS;
 }
 em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 	         em_uint32 err;
 	         if(power_level>1000)
 	        	 power_level=1000;
-             power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_STOP)*power_level/1000.0f;
+             power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_WORK)*power_level/1000.0f;
 #ifdef COMPILE_TEST_CODES
              printf("setting motor %d value:%d\n",motor->pin_number,power_level);
 #else
-		     err=set_value(power_level,motor->pin_number);
+		     err=set_value(power_level,motor->pwm_pin_number);
 		     if(err)
 		    	 return err;
 #endif

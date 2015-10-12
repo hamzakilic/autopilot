@@ -36,14 +36,14 @@ void* process_queue_start(void *arg){
 	controller_data *data=(controller_data *)arg;
 
 	while(data->work){
-		atp_thread_lock(&data->thread_lock);
+		atp_thread_lock(data->thread_lock);
 		if(atp_queue_count(data->queue)){
 
 		 	atp_command *queue_item=(atp_command *) atp_queue_pop(data->queue);
-		 	atp_thread_unlock(&data->thread_lock);
+		 	atp_thread_unlock(data->thread_lock);
 		 	data->process_command(queue_item);
 		}else{
-			atp_thread_unlock(&data->thread_lock);
+			atp_thread_unlock(data->thread_lock);
 		    em_io_delay_microseconds(1000);
 		}
 	}
@@ -75,7 +75,7 @@ em_uint32  atp_command_manager_destroy(atp_command_manager * controller){
     		controller_data *data= (controller_data *) controller->private_data;
     		data->work=0;
     		atp_thread_join(&data->thread_id);
-
+            atp_thread_destory_lock(data->thread_lock);
     		if(data->queue)
     			atp_free(data->queue);
 

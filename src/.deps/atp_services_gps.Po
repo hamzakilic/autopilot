@@ -69,7 +69,7 @@ atp_services_gps.o: services/atp_services_gps.c \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h \
  services/../log/atp_log.h services/../log/../common/atp_common.h \
  services/../input/atp_input.h services/../input/../common/atp_common.h \
- services/../thread/atp_thread.h \
+ services/../input/../log/atp_log.h services/../thread/atp_thread.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/sched.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h \
@@ -223,6 +223,8 @@ services/../log/../common/atp_common.h:
 services/../input/atp_input.h:
 
 services/../input/../common/atp_common.h:
+
+services/../input/../log/atp_log.h:
 
 services/../thread/atp_thread.h:
 

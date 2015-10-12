@@ -66,7 +66,8 @@ atp_input.o: input/atp_input.c \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/pthreadtypes.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/alloca.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-bsearch.h \
- /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h \
+ input/../log/atp_log.h input/../log/../common/atp_common.h
 
 /work/raspberrypi/toolchainraspi/rootfs/include/stdc-predef.h:
 
@@ -205,3 +206,7 @@ input/../common/atp_common.h:
 /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-bsearch.h:
 
 /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h:
+
+input/../log/atp_log.h:
+
+input/../log/../common/atp_common.h:

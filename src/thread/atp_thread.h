@@ -17,9 +17,9 @@ typedef pthread_t atp_thread_id;
 em_uint32 atp_thread_create(atp_thread_id *thread_id,thread_func func,void *arg);
 void atp_thread_join(atp_thread_id *thread_id);
 em_uint32 atp_thread_create_lock(void **lock_key);
-em_uint32 atp_thread_lock(void ** lock_key);
-em_uint32 atp_thread_unlock(void **lock_key);
-em_uint32 atp_thread_destory_lock(void **lock_key);
+em_uint32 atp_thread_lock(void * lock_key);
+em_uint32 atp_thread_unlock(void *lock_key);
+em_uint32 atp_thread_destory_lock(void *lock_key);
 
 
 #endif /* ATP_THREAD_H_ */

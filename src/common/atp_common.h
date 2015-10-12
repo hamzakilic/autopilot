@@ -47,17 +47,12 @@
 #define atp_free(a)   free(a)
 #define atp_fill_zero(src,size) memset(src,0,size)
 #define atp_copy(dst,src,size) memcpy(dst,src,size)
+#define atp_new(a)  malloc(sizeof(a))
+#define atp_convert(src,dst) ((dst)src)
 
 
 
 
-typedef struct {
-
-}gps;
-
-typedef struct{
-
-}gyro;
 
 
 

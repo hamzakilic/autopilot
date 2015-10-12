@@ -38,6 +38,8 @@ int main(void) {
 
 
    getchar();
+   printf("print any char to exit");
+   getchar();
 
 	return EXIT_SUCCESS;
 }

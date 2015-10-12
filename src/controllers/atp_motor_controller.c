@@ -73,10 +73,8 @@ static em_uint32 init_pca9685(){
 
 
 	        em_uint8 oldmod=0;
-	        em_uint32 length=1;
-	        em_uint8 data[]={PCA9685_MODE1};
-	        em_int8  index=0;
-
+	 		em_uint32 length=1;
+	 		em_uint8 data[]={49};//sleep mode
 
 	        err=i2c_write(data,length);
 	        if(err){
@@ -88,14 +86,8 @@ static em_uint32 init_pca9685(){
 	        }
 
 
-	        em_uint8 newMode=(oldmod &0x7F) |0x10;//sleep
-	        em_uint8 data2[2]={PCA9685_MODE1,newMode};
 
-
-	        err=i2c_write(data2,2);
-	        if(err){
-	        return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
+	        em_uint8 data2[2]={0,0};
 
 	        data2[0]=PCA9685_PRESCALE;
 	        data2[1]=frequency_scale;
@@ -103,21 +95,19 @@ static em_uint32 init_pca9685(){
 	        if(err){
 	          return ATP_ERROR_HARDWARE_COMMUNICATION;
 	        }
-
+	        em_io_delay_loops(5000);
 	        data2[0]=PCA9685_MODE1;
-	        data2[1]=oldmod;
+	        data2[1]=0xa1;
 	        err=i2c_write(data2,2);
 	        if(err){
 	         return ATP_ERROR_HARDWARE_COMMUNICATION;
 	        }
 
 	        em_io_delay_loops(5000);
-	        data2[0]=PCA9685_MODE1;
-	        data2[1]=oldmod|0xa1;
-	        err=i2c_write(data2,2);
-	        if(err){
-	         return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
+	        err=i2c_read(&oldmod,&length);
+	        	        if(err){
+	        	           return ATP_ERROR_HARDWARE_COMMUNICATION;
+	        	        }
 
 	        return ATP_SUCCESS;
 }
@@ -142,14 +132,16 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 	   atp_motor ** motors=NULL;
         motors=atp_malloc(ATP_MOTORS_COUNT*sizeof(struct atp_motor*));
 
-       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_RIGHT],ATP_MOTOR_FRONT_RIGHT,0);
+       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_RIGHT],ATP_MOTOR_FRONT_RIGHT,EM_GPIO_5,4);
        if(err){
          atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_RIGHT,err));
          atp_free(motors);
+
          return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
 
-       err=atp_motor_create(&motors[ATP_MOTOR_BACK_RIGHT],ATP_MOTOR_BACK_RIGHT,1);
+
+       err=atp_motor_create(&motors[ATP_MOTOR_BACK_RIGHT],ATP_MOTOR_BACK_RIGHT,EM_GPIO_6,5);
        if(err){
         atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_BACK_RIGHT,err));
         atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
@@ -157,7 +149,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
-       err=atp_motor_create(&motors[ATP_MOTOR_BACK_LEFT],ATP_MOTOR_BACK_LEFT,2);
+       err=atp_motor_create(&motors[ATP_MOTOR_BACK_LEFT],ATP_MOTOR_BACK_LEFT,EM_GPIO_7,6);
        if(err){
          atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_BACK_LEFT,err));
          atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
@@ -166,7 +158,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
 
-       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],ATP_MOTOR_FRONT_LEFT,3);
+       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],ATP_MOTOR_FRONT_LEFT,EM_GPIO_8,7);
        if(err){
        atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_LEFT,err));
        atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
@@ -190,6 +182,8 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
         	   atp_free(motors);
         	   return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
            }
+
+
         }
 
         atp_motor_controller *controller=atp_malloc(sizeof(atp_motor_controller));

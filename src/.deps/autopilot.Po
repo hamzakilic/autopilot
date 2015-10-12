@@ -68,10 +68,11 @@ autopilot.o: autopilot.c \
  /work/projects/tobor/libtobor_io/include/em_error.h \
  /work/projects/tobor/libtobor_io/include/em_types.h \
  manager/../input/atp_input.h manager/../input/../common/atp_common.h \
+ manager/../input/../log/atp_log.h \
+ manager/../input/../log/../common/atp_common.h \
  manager/../services/atp_service_system.h \
  manager/../services/../common/atp_common.h \
  manager/../services/../log/atp_log.h \
- manager/../services/../log/../common/atp_common.h \
  manager/../services/../input/atp_input.h \
  manager/../services/atp_services_gps.h \
  manager/../services/../thread/atp_thread.h \
@@ -235,13 +236,15 @@ manager/../input/atp_input.h:
 
 manager/../input/../common/atp_common.h:
 
+manager/../input/../log/atp_log.h:
+
+manager/../input/../log/../common/atp_common.h:
+
 manager/../services/atp_service_system.h:
 
 manager/../services/../common/atp_common.h:
 
 manager/../services/../log/atp_log.h:
-
-manager/../services/../log/../common/atp_common.h:
 
 manager/../services/../input/atp_input.h:
 

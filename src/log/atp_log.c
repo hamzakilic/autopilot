@@ -26,7 +26,7 @@ struct client clients[10];
 static em_int8 initialized_clients=0;
 void initialize_clients(const char * host,em_uint16 port){
 	clients[0].socket_descriptior=socket(AF_INET,SOCK_DGRAM,0);
-	if(clients[0].socket_descriptior==-1)//buraya dikkat socket oluşturulamazsa ne olacak
+	if(clients[0].socket_descriptior==-1)//todo buraya dikkat socket oluşturulamazsa ne olacak
 		{
 		perror(strerror(errno));
 		return;
