@@ -68,20 +68,21 @@ atp_pilot.o: manager/atp_pilot.c \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-bsearch.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h \
  manager/../input/atp_input.h manager/../input/../common/atp_common.h \
+ manager/../input/../thread/atp_thread.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/sched.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h \
+ manager/../input/../thread/../common/atp_common.h \
+ manager/../input/../thread/../log/atp_log.h \
+ manager/../input/../thread/../log/../common/atp_common.h \
  manager/../input/../log/atp_log.h \
- manager/../input/../log/../common/atp_common.h \
  manager/../services/atp_service_system.h \
  manager/../services/../common/atp_common.h \
  manager/../services/../log/atp_log.h \
  manager/../services/../input/atp_input.h \
  manager/../services/atp_services_gps.h \
  manager/../services/../thread/atp_thread.h \
- /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h \
- /work/raspberrypi/toolchainraspi/rootfs/include/sched.h \
- /work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h \
- /work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h \
- manager/../services/../thread/../common/atp_common.h \
- manager/../services/../thread/../log/atp_log.h \
  manager/../services/../common/atp_queue.h \
  manager/../services/../common/atp_common.h \
  manager/../controllers/atp_motor_controller.h \
@@ -236,9 +237,23 @@ manager/../input/atp_input.h:
 
 manager/../input/../common/atp_common.h:
 
-manager/../input/../log/atp_log.h:
+manager/../input/../thread/atp_thread.h:
 
-manager/../input/../log/../common/atp_common.h:
+/work/raspberrypi/toolchainraspi/rootfs/include/pthread.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/sched.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h:
+
+manager/../input/../thread/../common/atp_common.h:
+
+manager/../input/../thread/../log/atp_log.h:
+
+manager/../input/../thread/../log/../common/atp_common.h:
+
+manager/../input/../log/atp_log.h:
 
 manager/../services/atp_service_system.h:
 
@@ -251,18 +266,6 @@ manager/../services/../input/atp_input.h:
 manager/../services/atp_services_gps.h:
 
 manager/../services/../thread/atp_thread.h:
-
-/work/raspberrypi/toolchainraspi/rootfs/include/pthread.h:
-
-/work/raspberrypi/toolchainraspi/rootfs/include/sched.h:
-
-/work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h:
-
-/work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h:
-
-manager/../services/../thread/../common/atp_common.h:
-
-manager/../services/../thread/../log/atp_log.h:
 
 manager/../services/../common/atp_queue.h:
 

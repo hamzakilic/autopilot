@@ -26,6 +26,10 @@ typedef struct{
 
 static void  atp_create_socket(atp_command_listener_data *data){
 	data->sockfd=socket(AF_INET,SOCK_DGRAM,0);
+	struct timeval time;
+	time.tv_sec=0;
+	time.tv_usec=100000;//timeout
+	setsockopt(data->sockfd,SOL_SOCKET,SO_RCVTIMEO,&time,sizeof(time));
 	if(data->sockfd==-1)
 	{
 		atp_log(atp_log_create_string(ATP_LOG_FATAL,strerror(errno)));
@@ -168,6 +172,7 @@ em_uint32 atp_command_listener_create(atp_command_listener **command_listener,at
 }
 
 em_uint32 atp_command_listener_destroy(atp_command_listener *command_listener){
+
 
    if(command_listener)
    {

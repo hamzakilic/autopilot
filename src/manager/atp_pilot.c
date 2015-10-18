@@ -157,6 +157,7 @@ em_uint32 atp_pilot_stop(atp_pilot *pilot){
 
 		    }
 
+
 		    //stop command manager
             err=0;
             if(pilot_data->command_manager)
@@ -184,6 +185,7 @@ if(err)
 
 		    		    }
 
+
 //stop motor controller
 err=0;
 if(pilot_data->motor_controller)
@@ -197,6 +199,8 @@ if(err)
 		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Stop Motor Controller Success \n"));
 
 		    		    }
+
+
 
 	return ATP_SUCCESS;
 

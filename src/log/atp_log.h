@@ -21,7 +21,7 @@
 
 
 #define ATP_LOG_DATA_TYPE_STRING 0x01
-#define ATP_LOG_DATA_TYPE_INPUT_MOTOR 0x02
+#define ATP_LOG_DATA_TYPE_INPUT 0x02
 
 
 typedef struct{

@@ -78,8 +78,9 @@ struct nav_sol{
 
 static em_uint8 work = 0;
 static em_uint32 log_count=0;
-void print(const struct ubx *data){
 
+void print(const struct ubx *data){
+ //printf("class=%u id=%u length=%u log=%d \n",data->class,data->id,data->lenght,log_count++);
  atp_log(atp_log_create_string(ATP_LOG_INFO,"class=%u id=%u length=%u log=%d \n",data->class,data->id,data->lenght,log_count++));
 
 }
@@ -229,11 +230,13 @@ CFG-USB - 06 1B 6C 00 46 15 A6 01 00 00 00 00 64 00 00 01 75 2D 62 6C 6F 78 20 4
 
 			 em_uint32 counter=0;
 			 while(counter<=index){
-				//if(em_io_mini_uart_write(bytes[counter])==EM_SUCCESS){
 				 if(em_io_uart_write(bytes[counter])==EM_SUCCESS){
+
 					 counter++;
 				}else{
-					atp_log(atp_log_create_string(ATP_LOG_INFO,"Could Not  Write Gps\n"));
+					//bu pek anlamlı değil zaten success olana kadar deniyoruz
+					//atp_log(atp_log_create_string(ATP_LOG_INFO,"Could Not  Write Gps\n"));
+					//em_io_delay_microseconds(100);
 				}
 			 }
 
@@ -261,30 +264,46 @@ CFG-USB - 06 1B 6C 00 46 15 A6 01 00 00 00 00 64 00 00 01 75 2D 62 6C 6F 78 20 4
 		 }
 	 }
 
+
+
 }
 
-atp_queue *packet_queue;
-static void * process_queue_lock;
 
 
-void add_process_queue(const struct ubx *packet){
+typedef struct {
+	atp_queue *packet_queue;
+	void * process_queue_lock;
+	atp_thread_id thread_communication_id;
+	atp_thread_id thread_queue_id;
+	atp_input *input;
+
+}atp_services_gps_data;
+
+
+
+
+
+void add_process_queue(atp_services_gps_data *data, const struct ubx *packet){
 	struct ubx *temp=atp_malloc(sizeof(struct ubx));
 	memcpy(temp,packet,sizeof(struct ubx));
-   atp_thread_lock(process_queue_lock);
-   atp_queue_push(packet_queue,(void *)temp);
-   atp_thread_unlock(process_queue_lock);
+   atp_thread_lock(data->process_queue_lock);
+   atp_queue_push(data->packet_queue,(void *)temp);
+   atp_thread_unlock(data->process_queue_lock);
 }
 
 void *process_packet_queue(void *ptr){
+	atp_services_gps_data *data=atp_convert(ptr,atp_services_gps_data*);
+
 	while(work){
 
-		if(atp_queue_count(packet_queue)==0){
+		if(atp_queue_count(data->packet_queue)==0){
 			em_io_delay_microseconds(10000);
 			continue;
 		}
-		atp_thread_lock(process_queue_lock);
-        struct ubx *packet=(struct ubx  *)atp_queue_pop(packet_queue);
-        atp_thread_unlock(process_queue_lock);
+		atp_services_gps_data *data=atp_convert(ptr,atp_services_gps_data *);
+		atp_thread_lock(data->process_queue_lock);
+        struct ubx *packet=(struct ubx  *)atp_queue_pop(data->packet_queue);
+        atp_thread_unlock(data->process_queue_lock);
 		//print(packet);
 							em_uint8 clk_a,clk_b;
 							calculate_packet_ck(packet,&clk_a,&clk_b);
@@ -295,6 +314,11 @@ void *process_packet_queue(void *ptr){
 									if(packet->lenght>=28){
 										memcpy(&nav,packet->data,28);
 										//print2(&nav);
+										atp_gps_location_data location_data;
+										location_data.latitude=nav.lat;
+										location_data.longtitude=nav.lon;
+										location_data.sealevel=nav.hMSL;
+										atp_input_update_gps_location(data->input,location_data);
 									}
 								}
 								if(packet->class==0x01 && packet->id==0x21){
@@ -302,6 +326,15 @@ void *process_packet_queue(void *ptr){
 										if(packet->lenght>=20){
 										   memcpy(&timeutc,packet->data,20);
 											//print3(&timeutc);
+										   atp_gps_time_data time_data;
+										   time_data.day=timeutc.day;
+										   time_data.hour=timeutc.hour;
+										   time_data.min=timeutc.min;
+										   time_data.month=timeutc.month;
+										   time_data.sec=timeutc.sec;
+										   time_data.year=timeutc.year;
+										   atp_input_update_gps_time(data->input,time_data);
+
 										}
 									}
 
@@ -310,9 +343,14 @@ void *process_packet_queue(void *ptr){
 									if(packet->lenght>=16){
 									    memcpy(&status,packet->data,16);
 									    //print4(&status);
+									    atp_gps_location_ex_data location_ex_data;
+									    location_ex_data.gps_fix=status.gpsFix;
+									    location_ex_data.msss=status.msss;
+									    location_ex_data.flags=status.flags;
+									    atp_input_update_gps_location_ex(data->input,location_ex_data);
 									    }
 								}
-								if(packet->class==0x01 && packet->id==0x03){
+								if(packet->class==0x01 && packet->id==0x06){
 									struct nav_sol sol;
 									if(packet->lenght>=52){
 										memcpy(&sol,packet->data,52);
@@ -332,7 +370,7 @@ void *process_packet_queue(void *ptr){
 }
 
 void * start_communication(void *ptr) {
-	atp_input *input = (atp_input *) ptr;
+	atp_services_gps_data *gps_data =atp_convert(ptr,atp_services_gps_data*);
 
 
     set_config();
@@ -349,16 +387,17 @@ void * start_communication(void *ptr) {
 			if(readed == 0xB5)
 				packet.sync1 = readed;
 			else{
-				//atp_log(atp_log_create_string(ATP_LOG_INFO,"problem 1 \n"));
+
 				continue;
 			}
 
 		read_next_byte();
 
+
 			if(readed == 0x62)
 				packet.sync2 = readed;
 			else {
-				//atp_log(atp_log_create_string(ATP_LOG_INFO,"problem 2 \n"));
+
 				continue;
 
 			}
@@ -394,8 +433,8 @@ void * start_communication(void *ptr) {
 				packet.clk_a = readed;
 				read_next_byte();
 				packet.clk_b = readed;
-				//print(&packet);
-				add_process_queue(&packet);
+
+				add_process_queue(gps_data,&packet);
 
 
 		}
@@ -404,26 +443,30 @@ void * start_communication(void *ptr) {
 	return ATP_SUCCESS;
 	}
 
-static atp_thread_id thread_communication_id;
-static atp_thread_id thread_queue_id;
+
 
 em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) {
 
 
-	//em_io_mini_uart_start(EM_MINI_UART_RECEIVE_ENABLE | EM_MINI_UART_TRANSMIT_ENABLE| EM_MINI_UART_DATA_8BIT_ENABLE, 115200, 250);
+
 		em_uint32 err;
+		//these parameters are so important, otherwise cannot communicate with ublox gps
 		err=em_io_uart_start(EM_UART_FIF0_ENABLE|EM_UART_DATA_8BIT_ENABLE|EM_UART_RECEIVE_ENABLE|EM_UART_TRANSMIT_ENABLE,115200);
 		if(err)
 		{
 			atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting UART failed Errno:%u \n",err));
 			return ATP_ERROR_HARDWARE_UART_START;
 		}
+    atp_services_gps * gps=atp_new(atp_services_gps);
+    atp_services_gps_data *gps_data=atp_new(atp_services_gps_data);
+    gps->private_data=gps_data;
 
 
-    packet_queue= atp_queue_create();
+    gps_data->packet_queue= atp_queue_create();
+    gps_data->input=input;
 
 
-    err=atp_thread_create_lock(&process_queue_lock);
+    err=atp_thread_create_lock(&gps_data->process_queue_lock);
     if (err) {
     		atp_log(
     				atp_log_create_string(ATP_LOG_FATAL,
@@ -433,7 +476,8 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
     	}
 
 	work = 1;
-	err = atp_thread_create(&thread_communication_id, start_communication, input);
+
+	err = atp_thread_create(&gps_data->thread_communication_id, start_communication, gps_data);
 	if (err) {
 		atp_log(
 				atp_log_create_string(ATP_LOG_FATAL,
@@ -441,7 +485,7 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 		work=0;
 		return ATP_ERROR_CREATE_GPS;
 	}
-	err=atp_thread_create(&thread_queue_id, process_packet_queue,NULL);
+	err=atp_thread_create(&gps_data->thread_queue_id, process_packet_queue,gps_data);
 	if (err) {
 			atp_log(atp_log_create_string(ATP_LOG_FATAL,"Create Thread For Gps PacketQueue Failed Error:%u\n", err));
 			work=0;
@@ -450,12 +494,13 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 
 	return ATP_SUCCESS;
 }
-em_uint32 atp_services_gps_destroy(atp_services_gps **address) {
+em_uint32 atp_services_gps_destroy(atp_services_gps *address) {
 	work=0;
-    atp_thread_join(&thread_communication_id);
-    atp_thread_join(&thread_queue_id);
-    atp_queue_destroy(packet_queue);
-    atp_thread_destory_lock(process_queue_lock);
+	atp_services_gps_data *gps_data=atp_convert(address->private_data,atp_services_gps_data*);
+    atp_thread_join(&gps_data->thread_communication_id);
+    atp_thread_join(&gps_data->thread_queue_id);
+    atp_queue_destroy(gps_data->packet_queue);
+    atp_thread_destory_lock(gps_data->process_queue_lock);
 	return ATP_SUCCESS;
 }
 

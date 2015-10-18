@@ -7,6 +7,8 @@
 
 #include "atp_motor_controller.h"
 
+
+
 #define PCA9685_SUBADR1 0x2
 #define PCA9685_SUBADR2 0x3
 #define PCA9685_SUBADR3 0x4
@@ -132,7 +134,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 	   atp_motor ** motors=NULL;
         motors=atp_malloc(ATP_MOTORS_COUNT*sizeof(struct atp_motor*));
 
-       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_RIGHT],ATP_MOTOR_FRONT_RIGHT,EM_GPIO_5,4);
+       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_RIGHT],input, ATP_MOTOR_FRONT_RIGHT,EM_GPIO_5,4);
        if(err){
          atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_RIGHT,err));
          atp_free(motors);
@@ -141,7 +143,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
        }
 
 
-       err=atp_motor_create(&motors[ATP_MOTOR_BACK_RIGHT],ATP_MOTOR_BACK_RIGHT,EM_GPIO_6,5);
+       err=atp_motor_create(&motors[ATP_MOTOR_BACK_RIGHT],input,ATP_MOTOR_BACK_RIGHT,EM_GPIO_6,5);
        if(err){
         atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_BACK_RIGHT,err));
         atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
@@ -149,7 +151,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
-       err=atp_motor_create(&motors[ATP_MOTOR_BACK_LEFT],ATP_MOTOR_BACK_LEFT,EM_GPIO_7,6);
+       err=atp_motor_create(&motors[ATP_MOTOR_BACK_LEFT],input, ATP_MOTOR_BACK_LEFT,EM_GPIO_7,6);
        if(err){
          atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_BACK_LEFT,err));
          atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
@@ -158,7 +160,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
         return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
        }
 
-       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],ATP_MOTOR_FRONT_LEFT,EM_GPIO_8,7);
+       err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],input,ATP_MOTOR_FRONT_LEFT,EM_GPIO_8,7);
        if(err){
        atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_LEFT,err));
        atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);

@@ -15,11 +15,11 @@
 
 
 typedef struct {
-    atp_input *input;
+    void * private_data;
 
 }atp_services_gps;
 
 em_uint32 atp_services_gps_create(atp_services_gps **address,atp_input *input);
-em_uint32 atp_services_gps_destroy(atp_services_gps **address);
+em_uint32 atp_services_gps_destroy(atp_services_gps *address);
 
 #endif /* ATP_SERVICES_GPS_H_ */

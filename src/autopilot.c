@@ -40,6 +40,8 @@ int main(void) {
    getchar();
    printf("print any char to exit");
    getchar();
+   atp_pilot_stop(pilot);
+   atp_pilot_destroy(pilot);
 
 	return EXIT_SUCCESS;
 }

@@ -7,7 +7,7 @@
 
 #include "atp_service_system.h"
 
-atp_services_gps *service_gps=0;
+static atp_services_gps *service_gps=0;
 em_uint32  atp_service_system_start(atp_input *input){
 	em_uint32 err;
 	if((err=atp_services_gps_create(&service_gps,input)))
@@ -22,6 +22,7 @@ em_uint32  atp_service_system_start(atp_input *input){
 
 }
 em_uint32 atp_service_system_stop(){
+	atp_services_gps_destroy(service_gps);
 
 	return ATP_SUCCESS;
 }

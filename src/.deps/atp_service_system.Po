@@ -69,14 +69,15 @@ atp_service_system.o: services/atp_service_system.c \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h \
  services/../log/atp_log.h services/../log/../common/atp_common.h \
  services/../input/atp_input.h services/../input/../common/atp_common.h \
- services/../input/../log/atp_log.h services/atp_services_gps.h \
- services/../thread/atp_thread.h \
+ services/../input/../thread/atp_thread.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/sched.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h \
- services/../thread/../common/atp_common.h \
- services/../thread/../log/atp_log.h services/../common/atp_queue.h \
+ services/../input/../thread/../common/atp_common.h \
+ services/../input/../thread/../log/atp_log.h \
+ services/../input/../log/atp_log.h services/atp_services_gps.h \
+ services/../thread/atp_thread.h services/../common/atp_queue.h \
  services/../common/atp_common.h
 
 /work/raspberrypi/toolchainraspi/rootfs/include/stdc-predef.h:
@@ -225,11 +226,7 @@ services/../input/atp_input.h:
 
 services/../input/../common/atp_common.h:
 
-services/../input/../log/atp_log.h:
-
-services/atp_services_gps.h:
-
-services/../thread/atp_thread.h:
+services/../input/../thread/atp_thread.h:
 
 /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h:
 
@@ -239,9 +236,15 @@ services/../thread/atp_thread.h:
 
 /work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h:
 
-services/../thread/../common/atp_common.h:
+services/../input/../thread/../common/atp_common.h:
 
-services/../thread/../log/atp_log.h:
+services/../input/../thread/../log/atp_log.h:
+
+services/../input/../log/atp_log.h:
+
+services/atp_services_gps.h:
+
+services/../thread/atp_thread.h:
 
 services/../common/atp_queue.h:
 

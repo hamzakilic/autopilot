@@ -70,6 +70,13 @@ atp_motor_controller.o: controllers/atp_motor_controller.c \
  controllers/../log/atp_log.h controllers/../log/../common/atp_common.h \
  controllers/../input/atp_input.h \
  controllers/../input/../common/atp_common.h \
+ controllers/../input/../thread/atp_thread.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/sched.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h \
+ controllers/../input/../thread/../common/atp_common.h \
+ controllers/../input/../thread/../log/atp_log.h \
  controllers/../input/../log/atp_log.h controllers/atp_motor.h
 
 /work/raspberrypi/toolchainraspi/rootfs/include/stdc-predef.h:
@@ -217,6 +224,20 @@ controllers/../log/../common/atp_common.h:
 controllers/../input/atp_input.h:
 
 controllers/../input/../common/atp_common.h:
+
+controllers/../input/../thread/atp_thread.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/pthread.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/sched.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h:
+
+controllers/../input/../thread/../common/atp_common.h:
+
+controllers/../input/../thread/../log/atp_log.h:
 
 controllers/../input/../log/atp_log.h:
 

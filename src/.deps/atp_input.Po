@@ -67,7 +67,13 @@ atp_input.o: input/atp_input.c \
  /work/raspberrypi/toolchainraspi/rootfs/include/alloca.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-bsearch.h \
  /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h \
- input/../log/atp_log.h input/../log/../common/atp_common.h
+ input/../thread/atp_thread.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/pthread.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/sched.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h \
+ /work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h \
+ input/../thread/../common/atp_common.h input/../thread/../log/atp_log.h \
+ input/../thread/../log/../common/atp_common.h input/../log/atp_log.h
 
 /work/raspberrypi/toolchainraspi/rootfs/include/stdc-predef.h:
 
@@ -207,6 +213,20 @@ input/../common/atp_common.h:
 
 /work/raspberrypi/toolchainraspi/rootfs/include/bits/stdlib-float.h:
 
-input/../log/atp_log.h:
+input/../thread/atp_thread.h:
 
-input/../log/../common/atp_common.h:
+/work/raspberrypi/toolchainraspi/rootfs/include/pthread.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/sched.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/bits/sched.h:
+
+/work/raspberrypi/toolchainraspi/rootfs/include/bits/setjmp.h:
+
+input/../thread/../common/atp_common.h:
+
+input/../thread/../log/atp_log.h:
+
+input/../thread/../log/../common/atp_common.h:
+
+input/../log/atp_log.h:
