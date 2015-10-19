@@ -22,6 +22,8 @@ em_uint32  atp_service_system_start(atp_input *input){
 
 }
 em_uint32 atp_service_system_stop(){
+
+	if(service_gps)
 	atp_services_gps_destroy(service_gps);
 
 	return ATP_SUCCESS;

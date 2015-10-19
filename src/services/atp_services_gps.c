@@ -318,6 +318,7 @@ void *process_packet_queue(void *ptr){
 										location_data.latitude=nav.lat;
 										location_data.longtitude=nav.lon;
 										location_data.sealevel=nav.hMSL;
+										//printf("%d %d %d\n",nav.lat,nav.lon,nav.hMSL);
 										atp_input_update_gps_location(data->input,location_data);
 									}
 								}
@@ -458,8 +459,11 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 			return ATP_ERROR_HARDWARE_UART_START;
 		}
     atp_services_gps * gps=atp_new(atp_services_gps);
+    atp_fill_zero(gps,sizeof(atp_services_gps));
     atp_services_gps_data *gps_data=atp_new(atp_services_gps_data);
+    atp_fill_zero(gps_data,sizeof(atp_services_gps_data));
     gps->private_data=gps_data;
+    *address=gps;
 
 
     gps_data->packet_queue= atp_queue_create();
@@ -496,11 +500,20 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 }
 em_uint32 atp_services_gps_destroy(atp_services_gps *address) {
 	work=0;
-	atp_services_gps_data *gps_data=atp_convert(address->private_data,atp_services_gps_data*);
-    atp_thread_join(&gps_data->thread_communication_id);
-    atp_thread_join(&gps_data->thread_queue_id);
-    atp_queue_destroy(gps_data->packet_queue);
-    atp_thread_destory_lock(gps_data->process_queue_lock);
+
+	if(address->private_data){
+		atp_services_gps_data *gps_data=atp_convert(address->private_data,atp_services_gps_data*);
+		if(gps_data->thread_communication_id)
+		atp_thread_join(&gps_data->thread_communication_id);
+
+		if(gps_data->thread_queue_id)
+        atp_thread_join(&gps_data->thread_queue_id);
+
+		atp_queue_destroy(gps_data->packet_queue);
+
+		if(gps_data->process_queue_lock)
+    	atp_thread_destory_lock(gps_data->process_queue_lock);
+	}
 	return ATP_SUCCESS;
 }
 

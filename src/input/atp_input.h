@@ -34,6 +34,8 @@ typedef struct{
 	 * sea level as milimeters
 	 */
 	em_int32 sealevel;
+
+
 }atp_gps_location_data;
 
 typedef struct{

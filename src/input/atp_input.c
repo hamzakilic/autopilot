@@ -113,6 +113,7 @@ void* atp_input_log(void *ptr){
 
 		buffer[31]=input_data->motor.values[3]>>8;
 		buffer[32]=input_data->motor.values[3];
+		//printf("motor 3 value:%d\n",input_data->motor.values[3]);
 		atp_thread_unlock(input_data->motor_lock_key);
 
 
@@ -122,7 +123,7 @@ void* atp_input_log(void *ptr){
 	    atp_log_data *log_data=atp_new(atp_log_data);
 	    log_data->type=ATP_LOG_DATA;
 	    log_data->data_type=ATP_LOG_DATA_TYPE_INPUT;
-	    log_data->data_len=32;
+	    log_data->data_len=33;
 	    log_data->data=atp_malloc(log_data->data_len);
 	    atp_copy(log_data->data,buffer,log_data->data_len);
 	    atp_log(log_data);
@@ -192,6 +193,8 @@ em_uint32 atp_input_create(atp_input **address){
     atp_fill_zero(input_data,sizeof(atp_input_data));
     atp_thread_create_lock(&input_data->motor_lock_key);
     atp_thread_create_lock(&input_data->gps_time_lock_key);
+    atp_thread_create_lock(&input_data->gps_location_ex_lock_key);
+    atp_thread_create_lock(&input_data->gps_location_lock_key);
     input->private_data=input_data;
 
     //start logging
