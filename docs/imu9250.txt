@@ -1,0 +1,35 @@
+A Gyroscope gives the values of Angular Velocity (degrees/sec) in the three respective axis (Yaw, Pitch and Roll axes respectively).
+
+But whatever raw value given first by these sensors should be converted to sensible acceleration or angular velocity values by scaling.
+
+InvenSense Data Sheet of MPU-6050 says that we have to use different scaling factors for different ranges of gyro values. I shall explain how to use these scaling factors in the end.
+
+Angular Velocity Limit  |   Sensitivity
+----------------------------------------
+250º/s                  |    131
+500º/s                  |    65.5 
+1000º/s                 |    32.8 
+2000º/s                 |    16.4
+Similarly , for Accelerometer (which gives x,y,z axes acceleration including gravity) the unit used is g (9.81ms2).
+
+Scaling factors for accelerometer values :
+
+Acceleration Limit  |   Sensitivity
+----------------------------------------
+2g                  |    16,384
+4g                  |    8,192  
+8g                  |    4,096 
+16g                 |    2,048 
+Converting the raw data :
+
+required_value=raw_valueproper_sensitivity
+For example , in the first data , you got
+
+accel x,y,z: 1944, 368, 15608
+gyro x,y,z : -34, -204, -247
+Acceleration seems to be in the limit of 2g. So, scaling factor = 16384
+
+implies ax=1944/16384g
+Gyro seems to be in the limit of 250ºs. So, scaling factor or sensitivity = 131
+
+implies gyro_value=−34/131degreessec

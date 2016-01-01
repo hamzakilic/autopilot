@@ -173,8 +173,11 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 
         em_uint8 index;
-        for_each_motors(){
-           err=atp_motor_start(motors[index]);
+       /* for_each_motors(){
+
+
+        	err=atp_motor_calibrate(motors[index]);
+
            if(err){
         	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Motor %u  failed Errno:%u\n",index,err));
         	   atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
@@ -186,7 +189,53 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
            }
 
 
-        }
+        }*/
+        for_each_motors(){
+
+
+
+        	        //err=atp_motor_calibrate(motors[index]);
+                	err=atp_motor_start(motors[index]);
+                	//err=atp_motor_set_power(motors[index],200);
+                   if(err){
+                	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Motor %u  failed Errno:%u\n",index,err));
+                	   atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
+                	   atp_free(motors[ATP_MOTOR_BACK_RIGHT]);
+                	   atp_free(motors[ATP_MOTOR_FRONT_LEFT]);
+                	   atp_free(motors[ATP_MOTOR_BACK_LEFT]);
+                	   atp_free(motors);
+                	   return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
+                   }
+
+
+                }
+
+
+
+        	/*for_each_motors(){
+
+                       	err=atp_motor_set_power(motors[index],200);
+                          if(err){
+                       	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Motor %u  failed Errno:%u\n",index,err));
+                       	   atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);
+                       	   atp_free(motors[ATP_MOTOR_BACK_RIGHT]);
+                       	   atp_free(motors[ATP_MOTOR_FRONT_LEFT]);
+                       	   atp_free(motors[ATP_MOTOR_BACK_LEFT]);
+                       	   atp_free(motors);
+                       	   return ATP_ERROR_START_MOTOR_CONTROLLER_SYSTEM;
+                          }
+
+
+                       }*/
+
+
+
+
+
+
+
+
+
 
         atp_motor_controller *controller=atp_malloc(sizeof(atp_motor_controller));
        	*motor_controller=controller;

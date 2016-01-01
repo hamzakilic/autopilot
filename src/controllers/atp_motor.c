@@ -9,11 +9,11 @@
 
 #ifdef COMPILE_A2212_MOTORS_AND_ESC
 
-#define MIN_SIGNAL_CALIBRATE 700
-#define MAX_SIGNAL_CALIBRATE 2000
+#define MIN_SIGNAL_CALIBRATE 800
+#define MAX_SIGNAL_CALIBRATE 1800
 
-#define MIN_SIGNAL_WORK 700
-#define MAX_SIGNAL_WORK 1700
+#define MIN_SIGNAL_WORK 800
+#define MAX_SIGNAL_WORK 1800
 
 
 
@@ -89,16 +89,19 @@ em_uint32 atp_motor_calibrate(atp_motor *motor){
 	     err=set_value(MAX_SIGNAL_CALIBRATE,motor->pwm_pin_number);
 	          if(err)
 	         	 return err;
+
 	     em_io_delay_microseconds(2000000);
 
 	     em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_HIGH);
 
-	     em_io_delay_microseconds(3000000);
+
+	     em_io_delay_microseconds(5000000);
 	     err=set_value(MIN_SIGNAL_CALIBRATE,motor->pwm_pin_number);
 	          if(err)
 	         	 return err;
-	     em_io_delay_microseconds(3000000);
-	     //err=set_value(800,motor->pwm_pin_number);
+
+	     em_io_delay_microseconds(5000000);
+
 	     update_input_motor_table(motor->input,motor->number,-3);
 
 	     return ATP_SUCCESS;
@@ -106,21 +109,25 @@ em_uint32 atp_motor_calibrate(atp_motor *motor){
 
 em_uint32 atp_motor_start(atp_motor *motor){
 	em_uint32 err;
-
-     em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_LOW);
-
-     err=set_value(MIN_SIGNAL_CALIBRATE,motor->pwm_pin_number);
-          if(err)
-         	 return err;
-     em_io_delay_microseconds(2000000);
-
-    // em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_HIGH);
+	em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_LOW);
+	 err=set_value(MIN_SIGNAL_WORK,motor->pwm_pin_number);
+	          if(err)
+	         	 return err;
+	 em_io_delay_microseconds(10000);
+     em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_HIGH);
+     em_io_delay_microseconds(5000000);
 
      //update input table, -4 means start
      update_input_motor_table(motor->input,motor->number,-4);
      return ATP_SUCCESS;
 
 }
+
+/*! \brief to stop a motor
+ * stops a motor and also update input table with -5 value
+ *
+ */
+
 em_uint32 atp_motor_stop(atp_motor *motor){
 	em_uint32 err;
 		     err=set_value(MIN_SIGNAL_WORK,motor->pwm_pin_number);
@@ -128,21 +135,27 @@ em_uint32 atp_motor_stop(atp_motor *motor){
 		    	 return err;
 		     em_io_gpio_mode(motor->raspi_pin_number,EM_GPIO_LOW);
 
-		     //update motor value,-5 means stoped
+		     //update input table,-5 means stoped
 		     update_input_motor_table(motor->input,motor->number,-5);
 
 
 		     return ATP_SUCCESS;
 }
+
+/*! \brief to set motor power
+ * set motor power
+ * also updates input table motor values with power_level
+ */
+
 em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 	         em_uint32 err;
 	         if(power_level>1000)
 	        	 power_level=1000;
-             power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_WORK)*power_level/1000.0f;
+            em_uint16  calc_power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_WORK)*power_level/1000.0f+MIN_SIGNAL_WORK;
 #ifdef COMPILE_TEST_CODES
-             printf("setting motor %d value:%d\n",motor->pin_number,power_level);
+             printf("setting motor %d value:%d\n",motor->pin_number,calc_power_level);
 #else
-		     err=set_value(power_level,motor->pwm_pin_number);
+		     err=set_value(calc_power_level,motor->pwm_pin_number);
 		     if(err)
 		    	 return err;
 #endif
