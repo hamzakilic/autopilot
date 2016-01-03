@@ -85,6 +85,11 @@ autopilot_test.o: autopilot_test.c \
  manager/../services/../thread/atp_thread.h \
  manager/../services/../common/atp_queue.h \
  manager/../services/../common/atp_common.h \
+ manager/../services/atp_services_ahrs.h \
+ manager/../services/../modules/module_Adafruit_LSM303.h \
+ manager/../services/../modules/../common/atp_common.h \
+ manager/../services/../modules/../log/atp_log.h \
+ manager/../services/../modules/module_Adafruit_L3GD20.h \
  manager/../controllers/atp_motor_controller.h \
  manager/../controllers/../common/atp_common.h \
  manager/../controllers/../log/atp_log.h \
@@ -270,6 +275,16 @@ manager/../services/../thread/atp_thread.h:
 manager/../services/../common/atp_queue.h:
 
 manager/../services/../common/atp_common.h:
+
+manager/../services/atp_services_ahrs.h:
+
+manager/../services/../modules/module_Adafruit_LSM303.h:
+
+manager/../services/../modules/../common/atp_common.h:
+
+manager/../services/../modules/../log/atp_log.h:
+
+manager/../services/../modules/module_Adafruit_L3GD20.h:
 
 manager/../controllers/atp_motor_controller.h:
 

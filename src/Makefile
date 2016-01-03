@@ -97,7 +97,9 @@ am_autopilot_OBJECTS = autopilot.$(OBJEXT) autopilot_test.$(OBJEXT) \
 	atp_command_listener.$(OBJEXT) atp_input.$(OBJEXT) \
 	atp_service_system.$(OBJEXT) atp_services_gps.$(OBJEXT) \
 	atp_log.$(OBJEXT) atp_thread.$(OBJEXT) atp_queue.$(OBJEXT) \
-	atp_motor_controller.$(OBJEXT) atp_motor.$(OBJEXT)
+	atp_motor_controller.$(OBJEXT) atp_motor.$(OBJEXT) \
+	atp_services_ahrs.$(OBJEXT) module_Adafruit_LSM303.$(OBJEXT) \
+	module_Adafruit_L3GD20.$(OBJEXT)
 autopilot_OBJECTS = $(am_autopilot_OBJECTS)
 autopilot_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
@@ -255,7 +257,7 @@ target_vendor = raspi
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c
+autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c
 AM_CFLAGS = -I/work/projects/tobor/libtobor_io/include 
 AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread
 all: all-am
@@ -354,10 +356,13 @@ include ./$(DEPDIR)/atp_motor_controller.Po
 include ./$(DEPDIR)/atp_pilot.Po
 include ./$(DEPDIR)/atp_queue.Po
 include ./$(DEPDIR)/atp_service_system.Po
+include ./$(DEPDIR)/atp_services_ahrs.Po
 include ./$(DEPDIR)/atp_services_gps.Po
 include ./$(DEPDIR)/atp_thread.Po
 include ./$(DEPDIR)/autopilot.Po
 include ./$(DEPDIR)/autopilot_test.Po
+include ./$(DEPDIR)/module_Adafruit_L3GD20.Po
+include ./$(DEPDIR)/module_Adafruit_LSM303.Po
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -526,6 +531,48 @@ atp_motor.obj: controllers/atp_motor.c
 #	$(AM_V_CC)source='controllers/atp_motor.c' object='atp_motor.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_motor.obj `if test -f 'controllers/atp_motor.c'; then $(CYGPATH_W) 'controllers/atp_motor.c'; else $(CYGPATH_W) '$(srcdir)/controllers/atp_motor.c'; fi`
+
+atp_services_ahrs.o: services/atp_services_ahrs.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_services_ahrs.o -MD -MP -MF $(DEPDIR)/atp_services_ahrs.Tpo -c -o atp_services_ahrs.o `test -f 'services/atp_services_ahrs.c' || echo '$(srcdir)/'`services/atp_services_ahrs.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_services_ahrs.Tpo $(DEPDIR)/atp_services_ahrs.Po
+#	$(AM_V_CC)source='services/atp_services_ahrs.c' object='atp_services_ahrs.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_services_ahrs.o `test -f 'services/atp_services_ahrs.c' || echo '$(srcdir)/'`services/atp_services_ahrs.c
+
+atp_services_ahrs.obj: services/atp_services_ahrs.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_services_ahrs.obj -MD -MP -MF $(DEPDIR)/atp_services_ahrs.Tpo -c -o atp_services_ahrs.obj `if test -f 'services/atp_services_ahrs.c'; then $(CYGPATH_W) 'services/atp_services_ahrs.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_services_ahrs.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_services_ahrs.Tpo $(DEPDIR)/atp_services_ahrs.Po
+#	$(AM_V_CC)source='services/atp_services_ahrs.c' object='atp_services_ahrs.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_services_ahrs.obj `if test -f 'services/atp_services_ahrs.c'; then $(CYGPATH_W) 'services/atp_services_ahrs.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_services_ahrs.c'; fi`
+
+module_Adafruit_LSM303.o: modules/module_Adafruit_LSM303.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_LSM303.o -MD -MP -MF $(DEPDIR)/module_Adafruit_LSM303.Tpo -c -o module_Adafruit_LSM303.o `test -f 'modules/module_Adafruit_LSM303.c' || echo '$(srcdir)/'`modules/module_Adafruit_LSM303.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_LSM303.Tpo $(DEPDIR)/module_Adafruit_LSM303.Po
+#	$(AM_V_CC)source='modules/module_Adafruit_LSM303.c' object='module_Adafruit_LSM303.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_LSM303.o `test -f 'modules/module_Adafruit_LSM303.c' || echo '$(srcdir)/'`modules/module_Adafruit_LSM303.c
+
+module_Adafruit_LSM303.obj: modules/module_Adafruit_LSM303.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_LSM303.obj -MD -MP -MF $(DEPDIR)/module_Adafruit_LSM303.Tpo -c -o module_Adafruit_LSM303.obj `if test -f 'modules/module_Adafruit_LSM303.c'; then $(CYGPATH_W) 'modules/module_Adafruit_LSM303.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_LSM303.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_LSM303.Tpo $(DEPDIR)/module_Adafruit_LSM303.Po
+#	$(AM_V_CC)source='modules/module_Adafruit_LSM303.c' object='module_Adafruit_LSM303.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_LSM303.obj `if test -f 'modules/module_Adafruit_LSM303.c'; then $(CYGPATH_W) 'modules/module_Adafruit_LSM303.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_LSM303.c'; fi`
+
+module_Adafruit_L3GD20.o: modules/module_Adafruit_L3GD20.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_L3GD20.o -MD -MP -MF $(DEPDIR)/module_Adafruit_L3GD20.Tpo -c -o module_Adafruit_L3GD20.o `test -f 'modules/module_Adafruit_L3GD20.c' || echo '$(srcdir)/'`modules/module_Adafruit_L3GD20.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_L3GD20.Tpo $(DEPDIR)/module_Adafruit_L3GD20.Po
+#	$(AM_V_CC)source='modules/module_Adafruit_L3GD20.c' object='module_Adafruit_L3GD20.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_L3GD20.o `test -f 'modules/module_Adafruit_L3GD20.c' || echo '$(srcdir)/'`modules/module_Adafruit_L3GD20.c
+
+module_Adafruit_L3GD20.obj: modules/module_Adafruit_L3GD20.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_L3GD20.obj -MD -MP -MF $(DEPDIR)/module_Adafruit_L3GD20.Tpo -c -o module_Adafruit_L3GD20.obj `if test -f 'modules/module_Adafruit_L3GD20.c'; then $(CYGPATH_W) 'modules/module_Adafruit_L3GD20.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_L3GD20.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_L3GD20.Tpo $(DEPDIR)/module_Adafruit_L3GD20.Po
+#	$(AM_V_CC)source='modules/module_Adafruit_L3GD20.c' object='module_Adafruit_L3GD20.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_L3GD20.obj `if test -f 'modules/module_Adafruit_L3GD20.c'; then $(CYGPATH_W) 'modules/module_Adafruit_L3GD20.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_L3GD20.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

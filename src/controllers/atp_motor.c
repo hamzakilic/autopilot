@@ -47,9 +47,11 @@ em_uint32 set_value(em_uint16 value,em_uint8 pin_number)
 	return ATP_SUCCESS;
 }
 
+#endif
 
-/// for updating system input table for motors.
-/**
+
+
+/*! \brief for updating system input table for motors.
  * value can be negative
  * negative values have different meanings like
  * -1 means created,
@@ -123,8 +125,9 @@ em_uint32 atp_motor_start(atp_motor *motor){
 
 }
 
+
 /*! \brief to stop a motor
- * stops a motor and also update input table with -5 value
+ * stops a motor suddenly, poweroff and also update input table with -5 value
  *
  */
 
@@ -141,6 +144,7 @@ em_uint32 atp_motor_stop(atp_motor *motor){
 
 		     return ATP_SUCCESS;
 }
+
 
 /*! \brief to set motor power
  * set motor power
@@ -163,4 +167,4 @@ em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 		     update_input_motor_table(motor->input,motor->number,power_level);
 		     return ATP_SUCCESS;
 }
-#endif
+

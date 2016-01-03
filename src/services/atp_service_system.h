@@ -11,6 +11,7 @@
 #include "../log/atp_log.h"
 #include "../input/atp_input.h"
 #include "atp_services_gps.h"
+#include "atp_services_ahrs.h"
 
 em_uint32  atp_service_system_start(atp_input *input);
 em_uint32 atp_service_system_stop();

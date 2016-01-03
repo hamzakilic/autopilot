@@ -6,6 +6,16 @@
  */
 #include "atp_services_gps.h"
 
+
+typedef struct {
+	atp_queue *packet_queue;
+	void * process_queue_lock;
+	atp_thread_id thread_communication_id;
+	atp_thread_id thread_queue_id;
+	atp_input *input;
+
+}atp_services_gps_data;
+
 #ifdef COMPILE_MODULE_GPS_NEO_6V
 
 struct ubx {
@@ -270,14 +280,7 @@ CFG-USB - 06 1B 6C 00 46 15 A6 01 00 00 00 00 64 00 00 01 75 2D 62 6C 6F 78 20 4
 
 
 
-typedef struct {
-	atp_queue *packet_queue;
-	void * process_queue_lock;
-	atp_thread_id thread_communication_id;
-	atp_thread_id thread_queue_id;
-	atp_input *input;
 
-}atp_services_gps_data;
 
 
 
@@ -370,12 +373,10 @@ void *process_packet_queue(void *ptr){
 	}
 }
 
-void * start_communication(void *ptr) {
+void * start_communication_gps(void *ptr) {
 	atp_services_gps_data *gps_data =atp_convert(ptr,atp_services_gps_data*);
 
-
-    set_config();
-
+	set_config();
 
 	struct ubx packet;
 	memset(&packet, 0, sizeof(struct ubx));
@@ -444,6 +445,8 @@ void * start_communication(void *ptr) {
 	return ATP_SUCCESS;
 	}
 
+#endif
+
 
 
 em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) {
@@ -451,6 +454,7 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 
 
 		em_uint32 err;
+#ifdef COMPILE_MODULE_GPS_NEO_6V
 		//these parameters are so important, otherwise cannot communicate with ublox gps
 		err=em_io_uart_start(EM_UART_FIF0_ENABLE|EM_UART_DATA_8BIT_ENABLE|EM_UART_RECEIVE_ENABLE|EM_UART_TRANSMIT_ENABLE,115200);
 		if(err)
@@ -458,6 +462,7 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 			atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting UART failed Errno:%u \n",err));
 			return ATP_ERROR_HARDWARE_UART_START;
 		}
+#endif
     atp_services_gps * gps=atp_new(atp_services_gps);
     atp_fill_zero(gps,sizeof(atp_services_gps));
     atp_services_gps_data *gps_data=atp_new(atp_services_gps_data);
@@ -481,7 +486,7 @@ em_uint32 atp_services_gps_create(atp_services_gps **address, atp_input *input) 
 
 	work = 1;
 
-	err = atp_thread_create(&gps_data->thread_communication_id, start_communication, gps_data);
+	err = atp_thread_create(&gps_data->thread_communication_id, start_communication_gps, gps_data);
 	if (err) {
 		atp_log(
 				atp_log_create_string(ATP_LOG_FATAL,
@@ -517,4 +522,4 @@ em_uint32 atp_services_gps_destroy(atp_services_gps *address) {
 	return ATP_SUCCESS;
 }
 
-#endif
+

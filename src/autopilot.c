@@ -26,6 +26,12 @@ int main(void) {
 		return ATP_ERROR_HARDWARE_INITIALIZE;
 	}
 
+	if((err=em_io_i2c_start(EM_USE_BSC1,0,0)))
+		        {
+		        	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting I2C failed Errno:%u\n",err));
+		        	return ATP_ERROR_HARDWARE_I2C_START;
+		        }
+
 
     atp_pilot *pilot;
 	if(atp_pilot_create(&pilot)){

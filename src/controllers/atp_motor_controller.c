@@ -121,11 +121,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 	em_uint32 err;
 
-	        if((err=em_io_i2c_start(EM_USE_BSC1,0,0)))
-	        {
-	        	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting I2C failed Errno:%u\n",err));
-	        	return ATP_ERROR_HARDWARE_I2C_START;
-	        }
+
 	        err=init_pca9685();
 	        if(err){
 	        	return err;

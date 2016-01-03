@@ -78,7 +78,11 @@ atp_service_system.o: services/atp_service_system.c \
  services/../input/../thread/../log/atp_log.h \
  services/../input/../log/atp_log.h services/atp_services_gps.h \
  services/../thread/atp_thread.h services/../common/atp_queue.h \
- services/../common/atp_common.h
+ services/../common/atp_common.h services/atp_services_ahrs.h \
+ services/../modules/module_Adafruit_LSM303.h \
+ services/../modules/../common/atp_common.h \
+ services/../modules/../log/atp_log.h \
+ services/../modules/module_Adafruit_L3GD20.h
 
 /work/raspberrypi/toolchainraspi/rootfs/include/stdc-predef.h:
 
@@ -249,3 +253,13 @@ services/../thread/atp_thread.h:
 services/../common/atp_queue.h:
 
 services/../common/atp_common.h:
+
+services/atp_services_ahrs.h:
+
+services/../modules/module_Adafruit_LSM303.h:
+
+services/../modules/../common/atp_common.h:
+
+services/../modules/../log/atp_log.h:
+
+services/../modules/module_Adafruit_L3GD20.h:
