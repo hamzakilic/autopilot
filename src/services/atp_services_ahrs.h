@@ -8,7 +8,7 @@
 #ifndef ATP_SERVICES_AHRS_H_
 #define ATP_SERVICES_AHRS_H_
 
-
+#include <math.h>
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
 #include "../input/atp_input.h"
@@ -16,6 +16,7 @@
 #include "../common/atp_queue.h"
 #include "../modules/module_Adafruit_LSM303.h"
 #include "../modules/module_Adafruit_L3GD20.h"
+#include "../modules/module_Adafruit_BMP085.h"
 
 
 

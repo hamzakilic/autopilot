@@ -92,14 +92,21 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__dirstamp = $(am__leading_dot)dirstamp
 am_autopilot_OBJECTS = autopilot.$(OBJEXT) autopilot_test.$(OBJEXT) \
-	atp_pilot.$(OBJEXT) atp_command_manager.$(OBJEXT) \
-	atp_command_listener.$(OBJEXT) atp_input.$(OBJEXT) \
-	atp_service_system.$(OBJEXT) atp_services_gps.$(OBJEXT) \
-	atp_log.$(OBJEXT) atp_thread.$(OBJEXT) atp_queue.$(OBJEXT) \
-	atp_motor_controller.$(OBJEXT) atp_motor.$(OBJEXT) \
-	atp_services_ahrs.$(OBJEXT) module_Adafruit_LSM303.$(OBJEXT) \
-	module_Adafruit_L3GD20.$(OBJEXT)
+	manager/atp_pilot.$(OBJEXT) \
+	manager/atp_command_manager.$(OBJEXT) \
+	manager/atp_command_listener.$(OBJEXT) \
+	input/atp_input.$(OBJEXT) \
+	services/atp_service_system.$(OBJEXT) \
+	services/atp_services_gps.$(OBJEXT) log/atp_log.$(OBJEXT) \
+	thread/atp_thread.$(OBJEXT) common/atp_queue.$(OBJEXT) \
+	controllers/atp_motor_controller.$(OBJEXT) \
+	controllers/atp_motor.$(OBJEXT) \
+	services/atp_services_ahrs.$(OBJEXT) \
+	modules/module_Adafruit_LSM303.$(OBJEXT) \
+	modules/module_Adafruit_L3GD20.$(OBJEXT) \
+	modules/module_Adafruit_BMP085.$(OBJEXT)
 autopilot_OBJECTS = $(am_autopilot_OBJECTS)
 autopilot_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -118,10 +125,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -257,9 +260,9 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c
+autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c
 AM_CFLAGS = -I/work/projects/tobor/libtobor_io/include 
-AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread
+AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread -lm
 all: all-am
 
 .SUFFIXES:
@@ -336,6 +339,85 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+manager/$(am__dirstamp):
+	@$(MKDIR_P) manager
+	@: > manager/$(am__dirstamp)
+manager/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) manager/$(DEPDIR)
+	@: > manager/$(DEPDIR)/$(am__dirstamp)
+manager/atp_pilot.$(OBJEXT): manager/$(am__dirstamp) \
+	manager/$(DEPDIR)/$(am__dirstamp)
+manager/atp_command_manager.$(OBJEXT): manager/$(am__dirstamp) \
+	manager/$(DEPDIR)/$(am__dirstamp)
+manager/atp_command_listener.$(OBJEXT): manager/$(am__dirstamp) \
+	manager/$(DEPDIR)/$(am__dirstamp)
+input/$(am__dirstamp):
+	@$(MKDIR_P) input
+	@: > input/$(am__dirstamp)
+input/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) input/$(DEPDIR)
+	@: > input/$(DEPDIR)/$(am__dirstamp)
+input/atp_input.$(OBJEXT): input/$(am__dirstamp) \
+	input/$(DEPDIR)/$(am__dirstamp)
+services/$(am__dirstamp):
+	@$(MKDIR_P) services
+	@: > services/$(am__dirstamp)
+services/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) services/$(DEPDIR)
+	@: > services/$(DEPDIR)/$(am__dirstamp)
+services/atp_service_system.$(OBJEXT): services/$(am__dirstamp) \
+	services/$(DEPDIR)/$(am__dirstamp)
+services/atp_services_gps.$(OBJEXT): services/$(am__dirstamp) \
+	services/$(DEPDIR)/$(am__dirstamp)
+log/$(am__dirstamp):
+	@$(MKDIR_P) log
+	@: > log/$(am__dirstamp)
+log/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) log/$(DEPDIR)
+	@: > log/$(DEPDIR)/$(am__dirstamp)
+log/atp_log.$(OBJEXT): log/$(am__dirstamp) \
+	log/$(DEPDIR)/$(am__dirstamp)
+thread/$(am__dirstamp):
+	@$(MKDIR_P) thread
+	@: > thread/$(am__dirstamp)
+thread/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) thread/$(DEPDIR)
+	@: > thread/$(DEPDIR)/$(am__dirstamp)
+thread/atp_thread.$(OBJEXT): thread/$(am__dirstamp) \
+	thread/$(DEPDIR)/$(am__dirstamp)
+common/$(am__dirstamp):
+	@$(MKDIR_P) common
+	@: > common/$(am__dirstamp)
+common/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) common/$(DEPDIR)
+	@: > common/$(DEPDIR)/$(am__dirstamp)
+common/atp_queue.$(OBJEXT): common/$(am__dirstamp) \
+	common/$(DEPDIR)/$(am__dirstamp)
+controllers/$(am__dirstamp):
+	@$(MKDIR_P) controllers
+	@: > controllers/$(am__dirstamp)
+controllers/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) controllers/$(DEPDIR)
+	@: > controllers/$(DEPDIR)/$(am__dirstamp)
+controllers/atp_motor_controller.$(OBJEXT):  \
+	controllers/$(am__dirstamp) \
+	controllers/$(DEPDIR)/$(am__dirstamp)
+controllers/atp_motor.$(OBJEXT): controllers/$(am__dirstamp) \
+	controllers/$(DEPDIR)/$(am__dirstamp)
+services/atp_services_ahrs.$(OBJEXT): services/$(am__dirstamp) \
+	services/$(DEPDIR)/$(am__dirstamp)
+modules/$(am__dirstamp):
+	@$(MKDIR_P) modules
+	@: > modules/$(am__dirstamp)
+modules/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) modules/$(DEPDIR)
+	@: > modules/$(DEPDIR)/$(am__dirstamp)
+modules/module_Adafruit_LSM303.$(OBJEXT): modules/$(am__dirstamp) \
+	modules/$(DEPDIR)/$(am__dirstamp)
+modules/module_Adafruit_L3GD20.$(OBJEXT): modules/$(am__dirstamp) \
+	modules/$(DEPDIR)/$(am__dirstamp)
+modules/module_Adafruit_BMP085.$(OBJEXT): modules/$(am__dirstamp) \
+	modules/$(DEPDIR)/$(am__dirstamp)
 
 autopilot$(EXEEXT): $(autopilot_OBJECTS) $(autopilot_DEPENDENCIES) $(EXTRA_autopilot_DEPENDENCIES) 
 	@rm -f autopilot$(EXEEXT)
@@ -343,236 +425,51 @@ autopilot$(EXEEXT): $(autopilot_OBJECTS) $(autopilot_DEPENDENCIES) $(EXTRA_autop
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f common/*.$(OBJEXT)
+	-rm -f controllers/*.$(OBJEXT)
+	-rm -f input/*.$(OBJEXT)
+	-rm -f log/*.$(OBJEXT)
+	-rm -f manager/*.$(OBJEXT)
+	-rm -f modules/*.$(OBJEXT)
+	-rm -f services/*.$(OBJEXT)
+	-rm -f thread/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_command_listener.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_command_manager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_input.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_log.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_motor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_motor_controller.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_pilot.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_queue.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_service_system.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_services_ahrs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_services_gps.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/atp_thread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autopilot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autopilot_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/module_Adafruit_L3GD20.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/module_Adafruit_LSM303.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@common/$(DEPDIR)/atp_queue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@controllers/$(DEPDIR)/atp_motor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@controllers/$(DEPDIR)/atp_motor_controller.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@input/$(DEPDIR)/atp_input.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/atp_log.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@manager/$(DEPDIR)/atp_command_listener.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@manager/$(DEPDIR)/atp_command_manager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@manager/$(DEPDIR)/atp_pilot.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@modules/$(DEPDIR)/module_Adafruit_BMP085.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@modules/$(DEPDIR)/module_Adafruit_L3GD20.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@modules/$(DEPDIR)/module_Adafruit_LSM303.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@services/$(DEPDIR)/atp_service_system.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@services/$(DEPDIR)/atp_services_ahrs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@services/$(DEPDIR)/atp_services_gps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@thread/$(DEPDIR)/atp_thread.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-atp_pilot.o: manager/atp_pilot.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_pilot.o -MD -MP -MF $(DEPDIR)/atp_pilot.Tpo -c -o atp_pilot.o `test -f 'manager/atp_pilot.c' || echo '$(srcdir)/'`manager/atp_pilot.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_pilot.Tpo $(DEPDIR)/atp_pilot.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager/atp_pilot.c' object='atp_pilot.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_pilot.o `test -f 'manager/atp_pilot.c' || echo '$(srcdir)/'`manager/atp_pilot.c
-
-atp_pilot.obj: manager/atp_pilot.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_pilot.obj -MD -MP -MF $(DEPDIR)/atp_pilot.Tpo -c -o atp_pilot.obj `if test -f 'manager/atp_pilot.c'; then $(CYGPATH_W) 'manager/atp_pilot.c'; else $(CYGPATH_W) '$(srcdir)/manager/atp_pilot.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_pilot.Tpo $(DEPDIR)/atp_pilot.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager/atp_pilot.c' object='atp_pilot.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_pilot.obj `if test -f 'manager/atp_pilot.c'; then $(CYGPATH_W) 'manager/atp_pilot.c'; else $(CYGPATH_W) '$(srcdir)/manager/atp_pilot.c'; fi`
-
-atp_command_manager.o: manager/atp_command_manager.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_command_manager.o -MD -MP -MF $(DEPDIR)/atp_command_manager.Tpo -c -o atp_command_manager.o `test -f 'manager/atp_command_manager.c' || echo '$(srcdir)/'`manager/atp_command_manager.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_command_manager.Tpo $(DEPDIR)/atp_command_manager.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager/atp_command_manager.c' object='atp_command_manager.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_command_manager.o `test -f 'manager/atp_command_manager.c' || echo '$(srcdir)/'`manager/atp_command_manager.c
-
-atp_command_manager.obj: manager/atp_command_manager.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_command_manager.obj -MD -MP -MF $(DEPDIR)/atp_command_manager.Tpo -c -o atp_command_manager.obj `if test -f 'manager/atp_command_manager.c'; then $(CYGPATH_W) 'manager/atp_command_manager.c'; else $(CYGPATH_W) '$(srcdir)/manager/atp_command_manager.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_command_manager.Tpo $(DEPDIR)/atp_command_manager.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager/atp_command_manager.c' object='atp_command_manager.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_command_manager.obj `if test -f 'manager/atp_command_manager.c'; then $(CYGPATH_W) 'manager/atp_command_manager.c'; else $(CYGPATH_W) '$(srcdir)/manager/atp_command_manager.c'; fi`
-
-atp_command_listener.o: manager/atp_command_listener.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_command_listener.o -MD -MP -MF $(DEPDIR)/atp_command_listener.Tpo -c -o atp_command_listener.o `test -f 'manager/atp_command_listener.c' || echo '$(srcdir)/'`manager/atp_command_listener.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_command_listener.Tpo $(DEPDIR)/atp_command_listener.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager/atp_command_listener.c' object='atp_command_listener.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_command_listener.o `test -f 'manager/atp_command_listener.c' || echo '$(srcdir)/'`manager/atp_command_listener.c
-
-atp_command_listener.obj: manager/atp_command_listener.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_command_listener.obj -MD -MP -MF $(DEPDIR)/atp_command_listener.Tpo -c -o atp_command_listener.obj `if test -f 'manager/atp_command_listener.c'; then $(CYGPATH_W) 'manager/atp_command_listener.c'; else $(CYGPATH_W) '$(srcdir)/manager/atp_command_listener.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_command_listener.Tpo $(DEPDIR)/atp_command_listener.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager/atp_command_listener.c' object='atp_command_listener.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_command_listener.obj `if test -f 'manager/atp_command_listener.c'; then $(CYGPATH_W) 'manager/atp_command_listener.c'; else $(CYGPATH_W) '$(srcdir)/manager/atp_command_listener.c'; fi`
-
-atp_input.o: input/atp_input.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_input.o -MD -MP -MF $(DEPDIR)/atp_input.Tpo -c -o atp_input.o `test -f 'input/atp_input.c' || echo '$(srcdir)/'`input/atp_input.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_input.Tpo $(DEPDIR)/atp_input.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='input/atp_input.c' object='atp_input.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_input.o `test -f 'input/atp_input.c' || echo '$(srcdir)/'`input/atp_input.c
-
-atp_input.obj: input/atp_input.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_input.obj -MD -MP -MF $(DEPDIR)/atp_input.Tpo -c -o atp_input.obj `if test -f 'input/atp_input.c'; then $(CYGPATH_W) 'input/atp_input.c'; else $(CYGPATH_W) '$(srcdir)/input/atp_input.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_input.Tpo $(DEPDIR)/atp_input.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='input/atp_input.c' object='atp_input.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_input.obj `if test -f 'input/atp_input.c'; then $(CYGPATH_W) 'input/atp_input.c'; else $(CYGPATH_W) '$(srcdir)/input/atp_input.c'; fi`
-
-atp_service_system.o: services/atp_service_system.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_service_system.o -MD -MP -MF $(DEPDIR)/atp_service_system.Tpo -c -o atp_service_system.o `test -f 'services/atp_service_system.c' || echo '$(srcdir)/'`services/atp_service_system.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_service_system.Tpo $(DEPDIR)/atp_service_system.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='services/atp_service_system.c' object='atp_service_system.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_service_system.o `test -f 'services/atp_service_system.c' || echo '$(srcdir)/'`services/atp_service_system.c
-
-atp_service_system.obj: services/atp_service_system.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_service_system.obj -MD -MP -MF $(DEPDIR)/atp_service_system.Tpo -c -o atp_service_system.obj `if test -f 'services/atp_service_system.c'; then $(CYGPATH_W) 'services/atp_service_system.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_service_system.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_service_system.Tpo $(DEPDIR)/atp_service_system.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='services/atp_service_system.c' object='atp_service_system.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_service_system.obj `if test -f 'services/atp_service_system.c'; then $(CYGPATH_W) 'services/atp_service_system.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_service_system.c'; fi`
-
-atp_services_gps.o: services/atp_services_gps.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_services_gps.o -MD -MP -MF $(DEPDIR)/atp_services_gps.Tpo -c -o atp_services_gps.o `test -f 'services/atp_services_gps.c' || echo '$(srcdir)/'`services/atp_services_gps.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_services_gps.Tpo $(DEPDIR)/atp_services_gps.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='services/atp_services_gps.c' object='atp_services_gps.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_services_gps.o `test -f 'services/atp_services_gps.c' || echo '$(srcdir)/'`services/atp_services_gps.c
-
-atp_services_gps.obj: services/atp_services_gps.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_services_gps.obj -MD -MP -MF $(DEPDIR)/atp_services_gps.Tpo -c -o atp_services_gps.obj `if test -f 'services/atp_services_gps.c'; then $(CYGPATH_W) 'services/atp_services_gps.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_services_gps.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_services_gps.Tpo $(DEPDIR)/atp_services_gps.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='services/atp_services_gps.c' object='atp_services_gps.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_services_gps.obj `if test -f 'services/atp_services_gps.c'; then $(CYGPATH_W) 'services/atp_services_gps.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_services_gps.c'; fi`
-
-atp_log.o: log/atp_log.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_log.o -MD -MP -MF $(DEPDIR)/atp_log.Tpo -c -o atp_log.o `test -f 'log/atp_log.c' || echo '$(srcdir)/'`log/atp_log.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_log.Tpo $(DEPDIR)/atp_log.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='log/atp_log.c' object='atp_log.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_log.o `test -f 'log/atp_log.c' || echo '$(srcdir)/'`log/atp_log.c
-
-atp_log.obj: log/atp_log.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_log.obj -MD -MP -MF $(DEPDIR)/atp_log.Tpo -c -o atp_log.obj `if test -f 'log/atp_log.c'; then $(CYGPATH_W) 'log/atp_log.c'; else $(CYGPATH_W) '$(srcdir)/log/atp_log.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_log.Tpo $(DEPDIR)/atp_log.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='log/atp_log.c' object='atp_log.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_log.obj `if test -f 'log/atp_log.c'; then $(CYGPATH_W) 'log/atp_log.c'; else $(CYGPATH_W) '$(srcdir)/log/atp_log.c'; fi`
-
-atp_thread.o: thread/atp_thread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_thread.o -MD -MP -MF $(DEPDIR)/atp_thread.Tpo -c -o atp_thread.o `test -f 'thread/atp_thread.c' || echo '$(srcdir)/'`thread/atp_thread.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_thread.Tpo $(DEPDIR)/atp_thread.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread/atp_thread.c' object='atp_thread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_thread.o `test -f 'thread/atp_thread.c' || echo '$(srcdir)/'`thread/atp_thread.c
-
-atp_thread.obj: thread/atp_thread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_thread.obj -MD -MP -MF $(DEPDIR)/atp_thread.Tpo -c -o atp_thread.obj `if test -f 'thread/atp_thread.c'; then $(CYGPATH_W) 'thread/atp_thread.c'; else $(CYGPATH_W) '$(srcdir)/thread/atp_thread.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_thread.Tpo $(DEPDIR)/atp_thread.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread/atp_thread.c' object='atp_thread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_thread.obj `if test -f 'thread/atp_thread.c'; then $(CYGPATH_W) 'thread/atp_thread.c'; else $(CYGPATH_W) '$(srcdir)/thread/atp_thread.c'; fi`
-
-atp_queue.o: common/atp_queue.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_queue.o -MD -MP -MF $(DEPDIR)/atp_queue.Tpo -c -o atp_queue.o `test -f 'common/atp_queue.c' || echo '$(srcdir)/'`common/atp_queue.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_queue.Tpo $(DEPDIR)/atp_queue.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='common/atp_queue.c' object='atp_queue.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_queue.o `test -f 'common/atp_queue.c' || echo '$(srcdir)/'`common/atp_queue.c
-
-atp_queue.obj: common/atp_queue.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_queue.obj -MD -MP -MF $(DEPDIR)/atp_queue.Tpo -c -o atp_queue.obj `if test -f 'common/atp_queue.c'; then $(CYGPATH_W) 'common/atp_queue.c'; else $(CYGPATH_W) '$(srcdir)/common/atp_queue.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_queue.Tpo $(DEPDIR)/atp_queue.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='common/atp_queue.c' object='atp_queue.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_queue.obj `if test -f 'common/atp_queue.c'; then $(CYGPATH_W) 'common/atp_queue.c'; else $(CYGPATH_W) '$(srcdir)/common/atp_queue.c'; fi`
-
-atp_motor_controller.o: controllers/atp_motor_controller.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_motor_controller.o -MD -MP -MF $(DEPDIR)/atp_motor_controller.Tpo -c -o atp_motor_controller.o `test -f 'controllers/atp_motor_controller.c' || echo '$(srcdir)/'`controllers/atp_motor_controller.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_motor_controller.Tpo $(DEPDIR)/atp_motor_controller.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='controllers/atp_motor_controller.c' object='atp_motor_controller.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_motor_controller.o `test -f 'controllers/atp_motor_controller.c' || echo '$(srcdir)/'`controllers/atp_motor_controller.c
-
-atp_motor_controller.obj: controllers/atp_motor_controller.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_motor_controller.obj -MD -MP -MF $(DEPDIR)/atp_motor_controller.Tpo -c -o atp_motor_controller.obj `if test -f 'controllers/atp_motor_controller.c'; then $(CYGPATH_W) 'controllers/atp_motor_controller.c'; else $(CYGPATH_W) '$(srcdir)/controllers/atp_motor_controller.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_motor_controller.Tpo $(DEPDIR)/atp_motor_controller.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='controllers/atp_motor_controller.c' object='atp_motor_controller.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_motor_controller.obj `if test -f 'controllers/atp_motor_controller.c'; then $(CYGPATH_W) 'controllers/atp_motor_controller.c'; else $(CYGPATH_W) '$(srcdir)/controllers/atp_motor_controller.c'; fi`
-
-atp_motor.o: controllers/atp_motor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_motor.o -MD -MP -MF $(DEPDIR)/atp_motor.Tpo -c -o atp_motor.o `test -f 'controllers/atp_motor.c' || echo '$(srcdir)/'`controllers/atp_motor.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_motor.Tpo $(DEPDIR)/atp_motor.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='controllers/atp_motor.c' object='atp_motor.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_motor.o `test -f 'controllers/atp_motor.c' || echo '$(srcdir)/'`controllers/atp_motor.c
-
-atp_motor.obj: controllers/atp_motor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_motor.obj -MD -MP -MF $(DEPDIR)/atp_motor.Tpo -c -o atp_motor.obj `if test -f 'controllers/atp_motor.c'; then $(CYGPATH_W) 'controllers/atp_motor.c'; else $(CYGPATH_W) '$(srcdir)/controllers/atp_motor.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_motor.Tpo $(DEPDIR)/atp_motor.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='controllers/atp_motor.c' object='atp_motor.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_motor.obj `if test -f 'controllers/atp_motor.c'; then $(CYGPATH_W) 'controllers/atp_motor.c'; else $(CYGPATH_W) '$(srcdir)/controllers/atp_motor.c'; fi`
-
-atp_services_ahrs.o: services/atp_services_ahrs.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_services_ahrs.o -MD -MP -MF $(DEPDIR)/atp_services_ahrs.Tpo -c -o atp_services_ahrs.o `test -f 'services/atp_services_ahrs.c' || echo '$(srcdir)/'`services/atp_services_ahrs.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_services_ahrs.Tpo $(DEPDIR)/atp_services_ahrs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='services/atp_services_ahrs.c' object='atp_services_ahrs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_services_ahrs.o `test -f 'services/atp_services_ahrs.c' || echo '$(srcdir)/'`services/atp_services_ahrs.c
-
-atp_services_ahrs.obj: services/atp_services_ahrs.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT atp_services_ahrs.obj -MD -MP -MF $(DEPDIR)/atp_services_ahrs.Tpo -c -o atp_services_ahrs.obj `if test -f 'services/atp_services_ahrs.c'; then $(CYGPATH_W) 'services/atp_services_ahrs.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_services_ahrs.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/atp_services_ahrs.Tpo $(DEPDIR)/atp_services_ahrs.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='services/atp_services_ahrs.c' object='atp_services_ahrs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o atp_services_ahrs.obj `if test -f 'services/atp_services_ahrs.c'; then $(CYGPATH_W) 'services/atp_services_ahrs.c'; else $(CYGPATH_W) '$(srcdir)/services/atp_services_ahrs.c'; fi`
-
-module_Adafruit_LSM303.o: modules/module_Adafruit_LSM303.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_LSM303.o -MD -MP -MF $(DEPDIR)/module_Adafruit_LSM303.Tpo -c -o module_Adafruit_LSM303.o `test -f 'modules/module_Adafruit_LSM303.c' || echo '$(srcdir)/'`modules/module_Adafruit_LSM303.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_LSM303.Tpo $(DEPDIR)/module_Adafruit_LSM303.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='modules/module_Adafruit_LSM303.c' object='module_Adafruit_LSM303.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_LSM303.o `test -f 'modules/module_Adafruit_LSM303.c' || echo '$(srcdir)/'`modules/module_Adafruit_LSM303.c
-
-module_Adafruit_LSM303.obj: modules/module_Adafruit_LSM303.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_LSM303.obj -MD -MP -MF $(DEPDIR)/module_Adafruit_LSM303.Tpo -c -o module_Adafruit_LSM303.obj `if test -f 'modules/module_Adafruit_LSM303.c'; then $(CYGPATH_W) 'modules/module_Adafruit_LSM303.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_LSM303.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_LSM303.Tpo $(DEPDIR)/module_Adafruit_LSM303.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='modules/module_Adafruit_LSM303.c' object='module_Adafruit_LSM303.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_LSM303.obj `if test -f 'modules/module_Adafruit_LSM303.c'; then $(CYGPATH_W) 'modules/module_Adafruit_LSM303.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_LSM303.c'; fi`
-
-module_Adafruit_L3GD20.o: modules/module_Adafruit_L3GD20.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_L3GD20.o -MD -MP -MF $(DEPDIR)/module_Adafruit_L3GD20.Tpo -c -o module_Adafruit_L3GD20.o `test -f 'modules/module_Adafruit_L3GD20.c' || echo '$(srcdir)/'`modules/module_Adafruit_L3GD20.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_L3GD20.Tpo $(DEPDIR)/module_Adafruit_L3GD20.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='modules/module_Adafruit_L3GD20.c' object='module_Adafruit_L3GD20.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_L3GD20.o `test -f 'modules/module_Adafruit_L3GD20.c' || echo '$(srcdir)/'`modules/module_Adafruit_L3GD20.c
-
-module_Adafruit_L3GD20.obj: modules/module_Adafruit_L3GD20.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT module_Adafruit_L3GD20.obj -MD -MP -MF $(DEPDIR)/module_Adafruit_L3GD20.Tpo -c -o module_Adafruit_L3GD20.obj `if test -f 'modules/module_Adafruit_L3GD20.c'; then $(CYGPATH_W) 'modules/module_Adafruit_L3GD20.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_L3GD20.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/module_Adafruit_L3GD20.Tpo $(DEPDIR)/module_Adafruit_L3GD20.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='modules/module_Adafruit_L3GD20.c' object='module_Adafruit_L3GD20.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o module_Adafruit_L3GD20.obj `if test -f 'modules/module_Adafruit_L3GD20.c'; then $(CYGPATH_W) 'modules/module_Adafruit_L3GD20.c'; else $(CYGPATH_W) '$(srcdir)/modules/module_Adafruit_L3GD20.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -689,6 +586,22 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f common/$(DEPDIR)/$(am__dirstamp)
+	-rm -f common/$(am__dirstamp)
+	-rm -f controllers/$(DEPDIR)/$(am__dirstamp)
+	-rm -f controllers/$(am__dirstamp)
+	-rm -f input/$(DEPDIR)/$(am__dirstamp)
+	-rm -f input/$(am__dirstamp)
+	-rm -f log/$(DEPDIR)/$(am__dirstamp)
+	-rm -f log/$(am__dirstamp)
+	-rm -f manager/$(DEPDIR)/$(am__dirstamp)
+	-rm -f manager/$(am__dirstamp)
+	-rm -f modules/$(DEPDIR)/$(am__dirstamp)
+	-rm -f modules/$(am__dirstamp)
+	-rm -f services/$(DEPDIR)/$(am__dirstamp)
+	-rm -f services/$(am__dirstamp)
+	-rm -f thread/$(DEPDIR)/$(am__dirstamp)
+	-rm -f thread/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -698,7 +611,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) common/$(DEPDIR) controllers/$(DEPDIR) input/$(DEPDIR) log/$(DEPDIR) manager/$(DEPDIR) modules/$(DEPDIR) services/$(DEPDIR) thread/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -744,7 +657,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) common/$(DEPDIR) controllers/$(DEPDIR) input/$(DEPDIR) log/$(DEPDIR) manager/$(DEPDIR) modules/$(DEPDIR) services/$(DEPDIR) thread/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

@@ -5,7 +5,7 @@ AC_INIT(autopilot, 1.0)
 
 
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE()
+AM_INIT_AUTOMAKE([subdir-objects])
 
 AC_PROG_CC
 

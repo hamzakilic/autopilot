@@ -95,7 +95,7 @@
          */
         em_int32 adafruit_l3gd20_gyro_read(float *values);
 
-        /*
+        /**
          * @brief does not do anything, empty function
          */
         em_int32 adafruit_l3gd20_gyro_stop(void *);

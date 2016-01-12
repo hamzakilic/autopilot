@@ -47,10 +47,13 @@ inline em_int32 lsm303_accel_read8(em_byte *data){
     em_int32 length=1;
     return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,&length);
 }
-inline em_int32 lsm303_accel_read16(em_byte *data){
-
+inline em_int32 lsm303_accel_read16(em_uint16 *data){
+    em_byte temp[2];
     em_int32 length=2;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,&length);
+    em_int32 err;
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,temp,&length);
+    *data=temp[0]<<8||temp[1];
+    return err;
 }
 
 inline em_int32 lsm303_accel_write8(em_byte val){
@@ -82,6 +85,7 @@ em_int32 adafruit_lsm303_accel_start(void * param){
 
 	  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG1_A,0x57);
 	  if(err){
+
 		  return ATP_ERROR_HARDWARE_COMMUNICATION;
 	  }
 
@@ -90,17 +94,21 @@ em_int32 adafruit_lsm303_accel_start(void * param){
 
 	  err=lsm303_accel_write8(LSM303_REGISTER_ACCEL_CTRL_REG1_A);
 	  if(err){
+
 	  		   	return ATP_ERROR_HARDWARE_COMMUNICATION;
 	  	  }
 	  em_uint32 temp=1;
 	  err=lsm303_accel_read8(data);
-	  if(err)
+	  if(err){
+
     	    return ATP_ERROR_HARDWARE_COMMUNICATION;
+	  }
 
 
 	  em_uint8 reg1_a =data[0];// read8(LSM303_ADDRESS_ACCEL, LSM303_REGISTER_ACCEL_CTRL_REG1_A);
 	  if (reg1_a != 0x57)
 	  {
+
 	    return ATP_ERROR_HARDWARE_INITIALIZE;
 	  }
 
@@ -236,6 +244,7 @@ em_int32 adafruit_lsm303_mag_start(void * param){
 
 		  err=lsm303_mag_write16(LSM303_REGISTER_MAG_MR_REG_M,0x00);
 		  if(err){
+
 			  return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
 
@@ -243,16 +252,21 @@ em_int32 adafruit_lsm303_mag_start(void * param){
 		   // the default value (0b00010000/0x10)
 
 		  err=lsm303_mag_write8(LSM303_REGISTER_MAG_CRA_REG_M);
-		  if(err)   	return ATP_ERROR_HARDWARE_COMMUNICATION;
+		  if(err){
+
+			  return ATP_ERROR_HARDWARE_COMMUNICATION;
+		  }
 
 		  em_uint32 temp=1;
 		  err=lsm303_mag_read8(data);
-		  if(err)
+		  if(err){
+
 	    	    return ATP_ERROR_HARDWARE_COMMUNICATION;
+		  }
 
 
 		  em_uint8 reg1_a =data[0];
-		  if (reg1_a != 24)
+		  if (reg1_a != 0x10 && reg1_a != 24)
 		  {
 
 		    return ATP_ERROR_HARDWARE_INITIALIZE;
@@ -262,7 +276,10 @@ em_int32 adafruit_lsm303_mag_start(void * param){
 		  //setmagrate
 		  em_byte reg_m = (LSM303_MAGRATE_75 & 0x07) << 2;
 		  err=lsm303_mag_write16(LSM303_REGISTER_MAG_CRA_REG_M,reg_m);
-		  if(err) return ATP_ERROR_HARDWARE_COMMUNICATION;
+		  if(err){
+
+			  return ATP_ERROR_HARDWARE_COMMUNICATION;
+		  }
 
 
 

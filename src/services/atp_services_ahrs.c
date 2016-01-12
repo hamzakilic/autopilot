@@ -16,9 +16,31 @@ typedef struct {
 }atp_services_ahrs_data;
 
 
+#ifdef COMPILE_BMP085
+/**
+ * @brief Calculates the altitude (in meters) from the specified atmospheric \
+ * pressure (in hPa), and sea-level pressure (in hPa).
+ * @param  seaLevel      Sea-level pressure in hPa
+ * @param  atmospheric   Atmospheric pressure in hPa
+*/
+
+inline em_float32 pressure_to_altitude(em_float32 seaLevel, em_float32 atmospheric)
+{
+  // Equation taken from BMP180 datasheet (page 16):
+  //  http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+
+  // Note that using the equation from wikipedia can give bad results
+  // at high altitude.  See this thread for more information:
+  //  http://forums.adafruit.com/viewtopic.php?f=22&t=58064
+
+  return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
+}
+#endif
+
+
 void * start_communication_ahrs(void *data){
 	atp_services_ahrs_data *ahrs_data=atp_convert(data,atp_services_ahrs_data*);
-	em_uint32 err;
+	em_uint32 err=ATP_SUCCESS;
 
 #ifdef COMPILE_LSM303
 	 err=adafruit_lsm303_accel_start(NULL);
@@ -43,19 +65,42 @@ void * start_communication_ahrs(void *data){
 
 #endif
 
+#ifdef COMPILE_BMP085
 
-    float accel_values[3];
-	float mag_values[3];
-	float gyro_values[3];
+	 	err=adafruit_bmp085_temp_pres_start(NULL);
+	 		 	 if(err){
+	 		 			 atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting BMP085 Temprature Pressure Failed Error:%u\n", err));
+	 		 			 return (void*)ATP_ERROR_HARDWARE_INITIALIZE;
+	 		 		 }
+
+#endif
+
+
+
+
+    em_float32 accel_values[3];
+	em_float32 mag_values[3];
+	em_float32 gyro_values[3];
+	em_float32 temprature;
+	em_float32 pressure;
+	em_float32 altitude;
 	while(ahrs_data->work){
 #ifdef COMPILE_LSM303
-      adafruit_lsm303_accel_read(accel_values);
-      adafruit_lsm303_mag_read(mag_values);
+      err |= adafruit_lsm303_accel_read(accel_values);
+      err |= adafruit_lsm303_mag_read(mag_values);
 #endif
 #ifdef COMPILE_L3GD20
-      adafruit_l3gd20_gyro_read(gyro_values);
+      err |= adafruit_l3gd20_gyro_read(gyro_values);
 #endif
-      printf("values %f %f %f # %f %f %f # %f %f %f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2]);
+#ifdef COMPILE_BMP085
+      err |= adafruit_bmp085_temp_press_read(&temprature,&pressure);
+      altitude=pressure_to_altitude(1008.4,pressure);
+#endif
+      //todo: what will happen if error occures too much
+
+      printf("accel gyro mag values %f %f %f # %f %f %f # %f %f %f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2]);
+      printf("temp pressure altitude values %f %f %f \n",temprature,pressure,altitude);
+
       em_io_delay_microseconds(100000);
 	}
 	return ATP_SUCCESS;
