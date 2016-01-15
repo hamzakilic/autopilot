@@ -9,110 +9,10 @@
 
 
 
-#define PCA9685_SUBADR1 0x2
-#define PCA9685_SUBADR2 0x3
-#define PCA9685_SUBADR3 0x4
-
-#define PCA9685_MODE1 0x0
-#define PCA9685_PRESCALE 0xFE
-
-#define LED0_ON_L 0x6
-#define LED0_ON_H 0x7
-#define LED0_OFF_L 0x8
-#define LED0_OFF_H 0x9
-
-#define ALLLED_ON_L 0xFA
-#define ALLLED_ON_H 0xFB
-#define ALLLED_OFF_L 0xFC
-#define ALLLED_OFF_H 0xFD
-
-em_uint8 slave=0x40;
-
-em_uint32 i2c_write(em_uint8 *data,em_uint32 length)
-{
-	em_uint32 err;
-	em_uint8 index=0;
-	//try 100 times then return error
-	//
-	for(index=0;index<100;++index){
-		err=em_io_i2c_write(EM_USE_BSC1,slave,data,length);
-		        	if(!err)
-		        		break;
-		        	else{
-		        		atp_log(atp_log_create_string(ATP_LOG_FATAL,"I2C communication failed Errno:\n",err));
-		        	}
-		        	err=0;
-	}
-
-	if(index==100){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	return ATP_SUCCESS;
-}
-
-em_uint32 i2c_read(em_uint8 *data,em_uint32 *length)
-{
-	em_uint32 err;
-	em_uint8 index=0;
-	for(index=0;index<100;++index){
-		err=em_io_i2c_read(EM_USE_BSC1,slave,data,length);
-		        	if(!err)
-		        		break;
-		        	else{
-		        		atp_log(atp_log_create_string(ATP_LOG_FATAL,"I2C communication failed Errno:\n",err));
-		        	}
-		        	err=0;
-	}
-
-	if(index==100){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	return ATP_SUCCESS;
-}
-static em_uint32 init_pca9685(){
-	em_uint32 err;
-	 em_uint32 frequency_scale= (int)(25000000.0f /(4096*200)-1.0f);
-
-
-	        em_uint8 oldmod=0;
-	 		em_uint32 length=1;
-	 		em_uint8 data[]={49};//sleep mode
-
-	        err=i2c_write(data,length);
-	        if(err){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	     	err=i2c_read(&oldmod,&length);
-	        if(err){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
 
 
 
-	        em_uint8 data2[2]={0,0};
 
-	        data2[0]=PCA9685_PRESCALE;
-	        data2[1]=frequency_scale;
-	        err=i2c_write(data2,2);
-	        if(err){
-	          return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	        em_io_delay_loops(5000);
-	        data2[0]=PCA9685_MODE1;
-	        data2[1]=0xa1;
-	        err=i2c_write(data2,2);
-	        if(err){
-	         return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-
-	        em_io_delay_loops(5000);
-	        err=i2c_read(&oldmod,&length);
-	        	        if(err){
-	        	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        	        }
-
-	        return ATP_SUCCESS;
-}
 
 #define for_each_motors()  for(index=0;index<ATP_MOTORS_COUNT;++index)
 
@@ -121,8 +21,9 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 	em_uint32 err;
 
-
-	        err=init_pca9685();
+#ifdef COMPILE_PCA9685
+	        err=adafruit_pca9685_start(NULL);
+#endif
 	        if(err){
 	        	return err;
 	        }
@@ -190,9 +91,9 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 
 
-        	        //err=atp_motor_calibrate(motors[index]);
-                	//err=atp_motor_start(motors[index]);
-                	//err=atp_motor_set_power(motors[index],200);
+        	       // err=atp_motor_calibrate(motors[index]);
+                	err=atp_motor_start(motors[index]);
+                	err=atp_motor_set_power(motors[index],200);
                    if(err){
                 	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Motor %u  failed Errno:%u\n",index,err));
                 	   atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);

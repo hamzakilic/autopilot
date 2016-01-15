@@ -148,7 +148,7 @@
      * @param parameters send NULL
      * @return ATP_SUCCESS or ATP_???? failure numbers
      */
-    em_int32 adafruit_lsm303_accel_start(void *parameters);
+    em_uint32 adafruit_lsm303_accel_start(void *parameters);
 
     /**
      * @brief read acceleration values
@@ -157,12 +157,12 @@
      * @param values send 3 dimension float array
      * @return ATP_SUCESS or ATP_???? failure numbers
      */
-    em_int32 adafruit_lsm303_accel_read(float *values);
+    em_uint32 adafruit_lsm303_accel_read(float *values);
 
     /*
      * @brief does not do anything, empty function     *
      */
-    em_int32 adafruit_lsm303_accel_stop(void *);
+    em_uint32 adafruit_lsm303_accel_stop(void *);
 
 
 
@@ -176,13 +176,13 @@
      *  @param parameters send NULL
      *  @return ATP_SUCCESS or ATP_???? failure numbers
      */
-    em_int32 adafruit_lsm303_mag_start(void *parameters);
+    em_uint32 adafruit_lsm303_mag_start(void *parameters);
 
     /**
      * magnetic vector values are in micro-Tesla (uT)
      */
-    em_int32 adafruit_lsm303_mag_read(float *values);
-    em_int32 adafruit_lsm303_mag_stop(void *);
+    em_uint32 adafruit_lsm303_mag_read(float *values);
+    em_uint32 adafruit_lsm303_mag_stop(void *);
 
 
 #endif /* MODULE_ADAFRUIT_LSM303_H_ */

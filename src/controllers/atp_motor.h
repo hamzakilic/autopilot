@@ -10,6 +10,7 @@
 
 #include "../common/atp_common.h"
 #include "../input/atp_input.h"
+#include "../modules/module_Adafruit_PCA9685.h"
 
 typedef struct {
 	//read-only

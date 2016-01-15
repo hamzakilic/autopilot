@@ -8,24 +8,24 @@
 
 static gyroRange_t _range;
 
-inline em_int32 l3gd20_read8(em_byte *data){
+inline em_uint32 l3gd20_read8(em_byte *data){
 
     em_int32 length=1;
     return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&length);
 }
-inline em_int32 l3gd20_read16(em_byte *data){
+inline em_uint32 l3gd20_read16(em_byte *data){
 
     em_int32 length=2;
     return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&length);
 }
 
-inline em_int32 l3gd20_write8(em_byte val){
+inline em_uint32 l3gd20_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
 	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,1);
 }
 
-inline em_int32 l3gd20_write16(em_byte reg,em_byte val){
+inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
@@ -33,8 +33,8 @@ inline em_int32 l3gd20_write16(em_byte reg,em_byte val){
 }
 
 
-  em_int32 adafruit_l3gd20_gyro_start(void *parameters){
-        	em_int32 err;
+ em_uint32 adafruit_l3gd20_gyro_start(void *parameters){
+        	em_uint32 err;
         	em_byte data[6];
         	/* Make sure we have the correct chip ID since this checks
         	     for correct address and that the IC is properly connected */
@@ -155,10 +155,10 @@ inline em_int32 l3gd20_write16(em_byte reg,em_byte val){
 	  em_float32 z;
   }gyro_data;
 
-  inline em_int32 adafruit_gyro_read(gyro_data *gyro){
+  inline em_uint32 adafruit_gyro_read(gyro_data *gyro){
 	  em_byte data[6];
 	  em_int32 lenght=6;
-	  em_int32 err;
+	  em_uint32 err;
 	  err=l3gd20_write8(GYRO_REGISTER_OUT_X_L | 0x80);
 	  if(err)return err;
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&lenght);
@@ -171,10 +171,10 @@ inline em_int32 l3gd20_write16(em_byte reg,em_byte val){
   }
 
 
-        em_int32 adafruit_l3gd20_gyro_read(float *values){
+        em_uint32 adafruit_l3gd20_gyro_read(float *values){
         	em_int32 reading_valid=0;
         	gyro_data gyro;
-        	em_int32 err;
+        	em_uint32 err;
         	while(!reading_valid){
         		err=adafruit_gyro_read(&gyro);
         		/* Check if the sensor is saturating or not */
@@ -253,7 +253,7 @@ inline em_int32 l3gd20_write16(em_byte reg,em_byte val){
         	return ATP_SUCCESS;
         }
 
-        em_int32 adafruit_l3gd20_gyro_stop(void *parameters){
+        em_uint32 adafruit_l3gd20_gyro_stop(void *parameters){
         	return ATP_SUCCESS;
         }
 

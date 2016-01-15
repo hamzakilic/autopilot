@@ -8,32 +8,32 @@
 #include "module_Adafruit_BMP085.h"
 
 
-inline em_int32 bmp085_read8(em_byte *data){
+inline em_uint32 bmp085_read8(em_byte *data){
 
     em_int32 length=1;
     return em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,data,&length);
 }
-inline em_int32 bmp085_read16(em_uint16 *data){
+inline em_uint32 bmp085_read16(em_uint16 *data){
    em_byte temp[2];
     em_int32 length=2;
-    em_int32 err;
+    em_uint32 err;
     err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,temp,&length);
     *data= (temp[0]<<8) | (temp[1]);
     return err;
 }
-inline em_int32 bmp085_write8(em_byte val){
+inline em_uint32 bmp085_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
 	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,1);
 }
-inline em_int32 bmp085_read16from(em_byte address,em_uint16 *value){
-	    em_int32 err;
+inline em_uint32 bmp085_read16from(em_byte address,em_uint16 *value){
+	    em_uint32 err;
 	    err=bmp085_write8(address);
 		if(err)return err;
 		return bmp085_read16(value);
 }
-inline em_int32 bmp085_read8from(em_byte address,em_byte *value){
-	    em_int32 err;
+inline em_uint32 bmp085_read8from(em_byte address,em_byte *value){
+	    em_uint32 err;
 	    err=bmp085_write8(address);
 		if(err)return err;
 		return bmp085_read8(value);
@@ -42,7 +42,7 @@ inline em_int32 bmp085_read8from(em_byte address,em_byte *value){
 
 
 
-inline em_int32 bmp085_write16(em_byte reg,em_byte val){
+inline em_uint32 bmp085_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
@@ -59,9 +59,9 @@ static bmp085_calib_data _bmp085_coeffs;
 */
 /**************************************************************************/
 #define BMP085_USE_DATASHEET_VALS (0)
-static em_int32  read_coefficients(void)
+static em_uint32  read_coefficients(void)
 {
-	em_int32 err=ATP_SUCCESS;
+	em_uint32 err=ATP_SUCCESS;
   #if BMP085_USE_DATASHEET_VALS
     _bmp085_coeffs.ac1 = 408;
     _bmp085_coeffs.ac2 = -72;
@@ -95,7 +95,7 @@ static em_int32  read_coefficients(void)
 
 
 
-static em_int32 read_raw_temperature(em_int32 *temperature)
+static em_uint32 read_raw_temperature(em_int32 *temperature)
 {
   #if BMP085_USE_DATASHEET_VALS
     *temperature = 27898;
@@ -113,7 +113,7 @@ static em_int32 read_raw_temperature(em_int32 *temperature)
 }
 
 
-static em_int32 read_raw_pressure(int32_t *pressure)
+static em_uint32 read_raw_pressure(int32_t *pressure)
 {
   #if BMP085_USE_DATASHEET_VALS
     *pressure = 23843;
@@ -121,7 +121,7 @@ static em_int32 read_raw_pressure(int32_t *pressure)
     em_uint8  p8;
     em_uint16 p16;
     em_int32  p32;
-    em_int32 err;
+    em_uint32 err;
 
     err=bmp085_write16(BMP085_REGISTER_CONTROL, BMP085_REGISTER_READPRESSURECMD + (_bmp085Mode << 6));
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -162,12 +162,12 @@ static em_int32 computeB5(em_int32 ut) {
 
 
 
-static em_int32 get_pressure(em_float32 *pressure)
+static em_uint32 get_pressure(em_float32 *pressure)
 {
   em_int32  ut = 0, up = 0, compp = 0;
   em_int32  x1, x2, b5, b6, x3, b3, p;
   em_uint32 b4, b7;
-  em_int32 err=ATP_SUCCESS;
+  em_uint32 err=ATP_SUCCESS;
   /* Get the raw pressure and temperature values */
   err=read_raw_temperature(&ut);
   err=read_raw_pressure(&up);
@@ -209,11 +209,11 @@ static em_int32 get_pressure(em_float32 *pressure)
 
 
 
-static em_int32 get_temperature(float *temp)
+static em_uint32 get_temperature(float *temp)
 {
   em_int32 UT, X1, X2, B5;     // following ds convention
   em_float32 t;
-  em_int32 err=ATP_SUCCESS;
+  em_uint32 err=ATP_SUCCESS;
   err=read_raw_temperature(&UT);
 
   #if BMP085_USE_DATASHEET_VALS
@@ -240,8 +240,8 @@ static em_int32 get_temperature(float *temp)
 
 
 
-   em_int32 adafruit_bmp085_temp_pres_start(void *parameter){
-    	em_int32 err;
+   em_uint32 adafruit_bmp085_temp_pres_start(void *parameter){
+    	em_uint32 err;
     	_bmp085Mode = BMP085_MODE_ULTRAHIGHRES;
 
     	err=bmp085_write8(BMP085_REGISTER_CHIPID);
@@ -256,15 +256,15 @@ static em_int32 get_temperature(float *temp)
     return ATP_SUCCESS;
     }
 
-    em_int32 adafruit_bmp085_temp_press_read(em_float32 *temp,em_float32 *press){
-    	em_int32 err=ATP_SUCCESS;
+    em_uint32 adafruit_bmp085_temp_press_read(em_float32 *temp,em_float32 *press){
+    	em_uint32 err=ATP_SUCCESS;
     	err |=get_temperature(temp);
     	err |=get_pressure(press);
 
     	return err;
 
     }
-    em_int32 adafruit_bmp085_temp_press_stop(void *param){
+    em_uint32 adafruit_bmp085_temp_press_stop(void *param){
     	return ATP_SUCCESS;
 
     }

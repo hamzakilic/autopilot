@@ -87,7 +87,7 @@
      * @param parameters send NULL
      * @return ATP_SUCCESS or ATP_???? failure numbers
      */
-    em_int32 adafruit_bmp085_temp_pres_start(void *parameter);
+    em_uint32 adafruit_bmp085_temp_pres_start(void *parameter);
 
 
 
@@ -97,13 +97,13 @@
      * @param press is pressure pointer, pressure level in hPa
      * return ATP_SUCCESS or ATP_???? failure numbers
      */
-    em_int32 adafruit_bmp085_temp_press_read(em_float32 *temp,em_float32 *press);
+    em_uint32 adafruit_bmp085_temp_press_read(em_float32 *temp,em_float32 *press);
 
 
     /**
      * @brief does not do anything, empty function
      */
-    em_int32 adafruit_bmp085_temp_press_stop(void *);
+    em_uint32 adafruit_bmp085_temp_press_stop(void *);
 
 
 

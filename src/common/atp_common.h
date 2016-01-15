@@ -23,6 +23,7 @@
 #define COMPILE_LSM303
 #define COMPILE_L3GD20
 #define COMPILE_BMP085
+#define COMPILE_PCA9685
 
 #define ATP_SUCCESS 0x00
 

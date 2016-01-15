@@ -142,6 +142,17 @@ int test_pilot(){
    return EXIT_SUCCESS;
 }
 
+int test_litte_big_endian(){
+	union {
+		    int i;
+		    char c[sizeof(int)];
+		} x;
+		x.i = 1;
+		if(x.c[0] == 1)
+		    printf("little-endian\n");
+		else    printf("big-endian\n");
+}
+
 
 
 

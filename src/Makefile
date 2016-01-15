@@ -106,7 +106,8 @@ am_autopilot_OBJECTS = autopilot.$(OBJEXT) autopilot_test.$(OBJEXT) \
 	services/atp_services_ahrs.$(OBJEXT) \
 	modules/module_Adafruit_LSM303.$(OBJEXT) \
 	modules/module_Adafruit_L3GD20.$(OBJEXT) \
-	modules/module_Adafruit_BMP085.$(OBJEXT)
+	modules/module_Adafruit_BMP085.$(OBJEXT) \
+	modules/module_Adafruit_PCA9685.$(OBJEXT)
 autopilot_OBJECTS = $(am_autopilot_OBJECTS)
 autopilot_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
@@ -260,7 +261,7 @@ target_vendor = raspi
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c
+autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c modules/module_Adafruit_PCA9685.c
 AM_CFLAGS = -I/work/projects/tobor/libtobor_io/include 
 AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread -lm
 all: all-am
@@ -418,6 +419,8 @@ modules/module_Adafruit_L3GD20.$(OBJEXT): modules/$(am__dirstamp) \
 	modules/$(DEPDIR)/$(am__dirstamp)
 modules/module_Adafruit_BMP085.$(OBJEXT): modules/$(am__dirstamp) \
 	modules/$(DEPDIR)/$(am__dirstamp)
+modules/module_Adafruit_PCA9685.$(OBJEXT): modules/$(am__dirstamp) \
+	modules/$(DEPDIR)/$(am__dirstamp)
 
 autopilot$(EXEEXT): $(autopilot_OBJECTS) $(autopilot_DEPENDENCIES) $(EXTRA_autopilot_DEPENDENCIES) 
 	@rm -f autopilot$(EXEEXT)
@@ -450,6 +453,7 @@ include manager/$(DEPDIR)/atp_pilot.Po
 include modules/$(DEPDIR)/module_Adafruit_BMP085.Po
 include modules/$(DEPDIR)/module_Adafruit_L3GD20.Po
 include modules/$(DEPDIR)/module_Adafruit_LSM303.Po
+include modules/$(DEPDIR)/module_Adafruit_PCA9685.Po
 include services/$(DEPDIR)/atp_service_system.Po
 include services/$(DEPDIR)/atp_services_ahrs.Po
 include services/$(DEPDIR)/atp_services_gps.Po

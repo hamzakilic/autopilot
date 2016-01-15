@@ -42,27 +42,27 @@ inline em_uint32 i2c_try_read(em_uint16 address,em_uint8 *data,em_uint32  *lengh
  * @param val pointer to data array
  */
 
-inline em_int32 lsm303_accel_read8(em_byte *data){
+inline em_uint32 lsm303_accel_read8(em_byte *data){
 
-    em_int32 length=1;
+    em_uint32 length=1;
     return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,&length);
 }
-inline em_int32 lsm303_accel_read16(em_uint16 *data){
+inline em_uint32 lsm303_accel_read16(em_uint16 *data){
     em_byte temp[2];
     em_int32 length=2;
-    em_int32 err;
+    em_uint32 err;
     err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,temp,&length);
     *data=temp[0]<<8||temp[1];
     return err;
 }
 
-inline em_int32 lsm303_accel_write8(em_byte val){
+inline em_uint32 lsm303_accel_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
 	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,1);
 }
 
-inline em_int32 lsm303_accel_write16(em_byte reg,em_byte val){
+inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
@@ -75,7 +75,7 @@ inline em_int32 lsm303_accel_write16(em_byte reg,em_byte val){
 //////////////accelerometer codes//////////////////
 ///////////////////////////////////////////////////
 
-em_int32 adafruit_lsm303_accel_start(void * param){
+em_uint32 adafruit_lsm303_accel_start(void * param){
 
 	em_uint32 err;
 
@@ -114,7 +114,7 @@ em_int32 adafruit_lsm303_accel_start(void * param){
 
 	return ATP_SUCCESS;
 }
-em_int32 adafruit_lsm303_stop(void *param){
+em_uint32 adafruit_lsm303_stop(void *param){
 	return ATP_SUCCESS;
 
 }
@@ -122,7 +122,7 @@ em_int32 adafruit_lsm303_stop(void *param){
 
 
 
-em_int32 adafruit_lsm303_accel_read(float *values){
+em_uint32 adafruit_lsm303_accel_read(float *values){
 	em_uint32 err;
 	em_byte data[6];
 	data[0]=LSM303_REGISTER_ACCEL_OUT_X_L_A | 0x80;
@@ -162,24 +162,24 @@ em_int32 adafruit_lsm303_accel_read(float *values){
 
 static em_int32 _magGain;
 
-inline em_int32 lsm303_mag_read8(em_byte *data){
+inline em_uint32 lsm303_mag_read8(em_byte *data){
 
     em_int32 length=1;
     return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,&length);
 }
-inline em_int32 lsm303_mag_read16(em_byte *data){
+inline em_uint32 lsm303_mag_read16(em_byte *data){
 
     em_int32 length=2;
     return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,&length);
 }
 
-inline em_int32 lsm303_mag_write8(em_byte val){
+inline em_uint32 lsm303_mag_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
 	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,1);
 }
 
-inline em_int32 lsm303_mag_write16(em_byte reg,em_byte val){
+inline em_uint32 lsm303_mag_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
@@ -187,10 +187,10 @@ inline em_int32 lsm303_mag_write16(em_byte reg,em_byte val){
 }
 
 
-em_int32 setMagGain(lsm303MagGain gain)
+em_uint32 setMagGain(lsm303MagGain gain)
 {
 
-    em_int32 err;
+    em_uint32 err;
 	em_byte data[2];
 
 			  err=lsm303_mag_write16(LSM303_REGISTER_MAG_CRB_REG_M,gain);
@@ -234,7 +234,7 @@ em_int32 setMagGain(lsm303MagGain gain)
 
 
 
-em_int32 adafruit_lsm303_mag_start(void * param){
+em_uint32 adafruit_lsm303_mag_start(void * param){
 
 	em_uint32 err;
 
@@ -295,7 +295,7 @@ typedef struct {
 	float z;
 }mag_values;
 
-em_int32 adafruit_mag_read(mag_values *values){
+em_uint32 adafruit_mag_read(mag_values *values){
 	em_uint32 err;
 			em_byte data[6];
 			data[0]=LSM303_REGISTER_MAG_OUT_X_H_M;
@@ -316,7 +316,7 @@ em_int32 adafruit_mag_read(mag_values *values){
 }
 
 
-em_int32 adafruit_lsm303_mag_read(float *values){
+em_uint32 adafruit_lsm303_mag_read(float *values){
 	  em_int32 reading_valid = 0;
 	  em_byte data[6];
 	  em_uint32 err;
@@ -412,7 +412,7 @@ em_int32 adafruit_lsm303_mag_read(float *values){
 	   return ATP_SUCCESS;
    }
 
-em_int32 adafruit_lsm303_mag_stop(void * param){
+em_uint32 adafruit_lsm303_mag_stop(void * param){
 	   return ATP_SUCCESS;
    }
 
