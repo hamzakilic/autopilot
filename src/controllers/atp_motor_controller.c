@@ -92,8 +92,8 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 
         	       // err=atp_motor_calibrate(motors[index]);
-                	err=atp_motor_start(motors[index]);
-                	err=atp_motor_set_power(motors[index],200);
+                	//err=atp_motor_start(motors[index]);
+                	//err=atp_motor_set_power(motors[index],200);
                    if(err){
                 	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Motor %u  failed Errno:%u\n",index,err));
                 	   atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);

@@ -310,8 +310,8 @@ em_uint32 adafruit_mag_read(mag_values *values){
 				  }
 
 				  values->x = (int16_t)(data[1] | ((int16_t)data[0] << 8));
-				  values->y = (int16_t)(data[3] | ((int16_t)data[2] << 8));
-				  values->z = (int16_t)(data[5] | ((int16_t)data[4] << 8));
+				  values->z = (int16_t)(data[3] | ((int16_t)data[2] << 8));
+				  values->y = (int16_t)(data[5] | ((int16_t)data[4] << 8));
 				  return ATP_SUCCESS;
 }
 

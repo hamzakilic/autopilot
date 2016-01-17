@@ -163,9 +163,13 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 	  if(err)return err;
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&lenght);
 	  if(err) return err;
-	  gyro->x = data[0] | ((em_int32)data[1] << 8);
-	  gyro->y = data[2] | ((em_int32)data[3] << 8);
-	  gyro->z = data[4] | ((em_int32)data[5] << 8);
+	  gyro->x = (em_int16)(data[0] | (data[1] << 8));
+	  gyro->y =(em_int16) (data[2] | (data[3] << 8));
+	  gyro->z = (em_int16)(data[4] | (data[5] << 8));
+
+
+
+
 	  return ATP_SUCCESS;
 
   }

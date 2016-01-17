@@ -14,9 +14,11 @@
 #include "../input/atp_input.h"
 #include "../thread/atp_thread.h"
 #include "../common/atp_queue.h"
+#include "../common/atp_time.h"
 #include "../modules/module_Adafruit_LSM303.h"
 #include "../modules/module_Adafruit_L3GD20.h"
 #include "../modules/module_Adafruit_BMP085.h"
+#include "../algorithms/MahonyAHRS.h"
 
 
 

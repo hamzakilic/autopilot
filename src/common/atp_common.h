@@ -8,11 +8,14 @@
 #ifndef ATP_COMMON_H_
 #define ATP_COMMON_H_
 
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 #include <em_io.h>
 #include <em_error.h>
 #include <em_types.h>
-#include <string.h>
-#include <stdlib.h>
+
 
 
 #define COMPILE_TEST_CODES2

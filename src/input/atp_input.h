@@ -63,8 +63,35 @@ typedef struct{
 
 
 typedef struct{
+	em_float32 roll;
+	em_float32 pitch;
+	em_float32 yaw;
+	em_float32 altitude;
+	em_float32 pressure;
+	em_float32 temperature;
 
-}atp_gyro_data;
+}atp_ahrs_data;
+
+typedef struct{
+
+    em_float32 accx;
+    em_float32 accy;
+    em_float32 accz;
+
+    em_float32 gyrox;
+    em_float32 gyroy;
+    em_float32 gyroz;
+
+    em_float32 magx;
+    em_float32 magy;
+    em_float32 magz;
+
+
+}atp_dof_data;
+
+
+
+
 
 typedef struct{
  em_uint8 motor_index;
@@ -84,6 +111,8 @@ em_uint32 atp_input_update_gps_time(atp_input *input, atp_gps_time_data  data);
 em_uint32 atp_input_update_gps_location(atp_input *input, atp_gps_location_data  data);
 em_uint32 atp_input_update_gps_location_ex(atp_input *input, atp_gps_location_ex_data  data);
 em_uint32 atp_input_update_motor(atp_input *input, atp_motor_data  data);
+em_uint32 atp_input_update_dof(atp_input *input,atp_dof_data data);
+em_uint32 atp_input_update_ahrs(atp_input *input,atp_ahrs_data data);
 
 
 
