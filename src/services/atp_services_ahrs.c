@@ -113,13 +113,13 @@ void * start_communication_ahrs(void *data){
 #endif
 #ifdef COMPILE_BMP085
       err |= adafruit_bmp085_temp_press_read(&temprature,&pressure);
-      altitude=pressure_to_altitude(1008.4,pressure);
+      altitude=pressure_to_altitude(1009.9,pressure);
 
 #endif
 
 
 #ifdef WRITE_OUTPUTS_TO_FILE
-      fprintf(output,"%f %f %f %f %f %f %f %f %f %f %f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],pressure,temprature);
+      fprintf(output,"%.3f %.3f %f %f %f %f %f %f %f %f %f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],pressure,temprature);
 #endif
 
 
@@ -140,7 +140,8 @@ void * start_communication_ahrs(void *data){
 
       em_uint64 delta_t=atp_datetime_as_microseconds()- last_read;
       //fprintf(stdout,"%f %f %f %f %f %f %f %f %f %f %f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],pressure,temprature);
-      MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+      //MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+      MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
 
       last_read=atp_datetime_as_microseconds();
 
@@ -148,27 +149,16 @@ void * start_communication_ahrs(void *data){
 	   atp_ahrs_data ahrs_data_temp;
 	   ahrs_data_temp.altitude=altitude;
 	   ahrs_data_temp.temperature=temprature;
+       ahrs_data_temp.pressure=pressure;
 
 
 
-	   // Define output variables from updated quaternion---these are Tait-Bryan angles, commonly used in aircraft orientation.
-	     // In this coordinate system, the positive z-axis is down toward Earth.
-	     // Yaw is the angle between Sensor x-axis and Earth magnetic North (or true North if corrected for local declination, looking down on the sensor positive yaw is counterclockwise.
-	     // Pitch is angle between sensor x-axis and Earth ground plane, toward the Earth is positive, up toward the sky is negative.
-	     // Roll is angle between sensor y-axis and Earth ground plane, y-axis up is positive roll.
-	     // These arise from the definition of the homogeneous rotation matrix constructed from quaternions.
-	     // Tait-Bryan angles as well as Euler angles are non-commutative; that is, the get the correct orientation the rotations must be
-	     // applied in the correct order which for this configuration is yaw, pitch, and then roll.
-	     // For more see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles which has additional links.
-	      /*yaw   = atan2(2.0f * (q[1] * q[2] + q[0] * q[3]), q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3]);
-	       pitch = -asin(2.0f * (q[1] * q[3] - q[0] * q[2]));
-	       roll  = atan2(2.0f * (q[0] * q[1] + q[2] * q[3]), q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3]);*/
 	       ahrs_data_temp.yaw=atan2(2.0f * (q0 * q3 + q1 * q2), 1-2*(q2*q2+q3*q3));
-	       ahrs_data_temp.pitch=-asin(2.0f * (q0 * q2 - q3 * q1));
+	       ahrs_data_temp.pitch=asin(2.0f * (q0 * q2 - q3 * q1));
 	       ahrs_data_temp.roll=atan2(2.0f * (q0 * q1 + q2 * q3), 1-2*(q1*q1+q2*q2));
 	       ahrs_data_temp.pitch *= 180.0f / PI;
 	       ahrs_data_temp.yaw   *= 180.0f / PI;
-	       //yaw   -= 13.8; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
+
 	       ahrs_data_temp.roll  *= 180.0f / PI;
 
 
@@ -178,7 +168,7 @@ void * start_communication_ahrs(void *data){
 	       atp_input_update_dof(ahrs_data->input_table,dof_data_temp);
 	       atp_input_update_ahrs(ahrs_data->input_table,ahrs_data_temp);
 
-	       printf("roll pitch yaw %f %f %f %f %f %f %f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw,q0,q1,q2,q3);
+	       printf("roll pitch yaw %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw,ahrs_data_temp.pressure,ahrs_data_temp.temperature,ahrs_data_temp.altitude);
 
 
       }else{
@@ -191,7 +181,7 @@ void * start_communication_ahrs(void *data){
       em_int32 valoftime=1000000/25-(atp_datetime_as_microseconds()-read_start);
       //printf("time:%d %d\n ",valoftime,1000000/10-valoftime);
       if(valoftime>0)
-      em_io_delay_microseconds(1000000/25-valoftime);
+      em_io_delay_microseconds(valoftime);
 	}
 #ifdef WRITE_OUTPUTS_TO_FILE
 	if(output!=NULL)

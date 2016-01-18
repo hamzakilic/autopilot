@@ -19,6 +19,7 @@
 #include "../modules/module_Adafruit_L3GD20.h"
 #include "../modules/module_Adafruit_BMP085.h"
 #include "../algorithms/MahonyAHRS.h"
+#include "../algorithms/MadgwickAHRS.h"
 
 
 
