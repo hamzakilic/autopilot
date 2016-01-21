@@ -149,13 +149,9 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
         	return ATP_SUCCESS;
         }
 
-  typedef struct{
-	  em_float32 x;
-	  em_float32 y;
-	  em_float32 z;
-  }gyro_data;
 
-  inline em_uint32 adafruit_gyro_read(gyro_data *gyro){
+
+  inline em_uint32 adafruit_gyro_read(em_float32 *gyro){
 	  em_byte data[6];
 	  em_int32 lenght=6;
 	  em_uint32 err;
@@ -163,97 +159,54 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 	  if(err)return err;
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&lenght);
 	  if(err) return err;
-	  gyro->x = (em_int16)(data[0] | (data[1] << 8));
-	  gyro->y =(em_int16) (data[2] | (data[3] << 8));
-	  gyro->z = (em_int16)(data[4] | (data[5] << 8));
-
-
-
+	  gyro[0] = (em_int16)(data[0] | (data[1] << 8));
+	  gyro[1] =(em_int16) (data[2] | (data[3] << 8));
+	  gyro[2] = (em_int16)(data[4] | (data[5] << 8));
 
 	  return ATP_SUCCESS;
 
   }
 
+  em_uint32 adafruit_l3gd20_gyro_read_raw(em_float32 *values){
+	  em_int32 reading_valid=0;
 
-        em_uint32 adafruit_l3gd20_gyro_read(float *values){
-        	em_int32 reading_valid=0;
-        	gyro_data gyro;
-        	em_uint32 err;
-        	while(!reading_valid){
-        		err=adafruit_gyro_read(&gyro);
-        		/* Check if the sensor is saturating or not */
-        		      if ( (gyro.x >= 32760) | (gyro.x <= -32760) |
-        		           (gyro.y >= 32760) | (gyro.y <= -32760) |
-        		           (gyro.z >= 32760) | (gyro.z <= -32760) )
-        		      {
-        		        /* Saturating .... increase the range if we can */
-        		        switch(_range)
-        		        {
-        		          case GYRO_RANGE_500DPS:
-        		            /* Push the range up to 2000dps */
-        		            _range = GYRO_RANGE_2000DPS;
-        		            err=0;//do every operation, | every result, at the end check err
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x00);
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x0F);
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG4, 0x20);
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG5, 0x80);
-        		            if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-        		            reading_valid = 0;
-        		            // Serial.println("Changing range to 2000DPS");
-        		            break;
-        		          case GYRO_RANGE_250DPS:
-        		            /* Push the range up to 500dps */
-        		            _range = GYRO_RANGE_500DPS;
-        		            err=0;//do every operation, | every result, at the end check err
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x00);
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x0F);
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG4, 0x10);
-        		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG5, 0x80);
-        		            if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-        		            reading_valid = 0;
-        		            // Serial.println("Changing range to 500DPS");
-        		            break;
-        		          default:
-        		        	  reading_valid = 1;
-        		            break;
-        		        }
-        		      }
-        		      else
-        		      {
-        		        /* All values are withing range */
-        		    	  reading_valid = 1;
-        		      }
+	          	em_uint32 err=ATP_SUCCESS;
+
+	          		err=adafruit_gyro_read(values);
+
+	          	return err;
+  }
 
 
-        	}
+
+        em_uint32 adafruit_l3gd20_gyro_read(em_float32 *values){
+
 
         	switch(_range)
         	  {
         	    case GYRO_RANGE_250DPS:
-        	      gyro.x *= GYRO_SENSITIVITY_250DPS;
-        	      gyro.y *= GYRO_SENSITIVITY_250DPS;
-        	      gyro.z *= GYRO_SENSITIVITY_250DPS;
+        	      values[0] *= GYRO_SENSITIVITY_250DPS;
+        	      values[1] *= GYRO_SENSITIVITY_250DPS;
+        	      values[2] *= GYRO_SENSITIVITY_250DPS;
         	      break;
         	    case GYRO_RANGE_500DPS:
-        	      gyro.x *= GYRO_SENSITIVITY_500DPS;
-        	      gyro.y *= GYRO_SENSITIVITY_500DPS;
-        	      gyro.z *= GYRO_SENSITIVITY_500DPS;
+        	      values[0] *= GYRO_SENSITIVITY_500DPS;
+        	      values[1] *= GYRO_SENSITIVITY_500DPS;
+        	      values[2] *= GYRO_SENSITIVITY_500DPS;
         	      break;
         	    case GYRO_RANGE_2000DPS:
-        	      gyro.x *= GYRO_SENSITIVITY_2000DPS;
-        	      gyro.y *= GYRO_SENSITIVITY_2000DPS;
-        	      gyro.z *= GYRO_SENSITIVITY_2000DPS;
+        	      values[0] *= GYRO_SENSITIVITY_2000DPS;
+        	      values[1] *= GYRO_SENSITIVITY_2000DPS;
+        	      values[2] *= GYRO_SENSITIVITY_2000DPS;
         	      break;
         	  }
 
         	  /* Convert values to rad/s */
-        	  gyro.x *= SENSORS_DPS_TO_RADS;
-        	  gyro.y *= SENSORS_DPS_TO_RADS;
-        	  gyro.z *= SENSORS_DPS_TO_RADS;
+        	  values[0] *= SENSORS_DPS_TO_RADS;
+        	  values[1] *= SENSORS_DPS_TO_RADS;
+        	  values[2] *= SENSORS_DPS_TO_RADS;
 
-        	values[0]=gyro.x;
-        	values[1]=gyro.y;
-        	values[2]=gyro.z;
+
         	return ATP_SUCCESS;
         }
 

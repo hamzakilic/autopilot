@@ -104,16 +104,17 @@ static em_uint32 read_raw_temperature(em_int32 *temperature)
     em_uint32 err;
     err=bmp085_write16(BMP085_REGISTER_CONTROL, BMP085_REGISTER_READTEMPCMD);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-    em_io_delay_microseconds(5000);
+    em_io_delay_microseconds(10000);
     err=bmp085_read16from(BMP085_REGISTER_TEMPDATA, &t);
     *temperature = t;
+    if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
 
   #endif
     return ATP_SUCCESS;
 }
 
 
-static em_uint32 read_raw_pressure(int32_t *pressure)
+static em_uint32 read_raw_pressure(em_int32 *pressure)
 {
   #if BMP085_USE_DATASHEET_VALS
     *pressure = 23843;
@@ -228,7 +229,7 @@ static em_uint32 get_temperature(float *temp)
   B5 = computeB5(UT);
   t = (B5+8) >> 4;
   t /= 10;
-
+  //printf("%d %8.2f\n",UT,t);
   *temp = t;
   return err;
 }
@@ -264,6 +265,20 @@ static em_uint32 get_temperature(float *temp)
     	return err;
 
     }
+
+    em_uint32 adafruit_bmp085_temp_press_read_raw(em_float32 *temp,em_float32 *press){
+        	em_uint32 err=ATP_SUCCESS;
+        	em_int32 t1,p1;
+
+        	err |=read_raw_temperature(&t1);
+        	err |=read_raw_pressure(&p1);
+        	*temp=t1;
+        	*press=p1;
+
+        	return err;
+
+        }
+
     em_uint32 adafruit_bmp085_temp_press_stop(void *param){
     	return ATP_SUCCESS;
 

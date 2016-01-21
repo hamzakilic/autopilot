@@ -157,7 +157,16 @@
      * @param values send 3 dimension float array
      * @return ATP_SUCESS or ATP_???? failure numbers
      */
-    em_uint32 adafruit_lsm303_accel_read(float *values);
+    em_uint32 adafruit_lsm303_accel_read(em_float32 *values);
+
+
+
+    /*
+     * @brief read raw values
+     */
+    em_uint32 adafruit_lsm303_accel_read_raw(em_float32 *values);
+
+
 
     /*
      * @brief does not do anything, empty function     *
@@ -181,7 +190,8 @@
     /**
      * magnetic vector values are in micro-Tesla (uT)
      */
-    em_uint32 adafruit_lsm303_mag_read(float *values);
+    em_uint32 adafruit_lsm303_mag_read(em_float32 *values);
+    em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values);
     em_uint32 adafruit_lsm303_mag_stop(void *);
 
 

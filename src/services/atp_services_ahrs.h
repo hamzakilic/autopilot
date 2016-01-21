@@ -12,6 +12,7 @@
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
 #include "../input/atp_input.h"
+#include "../settings/atp_settings.h"
 #include "../thread/atp_thread.h"
 #include "../common/atp_queue.h"
 #include "../common/atp_time.h"
@@ -30,7 +31,7 @@ typedef struct {
 
 }atp_services_ahrs;
 
-em_uint32 atp_services_ahrs_create(atp_services_ahrs **address,atp_input *input);
+em_uint32 atp_services_ahrs_create(atp_services_ahrs **address,atp_input *input,atp_settings *settings);
 em_uint32 atp_services_ahrs_destroy(atp_services_ahrs *address);
 
 

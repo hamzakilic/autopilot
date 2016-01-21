@@ -1,0 +1,53 @@
+em_uint32 adafruit_l3gd20_gyro_read_raw(em_float32 *values){
+	  em_int32 reading_valid=0;
+
+	          	em_uint32 err=ATP_SUCCESS;
+	          	while(!reading_valid){
+	          		err=adafruit_gyro_read(values);
+	          		/* Check if the sensor is saturating or not */
+	          		      if ( (values[0] >= 32760) | (values[0] <= -32760) |
+	          		           (values[1] >= 32760) | (values[1] <= -32760) |
+	          		           (values[2] >= 32760) | (values[2] <= -32760) )
+	          		      {
+	          		        /* Saturating .... increase the range if we can */
+	          		        switch(_range)
+	          		        {
+	          		          case GYRO_RANGE_500DPS:
+	          		            /* Push the range up to 2000dps */
+	          		            _range = GYRO_RANGE_2000DPS;
+	          		            err=0;//do every operation, | every result, at the end check err
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x00);
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x0F);
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG4, 0x20);
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG5, 0x80);
+	          		            if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
+	          		            reading_valid = 0;
+	          		            // Serial.println("Changing range to 2000DPS");
+	          		            break;
+	          		          case GYRO_RANGE_250DPS:
+	          		            /* Push the range up to 500dps */
+	          		            _range = GYRO_RANGE_500DPS;
+	          		            err=0;//do every operation, | every result, at the end check err
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x00);
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG1, 0x0F);
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG4, 0x10);
+	          		            err|=l3gd20_write16(GYRO_REGISTER_CTRL_REG5, 0x80);
+	          		            if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
+	          		            reading_valid = 0;
+	          		            // Serial.println("Changing range to 500DPS");
+	          		            break;
+	          		          default:
+	          		        	  reading_valid = 1;
+	          		            break;
+	          		        }
+	          		      }
+	          		      else
+	          		      {
+	          		        /* All values are withing range */
+	          		    	  reading_valid = 1;
+	          		      }
+
+
+	          	}
+	          	return err;
+  }

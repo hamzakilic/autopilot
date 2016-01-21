@@ -1,0 +1,85 @@
+em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
+	em_int32 reading_valid = 0;
+		  em_byte data[6];
+		  em_uint32 err=ATP_SUCCESS;
+
+		  em_int32 length;
+		   // while(!reading_valid){
+		    	//read data from register and check
+		    	data[0]=LSM303_REGISTER_MAG_SR_REG_Mg;
+		    	err=lsm303_mag_write8(LSM303_REGISTER_MAG_SR_REG_Mg);
+		    	if(err)
+		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
+		    	length=1;
+		    	err=lsm303_mag_read8(data);
+		    	if(err  || !(data[0] & 0x1) ) {
+		    				return ATP_ERROR_HARDWARE_COMMUNICATION;
+		    	    }
+		    	err=adafruit_mag_read(values);
+		    	if(err)
+		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
+
+
+		    	if ( (values[0] >= 2040) | (values[0] <= -2040) |
+		    	           (values[1] >= 2040) | (values[1] <= -2040) |
+		    	           (values[2] >= 2040) | (values[2] <= -2040) )
+		    	      {
+		    	        /* Saturating .... increase the range if we can */
+		    	        switch(_magGain)
+		    	        {
+		    	          case LSM303_MAGGAIN_5_6:
+		    	            setMagGain(LSM303_MAGGAIN_8_1);
+		    	            reading_valid = 0;
+		    	#ifdef LSM303_DEBUG
+		    	            Serial.println("Changing range to +/- 8.1");
+		    	#endif
+		    	            break;
+		    	          case LSM303_MAGGAIN_4_7:
+		    	            setMagGain(LSM303_MAGGAIN_5_6);
+		    	            reading_valid = 0;
+		    	#ifdef LSM303_DEBUG
+		    	            Serial.println("Changing range to +/- 5.6");
+		    	#endif
+		    	            break;
+		    	          case LSM303_MAGGAIN_4_0:
+		    	            setMagGain(LSM303_MAGGAIN_4_7);
+		    	            reading_valid = 0;
+		    	#ifdef LSM303_DEBUG
+		    	            Serial.println("Changing range to +/- 4.7");
+		    	#endif
+		    	            break;
+		    	          case LSM303_MAGGAIN_2_5:
+		    	            setMagGain(LSM303_MAGGAIN_4_0);
+		    	            reading_valid = 0;
+		    	#ifdef LSM303_DEBUG
+		    	            Serial.println("Changing range to +/- 4.0");
+		    	#endif
+		    	            break;
+		    	          case LSM303_MAGGAIN_1_9:
+		    	            setMagGain(LSM303_MAGGAIN_2_5);
+		    	            reading_valid = 0;
+		    	#ifdef LSM303_DEBUG
+		    	            Serial.println("Changing range to +/- 2.5");
+		    	#endif
+		    	            break;
+		    	          case LSM303_MAGGAIN_1_3:
+		    	            setMagGain(LSM303_MAGGAIN_1_9);
+		    	            reading_valid = 0;
+		    	#ifdef LSM303_DEBUG
+		    	            Serial.println("Changing range to +/- 1.9");
+		    	#endif
+		    	            break;
+		    	          default:
+		    	        	  reading_valid = 1;
+		    	            break;
+		    	        }
+		    	      }
+		    	      else
+		    	      {
+		    	        /* All values are withing range */
+		    	    	  reading_valid = 1;
+		    	      }
+
+		   // }
+		    return ATP_SUCCESS;
+}

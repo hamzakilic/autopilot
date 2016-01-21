@@ -99,6 +99,8 @@
      */
     em_uint32 adafruit_bmp085_temp_press_read(em_float32 *temp,em_float32 *press);
 
+    em_uint32 adafruit_bmp085_temp_press_read_raw(em_float32 *temp,em_float32 *press);
+
 
     /**
      * @brief does not do anything, empty function

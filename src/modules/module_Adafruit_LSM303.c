@@ -7,9 +7,9 @@
 #include "module_Adafruit_LSM303.h"
 
 
-static float _lsm303Accel_MG_LSB     = 0.001F;   // 1, 2, 4 or 12 mg per lsb
-static float _lsm303Mag_Gauss_LSB_XY = 1100.0F;  // Varies with gain
-static float _lsm303Mag_Gauss_LSB_Z  = 980.0F;   // Varies with gain
+static em_float32 _lsm303Accel_MG_LSB     = 0.001F;   // 1, 2, 4 or 12 mg per lsb
+static em_float32 _lsm303Mag_Gauss_LSB_XY = 1100.0F;  // Varies with gain
+static em_float32 _lsm303Mag_Gauss_LSB_Z  = 980.0F;   // Varies with gain
 
 #define SENSORS_GRAVITY_EARTH             (9.80665F)              /**< Earth's gravity in m/s^2 */
 #define SENSORS_GRAVITY_MOON              (1.6F)                  /**< The moon's gravity in m/s^2 */
@@ -122,8 +122,8 @@ em_uint32 adafruit_lsm303_stop(void *param){
 
 
 
-em_uint32 adafruit_lsm303_accel_read(float *values){
-	em_uint32 err;
+em_uint32 adafruit_lsm303_accel_read_raw(em_float32 *values){
+em_uint32 err;
 	em_byte data[6];
 	data[0]=LSM303_REGISTER_ACCEL_OUT_X_L_A | 0x80;
 	err=lsm303_accel_write8(LSM303_REGISTER_ACCEL_OUT_X_L_A | 0x80);
@@ -139,14 +139,19 @@ em_uint32 adafruit_lsm303_accel_read(float *values){
 	 values[0]= (em_int16)(data[0] | (data[1] << 8)) >> 4;
 	 values[1]= (em_int16)(data[2] | (data[3] << 8)) >> 4;
 	 values[2]= (em_int16)(data[4] | (data[5] << 8)) >> 4;
+	 return ATP_SUCCESS;
 
-	 values[0]*=_lsm303Accel_MG_LSB * SENSORS_GRAVITY_STANDARD;
-	 values[1]*=_lsm303Accel_MG_LSB * SENSORS_GRAVITY_STANDARD;
-	 values[2]*=_lsm303Accel_MG_LSB * SENSORS_GRAVITY_STANDARD;
-
+}
 
 
-	return ATP_SUCCESS;
+em_uint32 adafruit_lsm303_accel_read(em_float32 *values){
+
+	em_uint32 err=adafruit_lsm303_accel_read_raw(values);
+	 values[0]*=_lsm303Accel_MG_LSB ;
+	 values[1]*=_lsm303Accel_MG_LSB ;
+	 values[2]*=_lsm303Accel_MG_LSB ;
+
+	return err;
 }
 
 
@@ -289,14 +294,10 @@ em_uint32 adafruit_lsm303_mag_start(void * param){
 
 }
 
-typedef struct {
-	float x;
-	float y;
-	float z;
-}mag_values;
 
-em_uint32 adafruit_mag_read(mag_values *values){
-	em_uint32 err;
+
+em_uint32 adafruit_mag_read(em_float32 *values){
+	em_uint32 err=ATP_SUCCESS;
 			em_byte data[6];
 			data[0]=LSM303_REGISTER_MAG_OUT_X_H_M;
 			err=lsm303_mag_write8(LSM303_REGISTER_MAG_OUT_X_H_M);
@@ -309,107 +310,47 @@ em_uint32 adafruit_mag_read(mag_values *values){
 				  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 				  }
 
-				  values->x = (int16_t)(data[1] | ((int16_t)data[0] << 8));
-				  values->z = (int16_t)(data[3] | ((int16_t)data[2] << 8));
-				  values->y = (int16_t)(data[5] | ((int16_t)data[4] << 8));
+				  values[0] = (em_int16)(data[1] | ((em_int16)data[0] << 8));
+				  values[2] = (em_int16)(data[3] | ((em_int16)data[2] << 8));
+				  values[1] = (em_int16)(data[5] | ((em_int16)data[4] << 8));
 				  return ATP_SUCCESS;
 }
 
+em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
+	em_int32 reading_valid = 0;
+		  em_byte data[6];
+		  em_uint32 err=ATP_SUCCESS;
 
-em_uint32 adafruit_lsm303_mag_read(float *values){
-	  em_int32 reading_valid = 0;
-	  em_byte data[6];
-	  em_uint32 err;
-	  mag_values _magData;
-	  em_int32 length;
-	    while(!reading_valid){
-	    	//read data from register and check
-	    	data[0]=LSM303_REGISTER_MAG_SR_REG_Mg;
-	    	err=lsm303_mag_write8(LSM303_REGISTER_MAG_SR_REG_Mg);
-	    	if(err)
-	    		return ATP_ERROR_HARDWARE_COMMUNICATION;
-	    	length=1;
-	    	err=lsm303_mag_read8(data);
-	    	if(err  || !(data[0] & 0x1) ) {
-	    				return ATP_ERROR_HARDWARE_COMMUNICATION;
-	    	    }
-	    	err=adafruit_mag_read(&_magData);
-	    	if(err)
-	    		return ATP_ERROR_HARDWARE_COMMUNICATION;
+		  em_int32 length;
 
-
-	    	if ( (_magData.x >= 2040) | (_magData.x <= -2040) |
-	    	           (_magData.y >= 2040) | (_magData.y <= -2040) |
-	    	           (_magData.z >= 2040) | (_magData.z <= -2040) )
-	    	      {
-	    	        /* Saturating .... increase the range if we can */
-	    	        switch(_magGain)
-	    	        {
-	    	          case LSM303_MAGGAIN_5_6:
-	    	            setMagGain(LSM303_MAGGAIN_8_1);
-	    	            reading_valid = 0;
-	    	#ifdef LSM303_DEBUG
-	    	            Serial.println("Changing range to +/- 8.1");
-	    	#endif
-	    	            break;
-	    	          case LSM303_MAGGAIN_4_7:
-	    	            setMagGain(LSM303_MAGGAIN_5_6);
-	    	            reading_valid = 0;
-	    	#ifdef LSM303_DEBUG
-	    	            Serial.println("Changing range to +/- 5.6");
-	    	#endif
-	    	            break;
-	    	          case LSM303_MAGGAIN_4_0:
-	    	            setMagGain(LSM303_MAGGAIN_4_7);
-	    	            reading_valid = 0;
-	    	#ifdef LSM303_DEBUG
-	    	            Serial.println("Changing range to +/- 4.7");
-	    	#endif
-	    	            break;
-	    	          case LSM303_MAGGAIN_2_5:
-	    	            setMagGain(LSM303_MAGGAIN_4_0);
-	    	            reading_valid = 0;
-	    	#ifdef LSM303_DEBUG
-	    	            Serial.println("Changing range to +/- 4.0");
-	    	#endif
-	    	            break;
-	    	          case LSM303_MAGGAIN_1_9:
-	    	            setMagGain(LSM303_MAGGAIN_2_5);
-	    	            reading_valid = 0;
-	    	#ifdef LSM303_DEBUG
-	    	            Serial.println("Changing range to +/- 2.5");
-	    	#endif
-	    	            break;
-	    	          case LSM303_MAGGAIN_1_3:
-	    	            setMagGain(LSM303_MAGGAIN_1_9);
-	    	            reading_valid = 0;
-	    	#ifdef LSM303_DEBUG
-	    	            Serial.println("Changing range to +/- 1.9");
-	    	#endif
-	    	            break;
-	    	          default:
-	    	        	  reading_valid = 1;
-	    	            break;
-	    	        }
-	    	      }
-	    	      else
-	    	      {
-	    	        /* All values are withing range */
-	    	    	  reading_valid = 1;
-	    	      }
-
-	    }
-
-	    values[0]= _magData.x / _lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
-	    values[1] = _magData.y / _lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
-	    values[2] = _magData.z / _lsm303Mag_Gauss_LSB_Z * SENSORS_GAUSS_TO_MICROTESLA;
+		    	//read data from register and check
+		    	data[0]=LSM303_REGISTER_MAG_SR_REG_Mg;
+		    	err=lsm303_mag_write8(LSM303_REGISTER_MAG_SR_REG_Mg);
+		    	if(err)
+		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
+		    	length=1;
+		    	err=lsm303_mag_read8(data);
+		    	if(err  || !(data[0] & 0x1) ) {
+		    				return ATP_ERROR_HARDWARE_COMMUNICATION;
+		    	    }
+		    	err=adafruit_mag_read(values);
+		    	if(err)
+		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
 
 
+	    return ATP_SUCCESS;
+}
 
 
+em_uint32 adafruit_lsm303_mag_read(em_float32 *values){
 
 
-	   return ATP_SUCCESS;
+       em_uint32 err=adafruit_lsm303_mag_read_raw(values);
+	    values[0] = values[0]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
+	    values[1] =  values[1]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
+	    values[2] = values[2]/ _lsm303Mag_Gauss_LSB_Z * SENSORS_GAUSS_TO_MICROTESLA;
+       return err;
+
    }
 
 em_uint32 adafruit_lsm303_mag_stop(void * param){

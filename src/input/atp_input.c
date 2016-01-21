@@ -364,7 +364,8 @@ em_uint32 atp_input_create(atp_input **address){
     *address=input;
     return ATP_SUCCESS;
 
-
+    if(input_data->gps_location_ex_lock_key)
+    					atp_thread_destory_lock(input_data->gps_location_ex_lock_key);
 
 }
 em_uint32 atp_input_destroy(atp_input *input){
@@ -380,12 +381,17 @@ em_uint32 atp_input_destroy(atp_input *input){
     				atp_thread_destory_lock(input_data->motor_lock_key);
     			if(input_data->gps_location_ex_lock_key)
     				atp_thread_destory_lock(input_data->gps_location_ex_lock_key);
-    			if(input_data->gps_location_ex_lock_key)
-					atp_thread_destory_lock(input_data->gps_location_ex_lock_key);
+    			if(input_data->gps_location_lock_key)
+    			    				atp_thread_destory_lock(input_data->gps_location_lock_key);
     			if(input_data->ahrs_lock_key)
 					atp_thread_destory_lock(input_data->ahrs_lock_key);
     			if(input_data->dof_lock_key)
 					atp_thread_destory_lock(input_data->dof_lock_key);
+
+
+
+
+
 
 
 

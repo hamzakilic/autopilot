@@ -109,7 +109,8 @@ am_autopilot_OBJECTS = autopilot.$(OBJEXT) autopilot_test.$(OBJEXT) \
 	modules/module_Adafruit_BMP085.$(OBJEXT) \
 	modules/module_Adafruit_PCA9685.$(OBJEXT) \
 	algorithms/MahonyAHRS.$(OBJEXT) \
-	algorithms/MadgwickAHRS.$(OBJEXT) common/atp_time.$(OBJEXT)
+	algorithms/MadgwickAHRS.$(OBJEXT) common/atp_time.$(OBJEXT) \
+	settings/atp_settings.$(OBJEXT)
 autopilot_OBJECTS = $(am_autopilot_OBJECTS)
 autopilot_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
@@ -263,7 +264,7 @@ target_vendor = raspi
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c modules/module_Adafruit_PCA9685.c algorithms/MahonyAHRS.c algorithms/MadgwickAHRS.c common/atp_time.c 
+autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c manager/atp_command_manager.c manager/atp_command_listener.c input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c modules/module_Adafruit_PCA9685.c algorithms/MahonyAHRS.c algorithms/MadgwickAHRS.c common/atp_time.c settings/atp_settings.c 
 AM_CFLAGS = -I/work/projects/tobor/libtobor_io/include 
 AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread -lm
 all: all-am
@@ -435,6 +436,14 @@ algorithms/MadgwickAHRS.$(OBJEXT): algorithms/$(am__dirstamp) \
 	algorithms/$(DEPDIR)/$(am__dirstamp)
 common/atp_time.$(OBJEXT): common/$(am__dirstamp) \
 	common/$(DEPDIR)/$(am__dirstamp)
+settings/$(am__dirstamp):
+	@$(MKDIR_P) settings
+	@: > settings/$(am__dirstamp)
+settings/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) settings/$(DEPDIR)
+	@: > settings/$(DEPDIR)/$(am__dirstamp)
+settings/atp_settings.$(OBJEXT): settings/$(am__dirstamp) \
+	settings/$(DEPDIR)/$(am__dirstamp)
 
 autopilot$(EXEEXT): $(autopilot_OBJECTS) $(autopilot_DEPENDENCIES) $(EXTRA_autopilot_DEPENDENCIES) 
 	@rm -f autopilot$(EXEEXT)
@@ -450,6 +459,7 @@ mostlyclean-compile:
 	-rm -f manager/*.$(OBJEXT)
 	-rm -f modules/*.$(OBJEXT)
 	-rm -f services/*.$(OBJEXT)
+	-rm -f settings/*.$(OBJEXT)
 	-rm -f thread/*.$(OBJEXT)
 
 distclean-compile:
@@ -475,6 +485,7 @@ include modules/$(DEPDIR)/module_Adafruit_PCA9685.Po
 include services/$(DEPDIR)/atp_service_system.Po
 include services/$(DEPDIR)/atp_services_ahrs.Po
 include services/$(DEPDIR)/atp_services_gps.Po
+include settings/$(DEPDIR)/atp_settings.Po
 include thread/$(DEPDIR)/atp_thread.Po
 
 .c.o:
@@ -624,6 +635,8 @@ distclean-generic:
 	-rm -f modules/$(am__dirstamp)
 	-rm -f services/$(DEPDIR)/$(am__dirstamp)
 	-rm -f services/$(am__dirstamp)
+	-rm -f settings/$(DEPDIR)/$(am__dirstamp)
+	-rm -f settings/$(am__dirstamp)
 	-rm -f thread/$(DEPDIR)/$(am__dirstamp)
 	-rm -f thread/$(am__dirstamp)
 
@@ -635,7 +648,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) algorithms/$(DEPDIR) common/$(DEPDIR) controllers/$(DEPDIR) input/$(DEPDIR) log/$(DEPDIR) manager/$(DEPDIR) modules/$(DEPDIR) services/$(DEPDIR) thread/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) algorithms/$(DEPDIR) common/$(DEPDIR) controllers/$(DEPDIR) input/$(DEPDIR) log/$(DEPDIR) manager/$(DEPDIR) modules/$(DEPDIR) services/$(DEPDIR) settings/$(DEPDIR) thread/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -681,7 +694,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) algorithms/$(DEPDIR) common/$(DEPDIR) controllers/$(DEPDIR) input/$(DEPDIR) log/$(DEPDIR) manager/$(DEPDIR) modules/$(DEPDIR) services/$(DEPDIR) thread/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) algorithms/$(DEPDIR) common/$(DEPDIR) controllers/$(DEPDIR) input/$(DEPDIR) log/$(DEPDIR) manager/$(DEPDIR) modules/$(DEPDIR) services/$(DEPDIR) settings/$(DEPDIR) thread/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

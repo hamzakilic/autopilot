@@ -8,10 +8,12 @@
 
 typedef struct {
 	atp_input *input;
+	atp_settings *settings;
 	atp_command_manager *command_manager;
 	atp_command_listener *command_listener;
 	em_uint32 service_system_started;
 	atp_motor_controller *motor_controller;
+	em_int32 pilot_started;
 }atp_pilot_data;
 
 static atp_pilot_data *pilot_data=0;
@@ -25,11 +27,7 @@ em_uint32 atp_pilot_create(atp_pilot **pilot){
     }
     //create necessary structures and reset their values
     pilot_data=atp_malloc(sizeof(atp_pilot_data));
-    pilot_data->command_listener=NULL;
-    pilot_data->command_manager=NULL;
-    pilot_data->input=NULL;
-    pilot_data->service_system_started=0;
-    pilot_data->motor_controller=NULL;
+    atp_fill_zero(pilot_data,sizeof(atp_pilot_data));
     atp_pilot * pilot_temp=atp_malloc(sizeof(atp_pilot));
     *pilot=pilot_temp;
     pilot_temp->private_data=pilot_data;
@@ -76,6 +74,7 @@ void process_command(atp_command *command){
 em_uint32 atp_pilot_start(atp_pilot *pilot){
      atp_pilot_data *pilot_data=(atp_pilot_data *)pilot->private_data;
 
+
      //create input
 	em_uint32 err=0;
         if(pilot_data->input==NULL)
@@ -88,6 +87,20 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Create Input Success \n"));
 
 	    }
+
+//create settings
+	    err=0;
+	    if(pilot_data->settings==NULL)
+	    	err=atp_settings_create(&pilot_data->settings);
+	    if(err)
+	    	    {
+	    	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Create Settings Failed Error:%u\n",err));
+	    	    	return ATP_ERROR_CREATE_INPUT;
+	    	    }else{
+	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Create Settings Success \n"));
+
+	    	    }
+
 
 	    //create command manager
         err=0;
@@ -114,7 +127,7 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 	    //create service system
         err=0;
         if(pilot_data->service_system_started==0)
-	    err=atp_service_system_start(pilot_data->input);
+	    err=atp_service_system_start(pilot_data->input,pilot_data->settings);
 
 	    if(err){
 
@@ -138,6 +151,7 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 
 	        	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Motor Controllers Success \n"));
 	        }
+
 	    return ATP_SUCCESS;
 
 }
@@ -156,6 +170,7 @@ em_uint32 atp_pilot_stop(atp_pilot *pilot){
 		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Command Listener Success \n"));
 
 		    }
+		    pilot_data->command_listener=NULL;
 
 
 		    //stop command manager
@@ -170,6 +185,8 @@ em_uint32 atp_pilot_stop(atp_pilot *pilot){
 		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Command Manager Success \n"));
 
 		    		    }
+		    		    pilot_data->command_manager=NULL;
+
 
 		    		    //stop service system
 err=0;
@@ -184,6 +201,7 @@ if(err)
 		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Stop Service System Success \n"));
 
 		    		    }
+pilot_data->service_system_started=0;
 
 
 //stop motor controller
@@ -199,6 +217,43 @@ if(err)
 		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Stop Motor Controller Success \n"));
 
 		    		    }
+pilot_data->motor_controller=NULL;
+
+
+
+//destroy input
+err=0;
+if(pilot_data->input)
+	err=atp_input_destroy(pilot_data->input);
+
+if(err)
+		    		    {
+		    		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Stop Input  Failed Error:%u\n",err));
+		    		    	return ATP_ERROR_CREATE_INPUT;
+		    		    }else{
+		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Stop Input  Success \n"));
+
+		    		    }
+pilot_data->input=NULL;
+
+//destroy settings
+
+err=0;
+if(pilot_data->settings)
+	err=atp_settings_destroy(pilot_data->settings);
+
+if(err)
+		    		    {
+		    		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Stop Settings  Failed Error:%u\n",err));
+		    		    	return ATP_ERROR_CREATE_INPUT;
+		    		    }else{
+		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Stop Settings  Success \n"));
+
+		    		    }
+pilot_data->settings=NULL;
+
+
+
 
 
 
@@ -206,11 +261,16 @@ if(err)
 
 }
 em_uint32 atp_pilot_destroy(atp_pilot *pilot){
-	if(pilot->private_data)
-	atp_free(pilot->private_data);
-	if(pilot)
+	if(pilot){
+		atp_pilot_stop(pilot);//if it is not stoped check it
+		if(pilot->private_data){
+	      atp_free(pilot->private_data);
+		}
+
 	atp_free(pilot);
+	}
 	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Pilot Success \n"));
+
 
 return ATP_SUCCESS;
 }

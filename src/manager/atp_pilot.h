@@ -10,6 +10,7 @@
 
 #include "../common/atp_common.h"
 #include "../input/atp_input.h"
+#include "../settings/atp_settings.h"
 #include "../services/atp_service_system.h"
 #include "../controllers/atp_motor_controller.h"
 #include "../log/atp_log.h"
