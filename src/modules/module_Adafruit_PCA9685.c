@@ -14,8 +14,8 @@ static em_uint32 pca9685_i2c_write(em_uint8 *data,em_uint32 length)
 	em_uint8 index=0;
 	//try 100 times then return error
 	//
-	for(index=0;index<100;++index){
-		err=em_io_i2c_write(EM_USE_BSC1,slave,data,length);
+	/*for(index=0;index<100;++index){
+		err=em_io_i2c_write(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
 		        	if(!err)
 		        		break;
 		        	else{
@@ -27,27 +27,32 @@ static em_uint32 pca9685_i2c_write(em_uint8 *data,em_uint32 length)
 	if(index==100){
 	           return ATP_ERROR_HARDWARE_COMMUNICATION;
 	        }
-	return ATP_SUCCESS;
+	return ATP_SUCCESS;*/
+	return em_io_i2c_write(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
+
 }
 
-static em_uint32 pca9685_i2c_read(em_uint8 *data,em_uint32 *length)
+static em_uint32 pca9685_i2c_read(em_uint8 *data,em_uint32 length)
 {
 	em_uint32 err;
 	em_uint8 index=0;
-	for(index=0;index<100;++index){
-		err=em_io_i2c_read(EM_USE_BSC1,slave,data,length);
+	/*for(index=0;index<10;++index){
+		err=em_io_i2c_read(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
 		        	if(!err)
 		        		break;
 		        	else{
-		        		atp_log(atp_log_create_string(ATP_LOG_FATAL,"I2C communication failed Errno:\n",err));
+		        		atp_log(atp_log_create_string(ATP_LOG_FATAL,"I2C communication failed Errno:%d\n",err));
 		        	}
 		        	err=0;
 	}
 
 	if(index==100){
 	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	return ATP_SUCCESS;
+	        }*/
+
+	err=em_io_i2c_read(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
+
+	return err;
 }
 
 static em_uint32 init_pca9685(){
@@ -63,7 +68,7 @@ static em_uint32 init_pca9685(){
 	        if(err){
 	           return ATP_ERROR_HARDWARE_COMMUNICATION;
 	        }
-	     	err=pca9685_i2c_read(&oldmod,&length);
+	     	err=pca9685_i2c_read(&oldmod,length);
 	        if(err){
 	           return ATP_ERROR_HARDWARE_COMMUNICATION;
 	        }
@@ -87,7 +92,7 @@ static em_uint32 init_pca9685(){
 	        }
 
 	        em_io_delay_loops(5000);
-	        err=pca9685_i2c_read(&oldmod,&length);
+	        err=pca9685_i2c_read(&oldmod,length);
 	        	        if(err){
 	        	           return ATP_ERROR_HARDWARE_COMMUNICATION;
 	        	        }
@@ -121,17 +126,18 @@ em_uint32 adafruit_pca9685_set(em_uint16 value,em_uint8 pin_number)
 
 	//try 100 times then return error
 	//
-	for(index=0;index<100;++index){
-		err=em_io_i2c_write(EM_USE_BSC1,slave,datapwm,5);
-		        	if(!err)
-		        		break;
-		        err=0;
-	}
+	//for(index=0;index<10;++index){
+		err=em_io_i2c_write(EM_USE_BSC1,slave,datapwm,5,EM_TIMEOUT_ONE_SECOND);
+		        //	if(!err)
+		        //		break;
+		        //err=0;
+	//}
 
-	if(index==100){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	return ATP_SUCCESS;
+	//if(index==10){
+	  //         return ATP_ERROR_HARDWARE_COMMUNICATION;
+	   //     }
+		return err;
+	//return ATP_SUCCESS;
 }
 
 

@@ -11,20 +11,20 @@
 inline em_uint32 bmp085_read8(em_byte *data){
 
     em_int32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,data,&length);
+    return em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
 }
 inline em_uint32 bmp085_read16(em_uint16 *data){
    em_byte temp[2];
     em_int32 length=2;
     em_uint32 err;
-    err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,temp,&length);
+    err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,temp,length,EM_TIMEOUT_ONE_SECOND);
     *data= (temp[0]<<8) | (temp[1]);
     return err;
 }
 inline em_uint32 bmp085_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,1);
+	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,1,EM_TIMEOUT_ONE_SECOND);
 }
 inline em_uint32 bmp085_read16from(em_byte address,em_uint16 *value){
 	    em_uint32 err;
@@ -46,7 +46,7 @@ inline em_uint32 bmp085_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,2);
+	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,2,EM_TIMEOUT_ONE_SECOND);
 }
 
 static em_uint8           _bmp085Mode;

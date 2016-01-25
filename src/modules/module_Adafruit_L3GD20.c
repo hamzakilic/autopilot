@@ -11,25 +11,25 @@ static gyroRange_t _range;
 inline em_uint32 l3gd20_read8(em_byte *data){
 
     em_int32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&length);
+    return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
 }
 inline em_uint32 l3gd20_read16(em_byte *data){
 
     em_int32 length=2;
-    return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&length);
+    return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
 }
 
 inline em_uint32 l3gd20_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,1);
+	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,1,EM_TIMEOUT_ONE_SECOND);
 }
 
 inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,2);
+	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,2,EM_TIMEOUT_ONE_SECOND);
 }
 
 
@@ -157,7 +157,7 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 	  em_uint32 err;
 	  err=l3gd20_write8(GYRO_REGISTER_OUT_X_L | 0x80);
 	  if(err)return err;
-	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,&lenght);
+	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,lenght,EM_TIMEOUT_ONE_SECOND);
 	  if(err) return err;
 	  gyro[0] = (em_int16)(data[0] | (data[1] << 8));
 	  gyro[1] =(em_int16) (data[2] | (data[3] << 8));

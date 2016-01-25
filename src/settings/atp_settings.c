@@ -29,7 +29,7 @@ em_uint32 atp_settings_create(atp_settings **address){
 	atp_fill_zero(data,sizeof(atp_settings_data));
 	settings->private_data=data;
 	data->gravity=9.8029f;
-	data->dof_calibration=1;
+	data->dof_calibration=0;
 	data->sea_level_pressure=1023.1f;
 	atp_thread_create_lock(&data->gravity_lock);
 	atp_thread_create_lock(&data->dof_calibration_lock);

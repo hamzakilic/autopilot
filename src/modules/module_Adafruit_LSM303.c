@@ -26,7 +26,7 @@ inline em_uint32 i2c_try_read(em_uint16 address,em_uint8 *data,em_uint32  *lengh
 	em_uint32 try=0;
 	em_uint32 err;
 	 for(try=0;try<100;++try){
-		  err=em_io_i2c_read(EM_USE_BSC1,address,data,lenght);
+		  err=em_io_i2c_read(EM_USE_BSC1,address,data,lenght,EM_TIMEOUT_ONE_SECOND);
 		    if(!err)
 		    	break;
 	      }
@@ -45,13 +45,13 @@ inline em_uint32 i2c_try_read(em_uint16 address,em_uint8 *data,em_uint32  *lengh
 inline em_uint32 lsm303_accel_read8(em_byte *data){
 
     em_uint32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,&length);
+    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,length,EM_TIMEOUT_ONE_SECOND);
 }
 inline em_uint32 lsm303_accel_read16(em_uint16 *data){
     em_byte temp[2];
     em_int32 length=2;
     em_uint32 err;
-    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,temp,&length);
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,temp,length,EM_TIMEOUT_ONE_SECOND);
     *data=temp[0]<<8||temp[1];
     return err;
 }
@@ -59,14 +59,14 @@ inline em_uint32 lsm303_accel_read16(em_uint16 *data){
 inline em_uint32 lsm303_accel_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,1);
+	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,1,EM_TIMEOUT_ONE_SECOND);
 }
 
 inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,2);
+	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,2,EM_TIMEOUT_ONE_SECOND);
 }
 
 
@@ -131,14 +131,16 @@ em_uint32 err;
 		     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 	 }
 	 em_uint32 lenght=6;
-	 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,&lenght);
+	 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,lenght,EM_TIMEOUT_ONE_SECOND);
 		  if(err){
 		  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
 
+
 	 values[0]= (em_int16)(data[0] | (data[1] << 8)) >> 4;
 	 values[1]= (em_int16)(data[2] | (data[3] << 8)) >> 4;
 	 values[2]= (em_int16)(data[4] | (data[5] << 8)) >> 4;
+	 //printf("accelx:%f\n",values[0]);
 	 return ATP_SUCCESS;
 
 }
@@ -170,25 +172,25 @@ static em_int32 _magGain;
 inline em_uint32 lsm303_mag_read8(em_byte *data){
 
     em_int32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,&length);
+    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,length,EM_TIMEOUT_ONE_SECOND);
 }
 inline em_uint32 lsm303_mag_read16(em_byte *data){
 
     em_int32 length=2;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,&length);
+    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,length,EM_TIMEOUT_ONE_SECOND);
 }
 
 inline em_uint32 lsm303_mag_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,1);
+	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,1,EM_TIMEOUT_ONE_SECOND);
 }
 
 inline em_uint32 lsm303_mag_write16(em_byte reg,em_byte val){
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,2);
+	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,2,EM_TIMEOUT_ONE_SECOND);
 }
 
 
@@ -305,7 +307,7 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 				     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 			 }
 			 em_uint32 lenght=6;
-			 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,&lenght);
+			 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,lenght,EM_TIMEOUT_ONE_SECOND);
 				  if(err){
 				  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 				  }
