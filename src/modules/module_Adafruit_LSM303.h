@@ -12,6 +12,7 @@
 
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
+#include "module_common.h"
 
 /*=========================================================================
     I2C ADDRESS/BITS

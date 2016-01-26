@@ -48,7 +48,9 @@ em_int32 err=ATP_SUCCESS;
 
 #ifdef COMPILE_LSM303
       err |= adafruit_lsm303_accel_read(accel_values);
+
       err |= adafruit_lsm303_mag_read(mag_values);
+
 
 #endif
 #ifdef COMPILE_L3GD20
@@ -115,7 +117,7 @@ em_int32 err=ATP_SUCCESS;
 
       }else{
     	  //todo:what will happen if error occures,continues too much
-    	  printf("ahrs system exception\n");
+    	  //printf("ahrs system exception\n");
       }
 }
 

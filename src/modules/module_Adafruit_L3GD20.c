@@ -33,9 +33,12 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 }
 
 
+static frame gyro_frame;
+
  em_uint32 adafruit_l3gd20_gyro_start(void *parameters){
         	em_uint32 err;
         	em_byte data[6];
+        	atp_fill_zero(&gyro_frame,sizeof(frame));
         	/* Make sure we have the correct chip ID since this checks
         	     for correct address and that the IC is properly connected */
         	data[0]=GYRO_REGISTER_WHO_AM_I;
@@ -159,9 +162,25 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 	  if(err)return err;
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,lenght,EM_TIMEOUT_ONE_SECOND);
 	  if(err) return err;
+
+	  em_int32 i;
+	  for(i=1;i<DIMSIZE;++i){
+		  gyro_frame.x[i-1]=gyro_frame.x[i];
+		  gyro_frame.y[i-1]=gyro_frame.x[i];
+		  gyro_frame.z[i-1]=gyro_frame.z[i];
+	  }
+
+	  gyro_frame.x[DIMSIZE-1]=(em_int16)(data[0] | (data[1] << 8));
+	  gyro_frame.y[DIMSIZE-1]=(em_int16) (data[2] | (data[3] << 8));
+	  gyro_frame.z[DIMSIZE-1]=(em_int16)(data[4] | (data[5] << 8));
+
+	  /*
 	  gyro[0] = (em_int16)(data[0] | (data[1] << 8));
 	  gyro[1] =(em_int16) (data[2] | (data[3] << 8));
-	  gyro[2] = (em_int16)(data[4] | (data[5] << 8));
+	  gyro[2] = (em_int16)(data[4] | (data[5] << 8));*/
+	  gyro[0]=find_median(gyro_frame.x,DIMSIZE);
+	  gyro[1]=find_median(gyro_frame.y,DIMSIZE);
+	  gyro[2]=find_median(gyro_frame.z,DIMSIZE);
 
 	  return ATP_SUCCESS;
 
@@ -213,6 +232,7 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
         em_uint32 adafruit_l3gd20_gyro_stop(void *parameters){
         	return ATP_SUCCESS;
         }
+
 
 
 
