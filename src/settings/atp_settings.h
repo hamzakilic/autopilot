@@ -47,11 +47,19 @@ em_float32 atp_settings_get_sea_level_pressure(atp_settings *settings);
 
 
 /**
- * @brief get acceleration standart deviation x values
+ * @brief get acceleration  bias  values
  */
-em_float32 atp_settings_get_acceleration_stdx(atp_settings *settings);
-em_float32 atp_settings_get_acceleration_stdy(atp_settings *settings);
-em_float32 atp_settings_get_acceleration_stdz(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_biasx(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_biasy(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_biasz(atp_settings *settings);
+
+/**
+ * @brief get accerelation scale values
+ */
+em_float32 atp_settings_get_acceleration_scalex(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_scaley(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_scalez(atp_settings *settings);
+
 
 
 

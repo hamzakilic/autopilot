@@ -161,7 +161,7 @@
      * @param std_values send acceleration standart deviation values as x,y,z
      * @return ATP_SUCESS or ATP_???? failure numbers
      */
-    em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *std_values);
+    em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *bias_values,const em_float32 *scale_values);
 
 
 

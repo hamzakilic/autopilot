@@ -109,6 +109,13 @@ em_uint32 adafruit_lsm303_accel_start(void * param){
 	  }
 
 
+	  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG4_A,0x0);
+	  	  if(err){
+
+	  		  return ATP_ERROR_HARDWARE_COMMUNICATION;
+	  	  }
+
+
 	  em_uint8 reg1_a =data[0];// read8(LSM303_ADDRESS_ACCEL, LSM303_REGISTER_ACCEL_CTRL_REG1_A);
 	  if (reg1_a != 0x57)
 	  {
@@ -153,12 +160,14 @@ em_uint32 err;
     accel_frames.z[DIMSIZE-1] =(em_int16)(data[4] | (data[5] << 8)) >> 4;
 
 
+
  	/* values[0]= (em_int16)(data[0] | (data[1] << 8)) >> 4;
 	 values[1]= (em_int16)(data[2] | (data[3] << 8)) >> 4;
 	 values[2]= (em_int16)(data[4] | (data[5] << 8)) >> 4;*/
     values[0]=find_median(accel_frames.x,DIMSIZE);
     values[1]=find_median(accel_frames.y,DIMSIZE);
     values[2]=find_median(accel_frames.z,DIMSIZE);
+   // printf("%8.5f %8.5f %8.5f\n",values[0],values[1],values[2]);
 
 
 	 return ATP_SUCCESS;
@@ -166,12 +175,15 @@ em_uint32 err;
 }
 
 
-em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *std_values){
+em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *bias_values,const em_float32 *scale_values){
 
 	em_uint32 err=adafruit_lsm303_accel_read_raw(values);
-     values[0]-=std_values[0];
-     values[1]-=std_values[1];
-     values[2]-=std_values[2];
+	values[0]*=scale_values[0];
+	values[1]*=scale_values[1];
+	values[2]*=scale_values[2];
+     values[0]-=bias_values[0];
+     values[1]-=bias_values[1];
+     values[2]-=bias_values[2];
 	 values[0]*=_lsm303Accel_MG_LSB ;
 	 values[1]*=_lsm303Accel_MG_LSB ;
 	 values[2]*=_lsm303Accel_MG_LSB ;

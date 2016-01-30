@@ -20,9 +20,15 @@ typedef struct{
 
 	//no need to create a thread lock
 	//it will change sometimes
-	em_float32  acceleration_stdx;
-	em_float32  acceleration_stdy;
-	em_float32  acceleration_stdz;
+	em_float32  acceleration_biasx;
+	em_float32  acceleration_biasy;
+	em_float32  acceleration_biasz;
+	//no need to create a thread lock
+		//it will change sometimes
+	em_float32  acceleration_scalex;
+	em_float32  acceleration_scaley;
+	em_float32  acceleration_scalez;
+
 
 
 
@@ -38,8 +44,14 @@ em_uint32 atp_settings_create(atp_settings **address){
 	atp_fill_zero(data,sizeof(atp_settings_data));
 	settings->private_data=data;
 	data->gravity=9.8029f;
-	data->dof_calibration=1;
+	data->dof_calibration=0;
 	data->sea_level_pressure=1023.1f;
+	data->acceleration_biasx=1.4932f;
+	data->acceleration_biasy=1.3905f;
+	data->acceleration_biasz=2.1590f;
+	data->acceleration_scalex=2000.0f/(1036+1088);
+	data->acceleration_scaley=2000.0f/(1060+1056);
+	data->acceleration_scalez=2000.0f/(1036+1100);
 	atp_thread_create_lock(&data->gravity_lock);
 	atp_thread_create_lock(&data->dof_calibration_lock);
 	atp_thread_create_lock(&data->sea_level_pressure_lock);
@@ -94,32 +106,60 @@ em_int32 atp_settings_get_dof_calibration(atp_settings *settings){
 	}
 
 
-em_float32 atp_settings_get_acceleration_stdx(atp_settings *settings){
+em_float32 atp_settings_get_acceleration_biasx(atp_settings *settings){
 	if(settings)
 				if(settings->private_data){
 					atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
-					return data->acceleration_stdx;
+					return data->acceleration_biasx;
 				}
 			return -1;
 
 }
-em_float32 atp_settings_get_acceleration_stdy(atp_settings *settings){
+em_float32 atp_settings_get_acceleration_biasy(atp_settings *settings){
 	if(settings)
 					if(settings->private_data){
 						atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
-						return data->acceleration_stdy;
+						return data->acceleration_biasy;
 					}
 				return -1;
 
 }
-em_float32 atp_settings_get_acceleration_stdz(atp_settings *settings){
+em_float32 atp_settings_get_acceleration_biasz(atp_settings *settings){
 	if(settings)
 					if(settings->private_data){
 						atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
-						return data->acceleration_stdz;
+						return data->acceleration_biasz;
 					}
 				return -1;
 }
+
+em_float32 atp_settings_get_acceleration_scalex(atp_settings *settings){
+	if(settings)
+						if(settings->private_data){
+							atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+							return data->acceleration_scalex;
+						}
+					return -1;
+}
+em_float32 atp_settings_get_acceleration_scaley(atp_settings *settings){
+	if(settings)
+							if(settings->private_data){
+								atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+								return data->acceleration_scaley;
+							}
+						return -1;
+
+}
+em_float32 atp_settings_get_acceleration_scalez(atp_settings *settings){
+	if(settings)
+							if(settings->private_data){
+								atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+								return data->acceleration_scalez;
+							}
+						return -1;
+
+}
+
 
 
 
