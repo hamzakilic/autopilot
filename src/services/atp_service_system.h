@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_SERVICE_SYSTEM_H_
-#define ATP_SERVICE_SYSTEM_H_
+#ifndef AUTOPILOTC_SRC_SERVICES_ATP_SERVICE_SYSTEM_H_
+#define AUTOPILOTC_SRC_SERVICES_ATP_SERVICE_SYSTEM_H_
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
 #include "../input/atp_input.h"
@@ -18,4 +18,4 @@ em_uint32  atp_service_system_start(atp_input *input,atp_settings *settings);
 em_uint32 atp_service_system_stop();
 
 
-#endif /* ATP_SERVICE_SYSTEM_H_ */
+#endif /* AUTOPILOTC_SRC_SERVICES_ATP_SERVICE_SYSTEM_H_ */

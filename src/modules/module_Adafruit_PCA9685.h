@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef MODULE_ADAFRUIT_PCA9685_H_
-#define MODULE_ADAFRUIT_PCA9685_H_
+#ifndef AUTOPILOTC_SRC_MODULES_MODULE_ADAFRUIT_PCA9685_H_
+#define AUTOPILOTC_SRC_MODULES_MODULE_ADAFRUIT_PCA9685_H_
 
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
@@ -54,4 +54,4 @@ em_uint32 adafruit_pca9685_stop(void *parameter);
 
 
 
-#endif /* MODULE_ADAFRUIT_PCA9685_H_ */
+#endif /* AUTOPILOTC_SRC_MODULES_MODULE_ADAFRUIT_PCA9685_H_ */

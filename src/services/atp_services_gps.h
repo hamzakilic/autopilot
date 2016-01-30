@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_SERVICES_GPS_H_
-#define ATP_SERVICES_GPS_H_
+#ifndef AUTOPILOTC_SRC_SERVICES_ATP_SERVICES_GPS_H_
+#define AUTOPILOTC_SRC_SERVICES_ATP_SERVICES_GPS_H_
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
 #include "../input/atp_input.h"
@@ -22,4 +22,4 @@ typedef struct {
 em_uint32 atp_services_gps_create(atp_services_gps **address,atp_input *input);
 em_uint32 atp_services_gps_destroy(atp_services_gps *address);
 
-#endif /* ATP_SERVICES_GPS_H_ */
+#endif /* AUTOPILOTC_SRC_SERVICES_ATP_SERVICES_GPS_H_ */

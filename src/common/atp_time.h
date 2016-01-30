@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_TIME_H_
-#define ATP_TIME_H_
+#ifndef AUTOPILOTC_SRC_COMMON_ATP_TIME_H_
+#define AUTOPILOTC_SRC_COMMON_ATP_TIME_H_
 
 #include <sys/time.h>
 #include "atp_common.h"
@@ -16,4 +16,4 @@
  */
 em_uint64 atp_datetime_as_microseconds();
 
-#endif /* ATP_TIME_H_ */
+#endif /* AUTOPILOTC_SRC_COMMON_ATP_TIME_H_ */

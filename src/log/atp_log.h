@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_LOG_H_
-#define ATP_LOG_H_
+#ifndef AUTOPILOTC_SRC_LOG_ATP_LOG_H_
+#define AUTOPILOTC_SRC_LOG_ATP_LOG_H_
 
 
 #include <stdarg.h>
@@ -39,4 +39,4 @@ void atp_log_raw(atp_log_data *data);
 
 atp_log_data* atp_log_create_string(em_uint8 log_type, const char *fmt,...);
 
-#endif /* ATP_LOG_H_ */
+#endif /* AUTOPILOTC_SRC_LOG_ATP_LOG_H_ */

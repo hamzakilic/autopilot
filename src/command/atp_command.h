@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_COMMAND_H_
-#define ATP_COMMAND_H_
+#ifndef AUTOPILOTC_SRC_COMMAND_ATP_COMMAND_H_
+#define AUTOPILOTC_SRC_COMMAND_ATP_COMMAND_H_
 
 #include "../common/atp_common.h"
 
@@ -35,4 +35,4 @@ typedef struct{
 #define ATP_COMMAND_TEST 1
 #define ATP_COMMAND_MOTOR 2
 
-#endif /* ATP_COMMAND_H_ */
+#endif /* AUTOPILOTC_SRC_COMMAND_ATP_COMMAND_H_ */

@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_COMMAND_LISTENER_H_
-#define ATP_COMMAND_LISTENER_H_
+#ifndef AUTOPILOTC_SRC_MANAGER_ATP_COMMAND_LISTENER_H_
+#define AUTOPILOTC_SRC_MANAGER_ATP_COMMAND_LISTENER_H_
 
 
 
@@ -20,4 +20,4 @@ typedef struct{
 em_uint32 atp_command_listener_create(atp_command_listener **command_listener,atp_command_manager *command_manager);
 em_uint32 atp_command_listener_destroy(atp_command_listener *command_listener);
 
-#endif /* ATP_COMMAND_LISTENER_H_ */
+#endif /* AUTOPILOTC_SRC_MANAGER_ATP_COMMAND_LISTENER_H_ */

@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef MODULE_COMMON_H_
-#define MODULE_COMMON_H_
+#ifndef AUTOPILOTC_SRC_MODULES_MODULE_COMMON_H_
+#define AUTOPILOTC_SRC_MODULES_MODULE_COMMON_H_
 
 #include "../common/atp_common.h"
 
@@ -23,4 +23,4 @@ typedef struct{
 inline em_int16 find_median(em_int16 *x,em_int32 n);
 
 
-#endif /* MODULE_COMMON_H_ */
+#endif /* AUTOPILOTC_SRC_MODULES_MODULE_COMMON_H_ */

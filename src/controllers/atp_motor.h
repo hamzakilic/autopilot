@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_MOTOR_H_
-#define ATP_MOTOR_H_
+#ifndef AUTOPILOTC_SRC_CONTROLLERS_ATP_MOTOR_H_
+#define AUTOPILOTC_SRC_CONTROLLERS_ATP_MOTOR_H_
 
 #include "../common/atp_common.h"
 #include "../input/atp_input.h"
@@ -28,4 +28,4 @@ em_uint32 atp_motor_start(atp_motor *motor);
 em_uint32 atp_motor_stop(atp_motor *motor);
 em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level);
 
-#endif /* ATP_MOTOR_H_ */
+#endif /* AUTOPILOTC_SRC_CONTROLLERS_ATP_MOTOR_H_ */

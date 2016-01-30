@@ -78,6 +78,7 @@ inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
 
 static frame accel_frames;
 
+
 em_uint32 adafruit_lsm303_accel_start(void * param){
 
 	em_uint32 err;
@@ -147,6 +148,7 @@ em_uint32 err;
              accel_frames.z[i-1] =accel_frames.z[i];
 		  }
     accel_frames.x[DIMSIZE-1] =(em_int16)(data[0] | (data[1] << 8)) >> 4;
+
     accel_frames.y[DIMSIZE-1] =(em_int16)(data[2] | (data[3] << 8)) >> 4;
     accel_frames.z[DIMSIZE-1] =(em_int16)(data[4] | (data[5] << 8)) >> 4;
 
@@ -164,9 +166,12 @@ em_uint32 err;
 }
 
 
-em_uint32 adafruit_lsm303_accel_read(em_float32 *values){
+em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *std_values){
 
 	em_uint32 err=adafruit_lsm303_accel_read_raw(values);
+     values[0]-=std_values[0];
+     values[1]-=std_values[1];
+     values[2]-=std_values[2];
 	 values[0]*=_lsm303Accel_MG_LSB ;
 	 values[1]*=_lsm303Accel_MG_LSB ;
 	 values[2]*=_lsm303Accel_MG_LSB ;

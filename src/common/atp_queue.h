@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_QUEUE_H_
-#define ATP_QUEUE_H_
+#ifndef AUTOPILOTC_SRC_COMMON_ATP_QUEUE_H_
+#define AUTOPILOTC_SRC_COMMON_ATP_QUEUE_H_
 #include "atp_common.h"
 
 
@@ -23,4 +23,4 @@ void * atp_queue_pop(atp_queue *queue);
 
 
 
-#endif /* ATP_QUEUE_H_ */
+#endif /* AUTOPILOTC_SRC_COMMON_ATP_QUEUE_H_ */

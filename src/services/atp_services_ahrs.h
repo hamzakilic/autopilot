@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_SERVICES_AHRS_H_
-#define ATP_SERVICES_AHRS_H_
+#ifndef AUTOPILOTC_SRC_SERVICES_ATP_SERVICES_AHRS_H_
+#define AUTOPILOTC_SRC_SERVICES_ATP_SERVICES_AHRS_H_
 
 #include <math.h>
 #include "../common/atp_common.h"
@@ -35,4 +35,4 @@ em_uint32 atp_services_ahrs_create(atp_services_ahrs **address,atp_input *input,
 em_uint32 atp_services_ahrs_destroy(atp_services_ahrs *address);
 
 
-#endif /* ATP_SERVICES_AHRS_H_ */
+#endif /* AUTOPILOTC_SRC_SERVICES_ATP_SERVICES_AHRS_H_ */

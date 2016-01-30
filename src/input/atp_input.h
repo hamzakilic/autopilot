@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_INPUT_H_
-#define ATP_INPUT_H_
+#ifndef AUTOPILOTC_SRC_INPUT_ATP_INPUT_H_
+#define AUTOPILOTC_SRC_INPUT_ATP_INPUT_H_
 #include "../common/atp_common.h"
 #include "../thread/atp_thread.h"
 #include "../log/atp_log.h"
@@ -117,4 +117,4 @@ em_uint32 atp_input_update_ahrs(atp_input *input,atp_ahrs_data data);
 
 
 
-#endif /* ATP_INPUT_H_ */
+#endif /* AUTOPILOTC_SRC_INPUT_ATP_INPUT_H_ */

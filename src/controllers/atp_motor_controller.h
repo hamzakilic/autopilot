@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_MOTOR_CONTROLLER_H_
-#define ATP_MOTOR_CONTROLLER_H_
+#ifndef AUTOPILOTC_SRC_CONTROLLERS_ATP_MOTOR_CONTROLLER_H_
+#define AUTOPILOTC_SRC_CONTROLLERS_ATP_MOTOR_CONTROLLER_H_
 
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
@@ -38,4 +38,4 @@ em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller
 
 
 
-#endif /* ATP_MOTOR_CONTROLLER_H_ */
+#endif /* AUTOPILOTC_SRC_CONTROLLERS_ATP_MOTOR_CONTROLLER_H_ */

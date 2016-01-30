@@ -7,12 +7,14 @@
  *
  */
 
-#ifndef MODULE_ADAFRUIT_LSM303_H_
-#define MODULE_ADAFRUIT_LSM303_H_
+#ifndef AUTOPILOTC_SRC_MODULES_MODULE_ADAFRUIT_LSM303_H_
+#define AUTOPILOTC_SRC_MODULES_MODULE_ADAFRUIT_LSM303_H_
 
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
 #include "module_common.h"
+
+
 
 /*=========================================================================
     I2C ADDRESS/BITS
@@ -156,9 +158,10 @@
      * acceleration values are in meter per second per second (m/s^2)
      *
      * @param values send 3 dimension float array
+     * @param std_values send acceleration standart deviation values as x,y,z
      * @return ATP_SUCESS or ATP_???? failure numbers
      */
-    em_uint32 adafruit_lsm303_accel_read(em_float32 *values);
+    em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *std_values);
 
 
 
@@ -196,4 +199,4 @@
     em_uint32 adafruit_lsm303_mag_stop(void *);
 
 
-#endif /* MODULE_ADAFRUIT_LSM303_H_ */
+#endif /* AUTOPILOTC_SRC_MODULES_MODULE_ADAFRUIT_LSM303_H_ */

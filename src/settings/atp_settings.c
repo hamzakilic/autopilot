@@ -17,6 +17,15 @@ typedef struct{
 
 	em_float32 sea_level_pressure;
 	void *sea_level_pressure_lock;
+
+	//no need to create a thread lock
+	//it will change sometimes
+	em_float32  acceleration_stdx;
+	em_float32  acceleration_stdy;
+	em_float32  acceleration_stdz;
+
+
+
 }atp_settings_data;
 
 
@@ -83,6 +92,36 @@ em_int32 atp_settings_get_dof_calibration(atp_settings *settings){
 			}
 		return -1;
 	}
+
+
+em_float32 atp_settings_get_acceleration_stdx(atp_settings *settings){
+	if(settings)
+				if(settings->private_data){
+					atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+					return data->acceleration_stdx;
+				}
+			return -1;
+
+}
+em_float32 atp_settings_get_acceleration_stdy(atp_settings *settings){
+	if(settings)
+					if(settings->private_data){
+						atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+						return data->acceleration_stdy;
+					}
+				return -1;
+
+}
+em_float32 atp_settings_get_acceleration_stdz(atp_settings *settings){
+	if(settings)
+					if(settings->private_data){
+						atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+						return data->acceleration_stdz;
+					}
+				return -1;
+}
+
+
 
 em_float32 atp_settings_get_sea_level_pressure(atp_settings *settings){
 	if(settings)

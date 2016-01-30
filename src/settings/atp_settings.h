@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_SETTINGS_H_
-#define ATP_SETTINGS_H_
+#ifndef AUTOPILOTC_SRC_SETTINGS_ATP_SETTINGS_H_
+#define AUTOPILOTC_SRC_SETTINGS_ATP_SETTINGS_H_
 
 #include "../common/atp_common.h"
 #include "../thread/atp_thread.h"
@@ -14,7 +14,7 @@
 /**
  * @brief system settings table
  * forexample gravity of location
- *
+ * or acceleration standart deviations
  */
 
 typedef struct{
@@ -46,8 +46,15 @@ em_int32 atp_settings_get_dof_calibration(atp_settings *settings);
 em_float32 atp_settings_get_sea_level_pressure(atp_settings *settings);
 
 
+/**
+ * @brief get acceleration standart deviation x values
+ */
+em_float32 atp_settings_get_acceleration_stdx(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_stdy(atp_settings *settings);
+em_float32 atp_settings_get_acceleration_stdz(atp_settings *settings);
 
 
 
 
-#endif /* ATP_SETTINGS_H_ */
+
+#endif /* AUTOPILOTC_SRC_SETTINGS_ATP_SETTINGS_H_ */

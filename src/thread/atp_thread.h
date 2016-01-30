@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_THREAD_H_
-#define ATP_THREAD_H_
+#ifndef AUTOPILOTC_SRC_THREAD_ATP_THREAD_H_
+#define AUTOPILOTC_SRC_THREAD_ATP_THREAD_H_
 #include <pthread.h>
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
@@ -22,4 +22,4 @@ em_uint32 atp_thread_unlock(void *lock_key);
 em_uint32 atp_thread_destory_lock(void *lock_key);
 
 
-#endif /* ATP_THREAD_H_ */
+#endif /* AUTOPILOTC_SRC_THREAD_ATP_THREAD_H_ */

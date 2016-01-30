@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_COMMAND_MANAGER_H_
-#define ATP_COMMAND_MANAGER_H_
+#ifndef AUTOPILOTC_SRC_MANAGER_ATP_COMMAND_MANAGER_H_
+#define AUTOPILOTC_SRC_MANAGER_ATP_COMMAND_MANAGER_H_
 
 #include "../common/atp_common.h"
 #include "../common/atp_queue.h"
@@ -24,4 +24,4 @@ em_uint32  atp_command_manager_destroy(atp_command_manager * controller);
 em_uint32  atp_command_manager_add(atp_command *command,atp_command_manager *to);
 
 
-#endif /* ATP_COMMAND_MANAGER_H_ */
+#endif /* AUTOPILOTC_SRC_MANAGER_ATP_COMMAND_MANAGER_H_ */

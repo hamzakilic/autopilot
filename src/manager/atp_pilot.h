@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_PILOT_H_
-#define ATP_PILOT_H_
+#ifndef AUTOPILOTC_SRC_MANAGER_ATP_PILOT_H_
+#define AUTOPILOTC_SRC_MANAGER_ATP_PILOT_H_
 
 #include "../common/atp_common.h"
 #include "../input/atp_input.h"
@@ -28,4 +28,4 @@ em_uint32 atp_pilot_start(atp_pilot *pilot);
 em_uint32 atp_pilot_stop(atp_pilot *pilot);
 em_uint32 atp_pilot_destroy(atp_pilot *pilot);
 
-#endif /* ATP_PILOT_H_ */
+#endif /* AUTOPILOTC_SRC_MANAGER_ATP_PILOT_H_ */

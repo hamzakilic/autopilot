@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_COMMON_H_
-#define ATP_COMMON_H_
+#ifndef AUTOPILOTC_SRC_COMMON_ATP_COMMON_H_
+#define AUTOPILOTC_SRC_COMMON_ATP_COMMON_H_
 
 #include <string.h>
 #include <stdlib.h>
@@ -69,4 +69,4 @@
 
 
 
-#endif /* ATP_COMMON_H_ */
+#endif /* AUTOPILOTC_SRC_COMMON_ATP_COMMON_H_ */

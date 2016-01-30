@@ -32,7 +32,12 @@ inline em_int16 find_median(em_int16 *x,em_int32 n){
 
 	  }
 	}
+	 /* for (c = 0 ; c < ( n - 1 ); c++)
+		  printf("%d ",temp[c]);
+	  printf(" ret:%d",temp[n/2]);
+	  printf("\n");*/
 
-	  return x[n/2];
+
+	  return temp[n/2];
 
 }
