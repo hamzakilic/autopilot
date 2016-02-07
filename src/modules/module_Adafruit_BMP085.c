@@ -94,6 +94,7 @@ static em_uint32  read_coefficients(void)
 }
 
 
+static frame tempreature_frame;
 
 static em_uint32 read_raw_temperature(em_int32 *temperature)
 {
@@ -106,14 +107,22 @@ static em_uint32 read_raw_temperature(em_int32 *temperature)
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
     em_io_delay_microseconds(10000);
     err=bmp085_read16from(BMP085_REGISTER_TEMPDATA, &t);
-    *temperature = t;
+
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
+
+    em_int32 i;
+    	  for(i=1;i<DIMSIZE;++i){
+    		  tempreature_frame.x_u16[i-1]=tempreature_frame.x_u16[i];
+    	  }
+    	  tempreature_frame.x_u16[DIMSIZE-1]=t;
+    *temperature = find_median_u16(tempreature_frame.x_u16,DIMSIZE);
+
 
   #endif
     return ATP_SUCCESS;
 }
 
-
+static frame pressure_frame;
 static em_uint32 read_raw_pressure(em_int32 *pressure)
 {
   #if BMP085_USE_DATASHEET_VALS
@@ -145,12 +154,22 @@ static em_uint32 read_raw_pressure(em_int32 *pressure)
 
     err=bmp085_read16from(BMP085_REGISTER_PRESSUREDATA, &p16);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
+
     p32 = (em_uint32)p16 << 8;
     err=bmp085_read8from(BMP085_REGISTER_PRESSUREDATA+2, &p8);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
     p32 += p8;
     p32 >>= (8 - _bmp085Mode);
-    *pressure = p32;
+
+
+    em_int32 i;
+       	  for(i=1;i<DIMSIZE;++i){
+       		  pressure_frame.x_i32[i-1]=pressure_frame.x_i32[i];
+       	  }
+       	pressure_frame.x_i32[DIMSIZE-1]=p32;
+       *pressure = find_median_i32(pressure_frame.x_i32,DIMSIZE);
+
+    //*pressure = p32;
     return  ATP_SUCCESS;
   #endif
 }
@@ -243,6 +262,9 @@ static em_uint32 get_temperature(float *temp)
 
    em_uint32 adafruit_bmp085_temp_pres_start(void *parameter){
     	em_uint32 err;
+    	atp_fill_zero(&tempreature_frame,sizeof(frame));
+    	atp_fill_zero(&pressure_frame,sizeof(frame));
+
     	_bmp085Mode = BMP085_MODE_ULTRAHIGHRES;
 
     	err=bmp085_write8(BMP085_REGISTER_CHIPID);

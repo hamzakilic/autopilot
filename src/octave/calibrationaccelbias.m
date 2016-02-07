@@ -1,5 +1,5 @@
-function [stdx,stdy,stdz]=calibration
-dof=load('/home/hframe/dof.calibration0');
+function [stdx,stdy,stdz]=calibrationaccelbias
+dof=load('/home/hframe/dof.accelbias0');
 accx=dof(20:end,1);
 accy=dof(20:end,2);
 accz=dof(20:end,3);
@@ -15,7 +15,7 @@ stdx0=std(accx);
 stdy0=std(accy);
 stdz0=std(accz);
 
-dof=load('/home/hframe/dof.calibration1');
+dof=load('/home/hframe/dof.accelbias1');
 accx=dof(20:end,1);
 accy=dof(20:end,2);
 accz=dof(20:end,3);
@@ -33,7 +33,7 @@ stdz1=std(accz);
 
 
 
-dof=load('/home/hframe/dof.calibration2');
+dof=load('/home/hframe/dof.accelbias2');
 accx=dof(20:end,1);
 accy=dof(20:end,2);
 accz=dof(20:end,3);
@@ -51,7 +51,7 @@ stdz2=std(accz);
 
 
 
-dof=load('/home/hframe/dof.calibration3');
+dof=load('/home/hframe/dof.accelbias3');
 accx=dof(20:end,1);
 accy=dof(20:end,2);
 accz=dof(20:end,3);
@@ -69,7 +69,7 @@ stdz3=std(accz);
 
 
 
-dof=load('/home/hframe/dof.calibration4');
+dof=load('/home/hframe/dof.accelbias4');
 accx=dof(20:end,1);
 accy=dof(20:end,2);
 accz=dof(20:end,3);

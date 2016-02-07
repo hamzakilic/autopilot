@@ -44,7 +44,7 @@ static frame gyro_frame;
         	data[0]=GYRO_REGISTER_WHO_AM_I;
         	err=l3gd20_write8(GYRO_REGISTER_WHO_AM_I);
         	if(err)	return ATP_ERROR_HARDWARE_COMMUNICATION;
-
+            em_io_delay_microseconds(1000);
         	em_int32 length=1;
         	err=l3gd20_read8(data);
         	if(err) return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -160,46 +160,50 @@ static frame gyro_frame;
 	  em_uint32 err;
 	  err=l3gd20_write8(GYRO_REGISTER_OUT_X_L | 0x80);
 	  if(err)return err;
+	  em_io_delay_microseconds(100);
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,lenght,EM_TIMEOUT_ONE_SECOND);
 	  if(err) return err;
 
 	  em_int32 i;
 	  for(i=1;i<DIMSIZE;++i){
-		  gyro_frame.x[i-1]=gyro_frame.x[i];
-		  gyro_frame.y[i-1]=gyro_frame.x[i];
-		  gyro_frame.z[i-1]=gyro_frame.z[i];
+		  gyro_frame.x_i16[i-1]=gyro_frame.x_i16[i];
+		  gyro_frame.y_i16[i-1]=gyro_frame.x_i16[i];
+		  gyro_frame.z_i16[i-1]=gyro_frame.z_i16[i];
 	  }
 
-	  gyro_frame.x[DIMSIZE-1]=(em_int16)(data[0] | (data[1] << 8));
-	  gyro_frame.y[DIMSIZE-1]=(em_int16) (data[2] | (data[3] << 8));
-	  gyro_frame.z[DIMSIZE-1]=(em_int16)(data[4] | (data[5] << 8));
-
+	  gyro_frame.x_i16[DIMSIZE-1]=(em_int16)(data[0] | (data[1] << 8));
+	  gyro_frame.y_i16[DIMSIZE-1]=(em_int16) (data[2] | (data[3] << 8));
+	  gyro_frame.z_i16[DIMSIZE-1]=(em_int16)(data[4] | (data[5] << 8));
+	  //printf("gyro:%8d %8d %8d\n",gyro_frame.x[DIMSIZE-1],gyro_frame.y[DIMSIZE-1],gyro_frame.z[DIMSIZE-1]);
 	  /*
 	  gyro[0] = (em_int16)(data[0] | (data[1] << 8));
 	  gyro[1] =(em_int16) (data[2] | (data[3] << 8));
 	  gyro[2] = (em_int16)(data[4] | (data[5] << 8));*/
-	  gyro[0]=find_median(gyro_frame.x,DIMSIZE);
-	  gyro[1]=find_median(gyro_frame.y,DIMSIZE);
-	  gyro[2]=find_median(gyro_frame.z,DIMSIZE);
+	  gyro[0]=find_median_i16(gyro_frame.x_i16,DIMSIZE);
+	  gyro[1]=find_median_i16(gyro_frame.y_i16,DIMSIZE);
+	  gyro[2]=find_median_i16(gyro_frame.z_i16,DIMSIZE);
 
 	  return ATP_SUCCESS;
 
   }
 
   em_uint32 adafruit_l3gd20_gyro_read_raw(em_float32 *values){
-	  em_int32 reading_valid=0;
 
-	          	em_uint32 err=ATP_SUCCESS;
-
-	          		err=adafruit_gyro_read(values);
-
-	          	return err;
+	  return adafruit_gyro_read(values);
   }
 
 
 
-        em_uint32 adafruit_l3gd20_gyro_read(em_float32 *values){
+  em_uint32 adafruit_l3gd20_gyro_read(em_float32 *values,const em_float32 *bias_values,const em_float32 *scale_values){
 
+	  em_uint32 err=	  adafruit_gyro_read(values);
+	  if(err)return err;
+	  values[0]*=scale_values[0];
+	  	values[1]*=scale_values[1];
+	  	values[2]*=scale_values[2];
+	       values[0]-=bias_values[0];
+	       values[1]-=bias_values[1];
+	       values[2]-=bias_values[2];
 
         	switch(_range)
         	  {

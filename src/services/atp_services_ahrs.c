@@ -42,7 +42,7 @@ inline em_float32 pressure_to_altitude(em_float32 seaLevel, em_float32 atmospher
 volatile float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
 
 
-inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read, atp_services_ahrs_data *ahrs_data){
+inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read, atp_services_ahrs_data *ahrs_data){
 
 em_int32 err=ATP_SUCCESS;
 
@@ -54,7 +54,7 @@ em_int32 err=ATP_SUCCESS;
 
 #endif
 #ifdef COMPILE_L3GD20
-      err |= adafruit_l3gd20_gyro_read(gyro_values);
+      err |= adafruit_l3gd20_gyro_read(gyro_values,gyro_bias_values,gyro_scale_values);
 
 #endif
 #ifdef COMPILE_BMP085
@@ -142,7 +142,7 @@ inline em_int32 write_calibration_values(FILE *output, float *accel_values,float
 
 
 
- fprintf(output,"%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],*pressure,*temperature);
+ fprintf(output,"%12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],*pressure,*temperature);
 
 	      return err;
 }
@@ -205,8 +205,13 @@ void * start_communication_ahrs(void *data){
     em_float32 accel_values[3];
     em_float32 accel_bias_values[3];
     em_float32 accel_scale_values[3];
+
+    em_float32 gyro_values[3];
+    em_float32 gyro_bias_values[3];
+    em_float32 gyro_scale_values[3];
+
 	em_float32 mag_values[3];
-	em_float32 gyro_values[3];
+
 	em_float32 temprature;
 	em_float32 pressure;
 	em_float32 altitude;
@@ -219,7 +224,7 @@ void * start_communication_ahrs(void *data){
     read_start=atp_datetime_as_microseconds();
 		err=ATP_SUCCESS;
       if(!get_calibration_values)
-      err=do_ahrs(accel_values,accel_bias_values,accel_scale_values,  mag_values,gyro_values,&temprature,&pressure,&altitude,gravity_location,sea_level_pressure_location, &last_read, ahrs_data);
+      err=do_ahrs(accel_values,accel_bias_values,accel_scale_values,  mag_values,gyro_values,gyro_bias_values,gyro_scale_values, &temprature,&pressure,&altitude,gravity_location,sea_level_pressure_location, &last_read, ahrs_data);
       else
     	 err= write_calibration_values(output,accel_values,mag_values,gyro_values,&temprature,&pressure);
 
@@ -236,6 +241,14 @@ void * start_communication_ahrs(void *data){
     	  accel_scale_values[0]=atp_settings_get_acceleration_scalex(ahrs_data->settings_table);
     	  accel_scale_values[1]=atp_settings_get_acceleration_scaley(ahrs_data->settings_table);
     	  accel_scale_values[2]=atp_settings_get_acceleration_scalez(ahrs_data->settings_table);
+
+    	  gyro_bias_values[0]=atp_settings_get_gyroscope_biasx(ahrs_data->settings_table);
+    	  gyro_bias_values[1]=atp_settings_get_gyroscope_biasy(ahrs_data->settings_table);
+    	  gyro_bias_values[2]=atp_settings_get_gyroscope_biasz(ahrs_data->settings_table);
+    	  gyro_scale_values[0]=atp_settings_get_gyroscope_scalex(ahrs_data->settings_table);
+    	  gyro_scale_values[1]=atp_settings_get_gyroscope_scaley(ahrs_data->settings_table);
+    	  gyro_scale_values[2]=atp_settings_get_gyroscope_scalez(ahrs_data->settings_table);
+
     	  check_settings_counter=0;
       }
       check_settings_counter++;

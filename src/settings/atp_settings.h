@@ -62,6 +62,22 @@ em_float32 atp_settings_get_acceleration_scalez(atp_settings *settings);
 
 
 
+/**
+ * @brief get gyroscope  bias  values
+ */
+em_float32 atp_settings_get_gyroscope_biasx(atp_settings *settings);
+em_float32 atp_settings_get_gyroscope_biasy(atp_settings *settings);
+em_float32 atp_settings_get_gyroscope_biasz(atp_settings *settings);
+
+/**
+ * @brief get gyroscope scale values
+ */
+em_float32 atp_settings_get_gyroscope_scalex(atp_settings *settings);
+em_float32 atp_settings_get_gyroscope_scaley(atp_settings *settings);
+em_float32 atp_settings_get_gyroscope_scalez(atp_settings *settings);
+
+
+
 
 
 

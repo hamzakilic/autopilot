@@ -143,31 +143,33 @@ em_uint32 err;
 	 if(err){
 		     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 	 }
+	 em_io_delay_microseconds(100);
 	 em_uint32 lenght=6;
 	 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,lenght,EM_TIMEOUT_ONE_SECOND);
 		  if(err){
 		  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
+
  em_int32 i;
 		  for(i=1;i<DIMSIZE;++i){
-             accel_frames.x[i-1] =accel_frames.x[i];
-             accel_frames.y[i-1] =accel_frames.y[i];
-             accel_frames.z[i-1] =accel_frames.z[i];
+             accel_frames.x_i16[i-1] =accel_frames.x_i16[i];
+             accel_frames.y_i16[i-1] =accel_frames.y_i16[i];
+             accel_frames.z_i16[i-1] =accel_frames.z_i16[i];
 		  }
-    accel_frames.x[DIMSIZE-1] =(em_int16)(data[0] | (data[1] << 8)) >> 4;
+    accel_frames.x_i16[DIMSIZE-1] =(em_int16)(data[0] | (data[1] << 8)) >> 4;
 
-    accel_frames.y[DIMSIZE-1] =(em_int16)(data[2] | (data[3] << 8)) >> 4;
-    accel_frames.z[DIMSIZE-1] =(em_int16)(data[4] | (data[5] << 8)) >> 4;
-
+    accel_frames.y_i16[DIMSIZE-1] =(em_int16)(data[2] | (data[3] << 8)) >> 4;
+    accel_frames.z_i16[DIMSIZE-1] =(em_int16)(data[4] | (data[5] << 8)) >> 4;
+   // printf("accel:%8d %8d %8d\n",accel_frames.x[DIMSIZE-1],accel_frames.y[DIMSIZE-1],accel_frames.z[DIMSIZE-1]);
 
 
  	/* values[0]= (em_int16)(data[0] | (data[1] << 8)) >> 4;
 	 values[1]= (em_int16)(data[2] | (data[3] << 8)) >> 4;
 	 values[2]= (em_int16)(data[4] | (data[5] << 8)) >> 4;*/
-    values[0]=find_median(accel_frames.x,DIMSIZE);
-    values[1]=find_median(accel_frames.y,DIMSIZE);
-    values[2]=find_median(accel_frames.z,DIMSIZE);
-   // printf("%8.5f %8.5f %8.5f\n",values[0],values[1],values[2]);
+    values[0]=find_median_i16(accel_frames.x_i16,DIMSIZE);
+    values[1]=find_median_i16(accel_frames.y_i16,DIMSIZE);
+    values[2]=find_median_i16(accel_frames.z_i16,DIMSIZE);
+
 
 
 	 return ATP_SUCCESS;
@@ -349,21 +351,21 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 
 				  em_int32 i;
 				  for(i=1;i<DIMSIZE;++i){
-					  mag_frame.x[i-1]=mag_frame.x[i];
-					  mag_frame.z[i-1]=mag_frame.z[i];
-					  mag_frame.y[i-1]=mag_frame.y[i];
+					  mag_frame.x_i16[i-1]=mag_frame.x_i16[i];
+					  mag_frame.z_i16[i-1]=mag_frame.z_i16[i];
+					  mag_frame.y_i16[i-1]=mag_frame.y_i16[i];
 				  }
-				  mag_frame.x[DIMSIZE-1]=(em_int16)(data[1] | ((em_int16)data[0] << 8));
-				  mag_frame.z[DIMSIZE-1]=(em_int16)(data[3] | ((em_int16)data[2] << 8));
-				  mag_frame.y[DIMSIZE-1]=(em_int16)(data[5] | ((em_int16)data[4] << 8));
+				  mag_frame.x_i16[DIMSIZE-1]=(em_int16)(data[1] | ((em_int16)data[0] << 8));
+				  mag_frame.z_i16[DIMSIZE-1]=(em_int16)(data[3] | ((em_int16)data[2] << 8));
+				  mag_frame.y_i16[DIMSIZE-1]=(em_int16)(data[5] | ((em_int16)data[4] << 8));
 
 
 				  /*values[0] = (em_int16)(data[1] | ((em_int16)data[0] << 8));
 				  values[2] = (em_int16)(data[3] | ((em_int16)data[2] << 8));
 				  values[1] = (em_int16)(data[5] | ((em_int16)data[4] << 8));*/
-				   values[0]=find_median(mag_frame.x,DIMSIZE);
-				   values[1]=find_median(mag_frame.y,DIMSIZE);
-				   values[2]=find_median(mag_frame.z,DIMSIZE);
+				   values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
+				   values[1]=find_median_i16(mag_frame.y_i16,DIMSIZE);
+				   values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);
 				  return ATP_SUCCESS;
 }
 

@@ -94,7 +94,7 @@
          * @param values send 3 dimension float array
          * @return ATP_SUCESS or ATP_???? failure numbers
          */
-        em_uint32 adafruit_l3gd20_gyro_read(em_float32 *values);
+        em_uint32 adafruit_l3gd20_gyro_read(em_float32 *values,const em_float32 *bias_values,const em_float32 *scale_values);
         em_uint32 adafruit_l3gd20_gyro_read_raw(em_float32 *values);
 
         /**

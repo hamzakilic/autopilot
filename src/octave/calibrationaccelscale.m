@@ -1,5 +1,5 @@
-function [minx,maxx,miny,maxy,minz,maxz]=calibration2
-dof=load('/home/hframe/dof.calibration');
+function [minx,maxx,miny,maxy,minz,maxz]=calibrationaccelscale
+dof=load('/home/hframe/dof.accelscale');
 accx=dof(20:end,1);
 accy=dof(20:end,2);
 accz=dof(20:end,3);
