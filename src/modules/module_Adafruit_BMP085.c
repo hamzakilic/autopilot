@@ -40,14 +40,23 @@ inline em_uint32 bmp085_read16from(em_byte address,em_uint16 *value){
 	    em_uint32 err;
 	    err=bmp085_write8(address);
 		if(err)return err;
+		em_io_busy_wait(5000);
 		return bmp085_read16(value);
 }
-inline em_uint32 bmp085_read8from(em_byte address,em_byte *value){
-	    em_uint32 err;
-	    err=bmp085_write8(address);
-		if(err)return err;
-		return bmp085_read8(value);
+
+inline em_uint32 bmp085_read24from(em_byte address,em_byte *data){
+	 em_uint32 err;
+		    err=bmp085_write8(address);
+			if(err)return err;
+			em_io_busy_wait(2000);
+			atp_system_lock_i2c();
+			    err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,data,3,EM_TIMEOUT_HALF_SECOND);
+			atp_system_unlock_i2c();
+			return err;
+
+
 }
+
 
 
 
@@ -119,7 +128,7 @@ static em_uint32 read_raw_temperature(em_int32 *temperature)
     em_uint32 err;
     err=bmp085_write16(BMP085_REGISTER_CONTROL, BMP085_REGISTER_READTEMPCMD);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-    em_io_busy_wait(100);
+    em_io_busy_wait(1000);
     err=bmp085_read16from(BMP085_REGISTER_TEMPDATA, &t);
 
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -142,8 +151,7 @@ static em_uint32 read_raw_pressure(em_int32 *pressure)
   #if BMP085_USE_DATASHEET_VALS
     *pressure = 23843;
   #else
-    em_uint8  p8;
-    em_uint16 p16;
+    em_uint8  temp[3];
     em_int32  p32;
     em_uint32 err;
 
@@ -166,14 +174,10 @@ static em_uint32 read_raw_pressure(em_int32 *pressure)
         break;
     }
 
-    err=bmp085_read16from(BMP085_REGISTER_PRESSUREDATA, &p16);
+    err=bmp085_read24from(BMP085_REGISTER_PRESSUREDATA,temp);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
+    p32 = (((em_int32)temp[0]<<16) | ((em_int32)temp[1]<<8) | ((em_int32)temp[2])) >>(8-_bmp085Mode);
 
-    p32 = (em_uint32)p16 << 8;
-    err=bmp085_read8from(BMP085_REGISTER_PRESSUREDATA+2, &p8);
-    if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-    p32 |= p8;
-    p32 >>= (8 - _bmp085Mode);
 
 
     em_int32 i;
@@ -181,7 +185,7 @@ static em_uint32 read_raw_pressure(em_int32 *pressure)
        		  pressure_frame.x_i32[i-1]=pressure_frame.x_i32[i];
        	  }
        	pressure_frame.x_i32[DIMSIZE-1]=p32;
-       *pressure = find_median_i32(pressure_frame.x_i32,DIMSIZE);
+       *pressure =find_median_i32(pressure_frame.x_i32,DIMSIZE);
 
     //*pressure = p32;
     return  ATP_SUCCESS;

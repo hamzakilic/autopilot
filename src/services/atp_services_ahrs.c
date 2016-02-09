@@ -72,7 +72,7 @@ em_int32 err=ATP_SUCCESS;
 
 #endif
 #ifdef COMPILE_BMP085
-      if(test++%50==0){
+
       err |= adafruit_bmp085_temp_press_read(temperature,pressure);
       if(err){
     	  return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -80,7 +80,7 @@ em_int32 err=ATP_SUCCESS;
       }
 
       *altitude=pressure_to_altitude(sea_level_pressure,*pressure);
-      }
+
 
 #endif
 
