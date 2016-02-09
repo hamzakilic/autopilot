@@ -56,7 +56,7 @@ em_uint32 atp_settings_create(atp_settings **address){
 	atp_fill_zero(data,sizeof(atp_settings_data));
 	settings->private_data=data;
 	data->gravity=9.8029f;
-	data->dof_calibration=1;
+	data->dof_calibration=0;
 	data->sea_level_pressure=1027.0f;
 	data->acceleration_biasx=1.4932f;
 	data->acceleration_biasy=1.3905f;

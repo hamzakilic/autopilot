@@ -10,7 +10,7 @@
 
 #include "../common/atp_common.h"
 #include "../log/atp_log.h"
-
+#include "../common/atp_system_lock.h"
 
 
 #define PCA9685_SUBADR1 0x2

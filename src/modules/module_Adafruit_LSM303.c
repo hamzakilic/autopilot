@@ -22,18 +22,15 @@ static em_float32 _lsm303Mag_Gauss_LSB_Z  = 980.0F;   // Varies with gain
 #define SENSORS_GAUSS_TO_MICROTESLA       (100)                   /**< Gauss to micro-Tesla multiplier */
 
 
-inline em_uint32 i2c_try_read(em_uint16 address,em_uint8 *data,em_uint32  lenght){
+inline em_uint32 i2c_read(em_uint16 address,em_uint8 *data,em_uint32  lenght){
 	em_uint32 try=0;
 	em_uint32 err;
-	 for(try=0;try<100;++try){
-		  err=em_io_i2c_read(EM_USE_BSC1,address,data,lenght,EM_TIMEOUT_ONE_SECOND);
-		    if(!err)
-		    	break;
-	      }
-	      if(try==100){
-	    	    return ATP_ERROR_HARDWARE_COMMUNICATION;
-	      }
-	      return ATP_SUCCESS;
+
+		 atp_system_lock_i2c();
+		  err=em_io_i2c_read(EM_USE_BSC1,address,data,lenght,EM_TIMEOUT_HALF_SECOND);
+		  atp_system_unlock_i2c();
+
+	      return err;
 
 }
 
@@ -43,30 +40,43 @@ inline em_uint32 i2c_try_read(em_uint16 address,em_uint8 *data,em_uint32  lenght
  */
 
 inline em_uint32 lsm303_accel_read8(em_byte *data){
-
+   em_uint32 err;
     em_uint32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_unlock_i2c();
+    return err;
 }
 inline em_uint32 lsm303_accel_read16(em_uint16 *data){
     em_byte temp[2];
     em_int32 length=2;
     em_uint32 err;
+    atp_system_lock_i2c();
     err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,temp,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_unlock_i2c();
     *data=temp[0]<<8||temp[1];
     return err;
 }
 
 inline em_uint32 lsm303_accel_write8(em_byte val){
+	em_uint32 err;
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,1,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,1,EM_TIMEOUT_ONE_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
+	em_uint32 err;
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 
@@ -132,9 +142,6 @@ em_uint32 adafruit_lsm303_stop(void *param){
 
 
 
-
-
-
 em_uint32 adafruit_lsm303_accel_read_raw(em_float32 *values){
 em_uint32 err;
 	em_byte data[6];
@@ -143,9 +150,10 @@ em_uint32 err;
 	 if(err){
 		     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 	 }
-	 em_io_delay_microseconds(100);
+	 em_io_busy_wait(100);
 	 em_uint32 lenght=6;
-	 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,lenght,EM_TIMEOUT_ONE_SECOND);
+
+	 err=i2c_read(LSM303_ADDRESS_ACCEL,data,lenght);
 		  if(err){
 		  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
@@ -163,9 +171,7 @@ em_uint32 err;
    // printf("accel:%8d %8d %8d\n",accel_frames.x[DIMSIZE-1],accel_frames.y[DIMSIZE-1],accel_frames.z[DIMSIZE-1]);
 
 
- 	/* values[0]= (em_int16)(data[0] | (data[1] << 8)) >> 4;
-	 values[1]= (em_int16)(data[2] | (data[3] << 8)) >> 4;
-	 values[2]= (em_int16)(data[4] | (data[5] << 8)) >> 4;*/
+
     values[0]=find_median_i16(accel_frames.x_i16,DIMSIZE);
     values[1]=find_median_i16(accel_frames.y_i16,DIMSIZE);
     values[2]=find_median_i16(accel_frames.z_i16,DIMSIZE);
@@ -207,27 +213,41 @@ em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *bias_v
 static em_int32 _magGain;
 
 inline em_uint32 lsm303_mag_read8(em_byte *data){
-
+    em_uint32 err;
     em_int32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,length,EM_TIMEOUT_HALF_SECOND);
+    atp_system_unlock_i2c();
+    return err;
 }
 inline em_uint32 lsm303_mag_read16(em_byte *data){
-
+    em_uint32 err;
     em_int32 length=2;
-    return em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,length,EM_TIMEOUT_HALF_SECOND);
+    atp_system_unlock_i2c();
+    return err;
 }
 
 inline em_uint32 lsm303_mag_write8(em_byte val){
+	em_uint32 err;
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,1,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,1,EM_TIMEOUT_HALF_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 inline em_uint32 lsm303_mag_write16(em_byte reg,em_byte val){
+	em_uint32 err;
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,2,EM_TIMEOUT_HALF_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 
@@ -341,11 +361,14 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 			data[0]=LSM303_REGISTER_MAG_OUT_X_H_M;
 			err=lsm303_mag_write8(LSM303_REGISTER_MAG_OUT_X_H_M);
 			 if(err){
+
 				     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 			 }
 			 em_uint32 lenght=6;
-			 err=em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_MAG,data,lenght,EM_TIMEOUT_ONE_SECOND);
+             em_io_busy_wait(100);
+			 err=i2c_read(LSM303_ADDRESS_MAG,data,lenght);
 				  if(err){
+
 				  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 				  }
 
@@ -380,10 +403,10 @@ em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
 		    	data[0]=LSM303_REGISTER_MAG_SR_REG_Mg;
 		    	err=lsm303_mag_write8(LSM303_REGISTER_MAG_SR_REG_Mg);
 		    	if(err){
-
 		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
 		    	}
 		    	length=1;
+		    	em_io_busy_wait(100);
 		    	err=lsm303_mag_read8(data);
 		    	if(err  || !(data[0] & 0x1) ) {
 
@@ -391,7 +414,7 @@ em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
 		    	    }
 		    	err=adafruit_mag_read(values);
 		    	if(err){
-		    		printf("%d err",err);
+
 		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
 		    	}
 
@@ -401,8 +424,6 @@ em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
 
 
 em_uint32 adafruit_lsm303_mag_read(em_float32 *values){
-
-
        em_uint32 err=adafruit_lsm303_mag_read_raw(values);
 	    values[0] = values[0]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
 	    values[1] =  values[1]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;

@@ -40,26 +40,47 @@ inline em_float32 pressure_to_altitude(em_float32 seaLevel, em_float32 atmospher
 #endif
 
 volatile float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
-
+static em_int32 test=0;
 
 inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read, atp_services_ahrs_data *ahrs_data){
-
+em_int64 start=atp_datetime_as_microseconds();
 em_int32 err=ATP_SUCCESS;
 
 #ifdef COMPILE_LSM303
       err |= adafruit_lsm303_accel_read(accel_values,accel_bias_values,accel_scale_values);
+      if(err){
+
+    	  return ATP_ERROR_HARDWARE_COMMUNICATION;
+      }
+
 
       err |= adafruit_lsm303_mag_read(mag_values);
 
+      if(err){
+
+          	return ATP_ERROR_HARDWARE_COMMUNICATION;
+      }
 
 #endif
 #ifdef COMPILE_L3GD20
       err |= adafruit_l3gd20_gyro_read(gyro_values,gyro_bias_values,gyro_scale_values);
+      if(err){
+
+          	return ATP_ERROR_HARDWARE_COMMUNICATION;
+      }
+
 
 #endif
 #ifdef COMPILE_BMP085
+      if(test++%50==0){
       err |= adafruit_bmp085_temp_press_read(temperature,pressure);
+      if(err){
+    	  return ATP_ERROR_HARDWARE_COMMUNICATION;
+
+      }
+
       *altitude=pressure_to_altitude(sea_level_pressure,*pressure);
+      }
 
 #endif
 
@@ -84,7 +105,7 @@ em_int32 err=ATP_SUCCESS;
       em_uint64 delta_t=atp_datetime_as_microseconds()- (*last_read);
 
       //MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
-      MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+       MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
 
       *last_read=atp_datetime_as_microseconds();
 
@@ -218,7 +239,7 @@ void * start_communication_ahrs(void *data){
 	em_float32 gravity_location=atp_settings_get_gravity(ahrs_data->settings_table);
 	em_float32 sea_level_pressure_location=atp_settings_get_sea_level_pressure(ahrs_data->settings_table);
 	em_int32 check_settings_counter=0;
-	em_uint64 read_start,read_end,last_read=atp_datetime_as_microseconds();
+	em_int64 read_start,read_end,last_read=atp_datetime_as_microseconds();
 
 	while(ahrs_data->work){
     read_start=atp_datetime_as_microseconds();
@@ -227,8 +248,6 @@ void * start_communication_ahrs(void *data){
       err=do_ahrs(accel_values,accel_bias_values,accel_scale_values,  mag_values,gyro_values,gyro_bias_values,gyro_scale_values, &temprature,&pressure,&altitude,gravity_location,sea_level_pressure_location, &last_read, ahrs_data);
       else
     	 err= write_calibration_values(output,accel_values,mag_values,gyro_values,&temprature,&pressure);
-
-
 
 
       //sometimes reload some values from settings again
@@ -253,9 +272,16 @@ void * start_communication_ahrs(void *data){
       }
       check_settings_counter++;
 
-      em_int32 valoftime=1000000/25-(atp_datetime_as_microseconds()-read_start);
-      if(valoftime>0)
+
+
+      em_int64 dif=(atp_datetime_as_microseconds()-read_start);
+      em_int64 valoftime=((em_int64)(1000000/25))-dif;
+
+      if(valoftime>0){
       em_io_delay_microseconds(valoftime);
+      }else{
+    	  printf("ahrs service is so slow dif time is %lld\n",dif);
+      }
 	}
 
 	if(output!=NULL)

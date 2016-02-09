@@ -12,23 +12,10 @@ static em_uint32 pca9685_i2c_write(em_uint8 *data,em_uint32 length)
 {
 	em_uint32 err;
 	em_uint8 index=0;
-	//try 100 times then return error
-	//
-	/*for(index=0;index<100;++index){
-		err=em_io_i2c_write(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
-		        	if(!err)
-		        		break;
-		        	else{
-		        		atp_log(atp_log_create_string(ATP_LOG_FATAL,"I2C communication failed Errno:\n",err));
-		        	}
-		        	err=0;
-	}
-
-	if(index==100){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }
-	return ATP_SUCCESS;*/
-	return em_io_i2c_write(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err =em_io_i2c_write(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 
 }
 
@@ -36,22 +23,9 @@ static em_uint32 pca9685_i2c_read(em_uint8 *data,em_uint32 length)
 {
 	em_uint32 err;
 	em_uint8 index=0;
-	/*for(index=0;index<10;++index){
-		err=em_io_i2c_read(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
-		        	if(!err)
-		        		break;
-		        	else{
-		        		atp_log(atp_log_create_string(ATP_LOG_FATAL,"I2C communication failed Errno:%d\n",err));
-		        	}
-		        	err=0;
-	}
-
-	if(index==100){
-	           return ATP_ERROR_HARDWARE_COMMUNICATION;
-	        }*/
-
+	atp_system_lock_i2c();
 	err=em_io_i2c_read(EM_USE_BSC1,slave,data,length,EM_TIMEOUT_ONE_SECOND);
-
+	atp_system_unlock_i2c();
 	return err;
 }
 
@@ -124,20 +98,13 @@ em_uint32 adafruit_pca9685_set(em_uint16 value,em_uint8 pin_number)
    	datapwm[3]=off ;
    	datapwm[4]=(off >>8);
 
-	//try 100 times then return error
-	//
-	//for(index=0;index<10;++index){
-		err=em_io_i2c_write(EM_USE_BSC1,slave,datapwm,5,EM_TIMEOUT_ONE_SECOND);
-		        //	if(!err)
-		        //		break;
-		        //err=0;
-	//}
 
-	//if(index==10){
-	  //         return ATP_ERROR_HARDWARE_COMMUNICATION;
-	   //     }
+   	atp_system_lock_i2c();
+		err=em_io_i2c_write(EM_USE_BSC1,slave,datapwm,5,EM_TIMEOUT_ONE_SECOND);
+		atp_system_unlock_i2c();
+
 		return err;
-	//return ATP_SUCCESS;
+
 }
 
 

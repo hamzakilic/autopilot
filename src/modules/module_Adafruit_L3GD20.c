@@ -9,27 +9,41 @@
 static gyroRange_t _range;
 
 inline em_uint32 l3gd20_read8(em_byte *data){
-
+    em_uint32 err;
     em_int32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_unlock_i2c();
+    return err;
 }
 inline em_uint32 l3gd20_read16(em_byte *data){
-
+    em_uint32 err;
     em_int32 length=2;
-    return em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_unlock_i2c();
+    return err;
 }
 
 inline em_uint32 l3gd20_write8(em_byte val){
+	em_uint32 err;
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,1,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,1,EM_TIMEOUT_ONE_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
+	em_uint32 err;
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,L3GD20_ADDRESS,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 
@@ -44,7 +58,7 @@ static frame gyro_frame;
         	data[0]=GYRO_REGISTER_WHO_AM_I;
         	err=l3gd20_write8(GYRO_REGISTER_WHO_AM_I);
         	if(err)	return ATP_ERROR_HARDWARE_COMMUNICATION;
-            em_io_delay_microseconds(1000);
+            em_io_busy_wait(100);
         	em_int32 length=1;
         	err=l3gd20_read8(data);
         	if(err) return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -160,8 +174,11 @@ static frame gyro_frame;
 	  em_uint32 err;
 	  err=l3gd20_write8(GYRO_REGISTER_OUT_X_L | 0x80);
 	  if(err)return err;
-	  em_io_delay_microseconds(100);
+	  em_io_busy_wait(100);
+	  atp_system_lock_i2c();
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,lenght,EM_TIMEOUT_ONE_SECOND);
+	  atp_system_unlock_i2c();
+
 	  if(err) return err;
 
 	  em_int32 i;
@@ -175,10 +192,7 @@ static frame gyro_frame;
 	  gyro_frame.y_i16[DIMSIZE-1]=(em_int16) (data[2] | (data[3] << 8));
 	  gyro_frame.z_i16[DIMSIZE-1]=(em_int16)(data[4] | (data[5] << 8));
 	  //printf("gyro:%8d %8d %8d\n",gyro_frame.x[DIMSIZE-1],gyro_frame.y[DIMSIZE-1],gyro_frame.z[DIMSIZE-1]);
-	  /*
-	  gyro[0] = (em_int16)(data[0] | (data[1] << 8));
-	  gyro[1] =(em_int16) (data[2] | (data[3] << 8));
-	  gyro[2] = (em_int16)(data[4] | (data[5] << 8));*/
+
 	  gyro[0]=find_median_i16(gyro_frame.x_i16,DIMSIZE);
 	  gyro[1]=find_median_i16(gyro_frame.y_i16,DIMSIZE);
 	  gyro[2]=find_median_i16(gyro_frame.z_i16,DIMSIZE);

@@ -349,6 +349,7 @@ em_uint32 atp_input_create(atp_input **address){
     atp_thread_create_lock(&input_data->gps_location_lock_key);
     atp_thread_create_lock(&input_data->ahrs_lock_key);
     atp_thread_create_lock(&input_data->dof_lock_key);
+
     input->private_data=input_data;
 
     //start logging

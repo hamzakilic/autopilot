@@ -31,7 +31,13 @@ em_uint32 atp_pilot_create(atp_pilot **pilot){
     atp_pilot * pilot_temp=atp_malloc(sizeof(atp_pilot));
     *pilot=pilot_temp;
     pilot_temp->private_data=pilot_data;
+
+    //initiliaze system locks
+    atp_system_lock_initialize();
+
+
     atp_log(atp_log_create_string(ATP_LOG_INFO,"Create Pilot Success \n"));
+
 
     return ATP_SUCCESS;
 }
@@ -269,6 +275,7 @@ em_uint32 atp_pilot_destroy(atp_pilot *pilot){
 
 	atp_free(pilot);
 	}
+	atp_system_lock_uninitialize();
 	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Pilot Success \n"));
 
 

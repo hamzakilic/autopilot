@@ -9,22 +9,32 @@
 
 
 inline em_uint32 bmp085_read8(em_byte *data){
-
+    em_uint32 err;
     em_int32 length=1;
-    return em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,data,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,data,length,EM_TIMEOUT_HALF_SECOND);
+    atp_system_unlock_i2c();
+    return err;
 }
 inline em_uint32 bmp085_read16(em_uint16 *data){
    em_byte temp[2];
     em_int32 length=2;
     em_uint32 err;
-    err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,temp,length,EM_TIMEOUT_ONE_SECOND);
+    atp_system_lock_i2c();
+    err= em_io_i2c_read(EM_USE_BSC1,BMP085_ADDRESS,temp,length,EM_TIMEOUT_HALF_SECOND);
+    atp_system_unlock_i2c();
     *data= (temp[0]<<8) | (temp[1]);
+
     return err;
 }
 inline em_uint32 bmp085_write8(em_byte val){
+	em_uint32 err;
 	em_byte data[1];
 	data[0]=val;
-	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,1,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,1,EM_TIMEOUT_HALF_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 inline em_uint32 bmp085_read16from(em_byte address,em_uint16 *value){
 	    em_uint32 err;
@@ -43,10 +53,14 @@ inline em_uint32 bmp085_read8from(em_byte address,em_byte *value){
 
 
 inline em_uint32 bmp085_write16(em_byte reg,em_byte val){
+	em_uint32 err;
 	em_byte data[2];
 	data[0]=reg;
 	data[1]=val;
-	return em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_lock_i2c();
+	err= em_io_i2c_write(EM_USE_BSC1,BMP085_ADDRESS,data,2,EM_TIMEOUT_ONE_SECOND);
+	atp_system_unlock_i2c();
+	return err;
 }
 
 static em_uint8           _bmp085Mode;
@@ -105,7 +119,7 @@ static em_uint32 read_raw_temperature(em_int32 *temperature)
     em_uint32 err;
     err=bmp085_write16(BMP085_REGISTER_CONTROL, BMP085_REGISTER_READTEMPCMD);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-    em_io_delay_microseconds(10000);
+    em_io_busy_wait(100);
     err=bmp085_read16from(BMP085_REGISTER_TEMPDATA, &t);
 
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -138,17 +152,17 @@ static em_uint32 read_raw_pressure(em_int32 *pressure)
     switch(_bmp085Mode)
     {
       case BMP085_MODE_ULTRALOWPOWER:
-    	  em_io_delay_microseconds(5000);
+    	  em_io_busy_wait(5000);
         break;
       case BMP085_MODE_STANDARD:
-    	  em_io_delay_microseconds(8000);
+    	  em_io_busy_wait(8000);
         break;
       case BMP085_MODE_HIGHRES:
-    	  em_io_delay_microseconds(14000);
+    	  em_io_busy_wait(14000);
         break;
       case BMP085_MODE_ULTRAHIGHRES:
       default:
-    	  em_io_delay_microseconds(26000);
+    	  em_io_busy_wait(26000);
         break;
     }
 
@@ -158,7 +172,7 @@ static em_uint32 read_raw_pressure(em_int32 *pressure)
     p32 = (em_uint32)p16 << 8;
     err=bmp085_read8from(BMP085_REGISTER_PRESSUREDATA+2, &p8);
     if(err)return ATP_ERROR_HARDWARE_COMMUNICATION;
-    p32 += p8;
+    p32 |= p8;
     p32 >>= (8 - _bmp085Mode);
 
 
@@ -229,7 +243,7 @@ static em_uint32 get_pressure(em_float32 *pressure)
 
 
 
-static em_uint32 get_temperature(float *temp)
+static em_uint32 get_temperature(em_float32 *temp)
 {
   em_int32 UT, X1, X2, B5;     // following ds convention
   em_float32 t;
@@ -265,7 +279,7 @@ static em_uint32 get_temperature(float *temp)
     	atp_fill_zero(&tempreature_frame,sizeof(frame));
     	atp_fill_zero(&pressure_frame,sizeof(frame));
 
-    	_bmp085Mode = BMP085_MODE_ULTRAHIGHRES;
+    	_bmp085Mode = BMP085_MODE_STANDARD;
 
     	err=bmp085_write8(BMP085_REGISTER_CHIPID);
     	if(err)		return ATP_ERROR_HARDWARE_COMMUNICATION;
