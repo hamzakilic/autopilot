@@ -132,7 +132,8 @@ em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 	        	 power_level=1000;
             em_uint16  calc_power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_WORK)*power_level/1000.0f+MIN_SIGNAL_WORK;
 #ifdef COMPILE_TEST_CODES
-             printf("setting motor %d value:%d\n",motor->pin_number,calc_power_level);
+            atp_log(atp_log_create_string(ATP_LOG_INFO,"setting motor %d value:%d\n",motor->number,calc_power_level));
+
 #else
 #ifdef COMPILE_PCA9685
 		     err=adafruit_pca9685_set(calc_power_level,motor->pwm_pin_number);

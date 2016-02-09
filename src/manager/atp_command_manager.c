@@ -22,9 +22,13 @@ typedef struct {
 em_uint32  atp_command_manager_add(atp_command *command,atp_command_manager *to){
 
 	controller_data *data=(controller_data *) to->private_data;
-	atp_thread_lock(&data->thread_lock);
+
+	atp_thread_lock(data->thread_lock);
+
 	atp_queue_push(data->queue,command);
-	atp_thread_unlock(&data->thread_lock);
+
+	atp_thread_unlock(data->thread_lock);
+
 	return ATP_SUCCESS;
 }
 

@@ -12,7 +12,7 @@
 #include "../input/atp_input.h"
 #include "../thread/atp_thread.h"
 #include "../common/atp_queue.h"
-
+#include "../modules/module_UBlox_neo6v.h"
 
 typedef struct {
     void * private_data;

@@ -49,7 +49,7 @@ em_int32 err=ATP_SUCCESS;
 #ifdef COMPILE_LSM303
       err |= adafruit_lsm303_accel_read(accel_values,accel_bias_values,accel_scale_values);
       if(err){
-
+    	  atp_log(atp_log_create_string(ATP_LOG_DEBUG,"Read Acceleration Error:%u\n", err));
     	  return ATP_ERROR_HARDWARE_COMMUNICATION;
       }
 
@@ -57,7 +57,7 @@ em_int32 err=ATP_SUCCESS;
       err |= adafruit_lsm303_mag_read(mag_values);
 
       if(err){
-
+    	  atp_log(atp_log_create_string(ATP_LOG_DEBUG,"Read Magnetometer Error:%u\n", err));
           	return ATP_ERROR_HARDWARE_COMMUNICATION;
       }
 
@@ -65,21 +65,25 @@ em_int32 err=ATP_SUCCESS;
 #ifdef COMPILE_L3GD20
       err |= adafruit_l3gd20_gyro_read(gyro_values,gyro_bias_values,gyro_scale_values);
       if(err){
-
+    	  atp_log(atp_log_create_string(ATP_LOG_DEBUG,"Read Gyro Error:%u\n", err));
           	return ATP_ERROR_HARDWARE_COMMUNICATION;
       }
 
 
 #endif
 #ifdef COMPILE_BMP085
-
+if(test++%25==0){
+	//note: this code need so many mathematic because of this every second we are reading and refreshing
       err |= adafruit_bmp085_temp_press_read(temperature,pressure);
       if(err){
+    	  atp_log(atp_log_create_string(ATP_LOG_DEBUG,"Read Tempreture Pressure Error:%u\n", err));
     	  return ATP_ERROR_HARDWARE_COMMUNICATION;
 
       }
+      test=0;
 
       *altitude=pressure_to_altitude(sea_level_pressure,*pressure);
+}
 
 
 #endif
@@ -132,8 +136,10 @@ em_int32 err=ATP_SUCCESS;
 
 	       atp_input_update_dof(ahrs_data->input_table,dof_data_temp);
 	       atp_input_update_ahrs(ahrs_data->input_table,ahrs_data_temp);
+#ifdef COMPILE_DEBUG_CODES
+	   atp_log(atp_log_create_string(ATP_LOG_DEBUG,"roll pitch yaw pressure tempreature altitude %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw,ahrs_data_temp.pressure,ahrs_data_temp.temperature,ahrs_data_temp.altitude));
+#endif
 
-	       printf("roll pitch yaw %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw,ahrs_data_temp.pressure,ahrs_data_temp.temperature,ahrs_data_temp.altitude);
 
 
       }else{
@@ -215,7 +221,8 @@ void * start_communication_ahrs(void *data){
 	 	FILE *output;
 	 	output=fopen("dof.calibration","w");
 	 	if(output==NULL){
-	 		printf("could not open output dof.calibration file\n");
+	 		atp_log(atp_log_create_string(ATP_LOG_ERROR,"could not open output dof.calibration file\n"));
+
 	 	}
 	 	em_byte buffer[1024];
 
@@ -280,7 +287,8 @@ void * start_communication_ahrs(void *data){
       if(valoftime>0){
       em_io_delay_microseconds(valoftime);
       }else{
-    	  printf("ahrs service is so slow dif time is %lld\n",dif);
+    	  atp_log(atp_log_create_string(ATP_LOG_INFO,"ahrs service is so slow dif time is %lld\n",dif));
+
       }
 	}
 

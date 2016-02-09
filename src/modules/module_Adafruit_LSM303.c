@@ -168,7 +168,7 @@ em_uint32 err;
 
     accel_frames.y_i16[DIMSIZE-1] =(em_int16)(data[2] | (data[3] << 8)) >> 4;
     accel_frames.z_i16[DIMSIZE-1] =(em_int16)(data[4] | (data[5] << 8)) >> 4;
-   // printf("accel:%8d %8d %8d\n",accel_frames.x[DIMSIZE-1],accel_frames.y[DIMSIZE-1],accel_frames.z[DIMSIZE-1]);
+
 
 
 
@@ -322,6 +322,7 @@ em_uint32 adafruit_lsm303_mag_start(void * param){
 		  }
 
 		  em_uint32 temp=1;
+		  em_io_busy_wait(1000);
 		  err=lsm303_mag_read8(data);
 		  if(err){
 
@@ -383,9 +384,6 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 				  mag_frame.y_i16[DIMSIZE-1]=(em_int16)(data[5] | ((em_int16)data[4] << 8));
 
 
-				  /*values[0] = (em_int16)(data[1] | ((em_int16)data[0] << 8));
-				  values[2] = (em_int16)(data[3] | ((em_int16)data[2] << 8));
-				  values[1] = (em_int16)(data[5] | ((em_int16)data[4] << 8));*/
 				   values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
 				   values[1]=find_median_i16(mag_frame.y_i16,DIMSIZE);
 				   values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);
@@ -403,14 +401,15 @@ em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
 		    	data[0]=LSM303_REGISTER_MAG_SR_REG_Mg;
 		    	err=lsm303_mag_write8(LSM303_REGISTER_MAG_SR_REG_Mg);
 		    	if(err){
+
 		    		return ATP_ERROR_HARDWARE_COMMUNICATION;
 		    	}
 		    	length=1;
 		    	em_io_busy_wait(100);
 		    	err=lsm303_mag_read8(data);
 		    	if(err  || !(data[0] & 0x1) ) {
-
-		    				return ATP_ERROR_HARDWARE_COMMUNICATION;
+		    		 //reading is not valid
+		    		 return ATP_ERROR_HARDWARE_COMMUNICATION;
 		    	    }
 		    	err=adafruit_mag_read(values);
 		    	if(err){

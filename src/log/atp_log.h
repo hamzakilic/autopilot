@@ -18,6 +18,7 @@
 #define ATP_LOG_ERROR 0x02
 #define ATP_LOG_FATAL 0x04
 #define ATP_LOG_DATA 0x08
+#define ATP_LOG_DEBUG 0x10
 
 
 #define ATP_LOG_DATA_TYPE_STRING 0x01

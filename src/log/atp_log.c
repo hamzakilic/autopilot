@@ -13,7 +13,7 @@
 #include <string.h>
 
 
-#ifdef COMPILE_LOG_UDP
+
 struct client{
 	em_int32 socket_descriptior;
     struct sockaddr_in client_address;
@@ -28,8 +28,8 @@ void initialize_clients(const char * host,em_uint16 port){
 	clients[0].socket_descriptior=socket(AF_INET,SOCK_DGRAM,0);
 	if(clients[0].socket_descriptior==-1)//todo buraya dikkat socket oluşturulamazsa ne olacak
 		{
-		perror(strerror(errno));
-		return;
+		  perror(strerror(errno));
+		  return;
 		}
 	bzero(&clients[0].client_address,sizeof(struct sockaddr_in));
 	clients[0].client_address.sin_family=AF_INET;
@@ -41,34 +41,33 @@ void initialize_clients(const char * host,em_uint16 port){
 
 }
 
-#endif
+
 
 void atp_log(atp_log_data *log){
-#ifdef COMPILE_TEST_CODES
+#ifdef COMPILE_DEBUG_CODES
 	if(log->type==ATP_LOG_INFO)
 		printf("Info->");
 	if(log->type==ATP_LOG_FATAL)
 			printf("Fatal->");
 	if(log->type==ATP_LOG_ERROR)
 			printf("Error->");
-
-	if(log->data_type==ATP_LOG_DATA_TYPE_FLOAT)
-				printf("Data Type Is Float->");
-	if(log->data_type==ATP_LOG_DATA_TYPE_INT)
-					printf("Data Type Is Int->");
-	if(log->data_type==ATP_LOG_DATA_TYPE_STRING)
-					printf("Data Type Is String->");
-
-
-	printf("Data Len %u->",log->data_len);
-	printf(log->data);
+	if(log->type==ATP_LOG_DEBUG)
+		printf("Debug->");
+	if(log->data_type==ATP_LOG_DATA_TYPE_STRING){
+	   printf("Data Type Is String->");
+	   printf("Data Len %u->",log->data_len);
+	   printf(log->data);
+	}
 #endif
-#ifdef COMPILE_LOG_UDP
+
+
 	if(!initialized_clients){
 		initialize_clients("192.168.2.138",9999);
 
 	}
-	em_uint8 buf_temp[8+log->data_len];
+	if(log->type!=ATP_LOG_DEBUG){
+		em_uint8 buf_temp[8+log->data_len];
+
 	buf_temp[0]=log->type;
 	buf_temp[1]=log->data_type;
 	buf_temp[2]=log->data_type>>8;
@@ -89,15 +88,11 @@ void atp_log(atp_log_data *log){
 	  perror(strerror(errno));
 
 	}
-
-	/*err=sendto(clients[0].socket_descriptior,log->data,log->data_len,0,(struct sockaddr *)&clients[0].client_address,sizeof(struct sockaddr_in));
-	if(err==-1){
-		perror(strerror(errno));
-	}*/
+	}
 
 
 
-#endif
+
 
 	atp_free(log->data);
 	atp_free(log);
@@ -120,10 +115,10 @@ atp_log_data* atp_log_create_string(em_uint8 log_type, const char *fmt,...){
 		char *buffer=atp_malloc(sizeof(char)*255);
 		atp_fill_zero(buffer,255);
 		log->data_len=vsnprintf(buffer,255,fmt,arg);
-		//log->data_len+=1;//null character
+
 		va_end(arg);
 		log->data=buffer;
-		//printf("%s",buffer);
+
         log->data_type=ATP_LOG_DATA_TYPE_STRING;
 
   return log;

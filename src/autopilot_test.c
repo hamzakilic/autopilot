@@ -70,20 +70,26 @@ int test_atp_command_manager(){
     atp_command_manager *manager;
     if(atp_command_manager_create(&manager,process_command))
     	return FATAL;
+
     atp_command *command=atp_malloc(sizeof(atp_command));
     command->type=ATP_COMMAND_TEST;
     command->destroy=destroy_atp_command_test;
     atp_command_test *command_test=atp_malloc(sizeof(atp_command_test));
 
+
     const char * command_text="atp_command for atp_command_manager";
     command_test->data=(void*)command_test;
+
     em_int32 size_of_text=strlen(command_text)+1;
+
     command_test->data=atp_malloc(sizeof(em_byte)*size_of_text);
     atp_fill_zero(command_test->data,size_of_text);
     atp_copy(command_test->data,command_text,size_of_text-1);
     command->data=command_test;
+
     if(atp_command_manager_add(command,manager))
     	return FATAL;
+
     puts("you must see command text as");
     puts(command_text);
     em_io_delay_microseconds(1000000);
