@@ -97,7 +97,9 @@ inline void calculate_packet_ck(struct ubx *packet,em_uint8 *ck_a,em_uint8 *ck_b
 }
 
 
+void * starttest(void *data){
 
+}
 
 void add_process_queue(atp_services_gps_data *data, const struct ubx *packet){
 	struct ubx *temp=atp_malloc(sizeof(struct ubx));
@@ -199,6 +201,7 @@ void * start_communication_gps(void *ptr) {
 
 		 err=ublox_neo6v_read_packet(&packet,&work);
 		 if(!err){
+
 	       add_process_queue(gps_data,&packet);
 
 		 }

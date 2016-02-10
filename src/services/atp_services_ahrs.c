@@ -40,7 +40,7 @@ inline em_float32 pressure_to_altitude(em_float32 seaLevel, em_float32 atmospher
 #endif
 
 volatile float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
-static em_int32 test=0;
+static em_int32 pressure_temprature_read_counter=0;
 
 inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read, atp_services_ahrs_data *ahrs_data){
 em_int64 start=atp_datetime_as_microseconds();
@@ -72,7 +72,7 @@ em_int32 err=ATP_SUCCESS;
 
 #endif
 #ifdef COMPILE_BMP085
-if(test++%25==0){
+if(++pressure_temprature_read_counter%250==0){
 	//note: this code need so many mathematic because of this every second we are reading and refreshing
       err |= adafruit_bmp085_temp_press_read(temperature,pressure);
       if(err){
@@ -80,7 +80,7 @@ if(test++%25==0){
     	  return ATP_ERROR_HARDWARE_COMMUNICATION;
 
       }
-      test=0;
+      pressure_temprature_read_counter=0;
 
       *altitude=pressure_to_altitude(sea_level_pressure,*pressure);
 }
