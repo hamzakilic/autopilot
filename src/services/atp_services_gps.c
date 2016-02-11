@@ -201,7 +201,7 @@ void * start_communication_gps(void *ptr) {
 
 		 err=ublox_neo6v_read_packet(&packet,&work);
 		 if(!err){
-
+//todo:adding to process queue is to late
 	       add_process_queue(gps_data,&packet);
 
 		 }
