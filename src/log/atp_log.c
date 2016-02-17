@@ -84,10 +84,12 @@ void atp_log(atp_log_data *log){
 	memcpy(buf_temp+8,log->data,log->data_len);
 	em_int32 err=0;
 	err=sendto(clients[0].socket_descriptior,buf_temp,8+log->data_len,0,(struct sockaddr *)&(clients[0].client_address),sizeof(struct sockaddr_in));
-	if(err==-1){
+	if(err==-1)
 	  perror(strerror(errno));
 
-	}
+
+
+
 	}
 
 
