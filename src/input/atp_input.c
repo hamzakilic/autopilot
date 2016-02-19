@@ -176,8 +176,10 @@ void* atp_input_log(void *ptr){
 				buffer[54]=input_data->ahrs.altitude>>16;
 				buffer[55]=input_data->ahrs.altitude>>8;
 				buffer[56]=input_data->ahrs.altitude;
-
 		atp_thread_unlock(input_data->ahrs_lock_key);
+
+		atp_thread_lock(input_data->dof_lock_key);
+
 				buffer[57]=input_data->dof.accx>>24;
 				buffer[58]=input_data->dof.accx>>16;
 				buffer[59]=input_data->dof.accx>>8;
@@ -222,10 +224,6 @@ void* atp_input_log(void *ptr){
 				buffer[78]=input_data->dof.gyroz>>16;
 				buffer[79]=input_data->dof.gyroz>>8;
 				buffer[80]=input_data->dof.gyroz;
-
-
-		atp_thread_lock(input_data->dof_lock_key);
-
 
 				atp_thread_unlock(input_data->dof_lock_key);
 

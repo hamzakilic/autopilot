@@ -32,10 +32,13 @@ em_uint32  atp_service_system_start(atp_input *input,atp_settings *settings){
 }
 em_uint32 atp_service_system_stop(){
 
+
 	if(service_gps)
 	atp_services_gps_destroy(service_gps);
+
 	if(service_ahrs)
 		atp_services_ahrs_destroy(service_ahrs);
+
 
 	return ATP_SUCCESS;
 }

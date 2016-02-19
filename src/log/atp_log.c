@@ -65,7 +65,9 @@ void atp_log(atp_log_data *log){
 		initialize_clients("192.168.2.138",9999);
 
 	}
-	if(log->type!=ATP_LOG_DEBUG){
+	if(log->type!=ATP_LOG_DEBUG)
+	{
+		printf("sending log data type:%d\n",log->data_type);
 		em_uint8 buf_temp[8+log->data_len];
 
 	buf_temp[0]=log->type;

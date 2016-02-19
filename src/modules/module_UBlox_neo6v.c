@@ -202,7 +202,7 @@ em_uint32 ublox_neo6v_read_packet(struct ubx *packet,const em_uint8 *work){
 	        if(packet->lenght>100)
 	        	return ATP_ERROR_HARDWARE_COMMUNICATION;
 			em_uint16 lenght = packet->lenght;
-					while (*work && lenght) {
+					while (*work & lenght) {
 
 						read_next_byte();
 							packet->data[packet->lenght - lenght] = readed;

@@ -330,6 +330,8 @@ em_uint32 atp_services_ahrs_destroy(atp_services_ahrs *address){
 		ahrs_data->work=0;
 		if(ahrs_data->thread_id)
 			atp_thread_join(&ahrs_data->thread_id);
+		atp_free(ahrs_data);
+		atp_free(address);
 
 
 	}

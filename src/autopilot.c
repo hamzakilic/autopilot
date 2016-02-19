@@ -46,8 +46,9 @@ int main(void) {
 
 
    getchar();
-   printf("print any char to exit");
+   printf("print any char to exit\n");
    getchar();
+   printf("exiting\n");
    atp_pilot_stop(pilot);
    atp_pilot_destroy(pilot);
 

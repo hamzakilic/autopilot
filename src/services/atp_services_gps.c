@@ -277,11 +277,14 @@ em_uint32 atp_services_gps_destroy(atp_services_gps *address) {
 
 	if(address->private_data){
 		atp_services_gps_data *gps_data=atp_convert(address->private_data,atp_services_gps_data*);
+
 		if(gps_data->thread_communication_id)
 		atp_thread_join(&gps_data->thread_communication_id);
 
+
 		if(gps_data->thread_queue_id)
         atp_thread_join(&gps_data->thread_queue_id);
+
 
 		atp_queue_destroy(gps_data->packet_queue);
 
