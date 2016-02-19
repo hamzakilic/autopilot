@@ -201,12 +201,12 @@ void * start_communication_gps(void *ptr) {
 
 		 err=ublox_neo6v_read_packet(&packet,&work);
 		 if(!err){
-//todo:adding to process queue is to late
+	     //todo:adding to process queue is to late
 	       add_process_queue(gps_data,&packet);
 
 		 }
 		 else{
-#ifdef COMPILE_DEBUG_CODES
+#ifdef COMPILE_DEBUG_CODES2
 			 atp_log(atp_log_create_string(ATP_LOG_DEBUG,"Gps Next Packet Read Error:%d\n",err));
 
 #endif

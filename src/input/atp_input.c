@@ -123,6 +123,7 @@ void* atp_input_log(void *ptr){
 				buffer[18]=input_data->gps_time.year>>8;
 				buffer[19]=input_data->gps_time.year;
 
+
 				buffer[20]=input_data->gps_time.month;
 				buffer[21]=input_data->gps_time.day;
 				buffer[22]=input_data->gps_time.hour;

@@ -158,17 +158,20 @@ em_uint32 ublox_neo6v_setconfig(){
 
 }
 
-#define read_next_byte()      while(*work){ if (em_io_uart_read(&readed) == EM_SUCCESS) break;}
+#define read_next_byte()      while(*work){ if (em_io_uart_read(&readed) == EM_SUCCESS){break;}}
 em_uint32 ublox_neo6v_read_packet(struct ubx *packet,const em_uint8 *work){
 
 	em_uint8 readed;
+	while(*work){
+
 	read_next_byte();
 
 				if(readed == 0xB5)
 					packet->sync1 = readed;
 				else{
 
-					return ATP_ERROR_HARDWARE_COMMUNICATION;
+					//return ATP_ERROR_HARDWARE_COMMUNICATION;
+					continue;
 				}
 
 			read_next_byte();
@@ -178,9 +181,12 @@ em_uint32 ublox_neo6v_read_packet(struct ubx *packet,const em_uint8 *work){
 					packet->sync2 = readed;
 				else {
 
-					return ATP_ERROR_HARDWARE_COMMUNICATION;
+					//return ATP_ERROR_HARDWARE_COMMUNICATION;
+					continue;
 
 				}
+				break;
+	}
 
 
 			read_next_byte();
@@ -199,8 +205,10 @@ em_uint32 ublox_neo6v_read_packet(struct ubx *packet,const em_uint8 *work){
 			read_next_byte();
 			packet->lenght += ((em_uint16)readed) << 8;
 
-	        if(packet->lenght>100)
+	        if(packet->lenght>100){
+
 	        	return ATP_ERROR_HARDWARE_COMMUNICATION;
+	        }
 			em_uint16 lenght = packet->lenght;
 					while (*work & lenght) {
 
