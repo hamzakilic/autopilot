@@ -152,6 +152,7 @@ void* atp_input_log(void *ptr){
 				buffer[34]=input_data->ahrs.roll>>16;
 				buffer[35]=input_data->ahrs.roll>>8;
 				buffer[36]=input_data->ahrs.roll;
+				//printf("%d %x %x %x %x\n",input_data->ahrs.roll,buffer[33],buffer[34],buffer[35],buffer[36]);
 
 				buffer[37]=input_data->ahrs.pitch>>24;
 				buffer[38]=input_data->ahrs.pitch>>16;
@@ -274,6 +275,8 @@ em_uint32 atp_input_update_ahrs(atp_input *input,atp_ahrs_data data){
 			    input_data->ahrs.altitude=data.altitude*1000;
 			    input_data->ahrs.temperature=data.temperature*1000;
 			    input_data->ahrs.pressure=data.pressure*1000;
+
+			    //printf("%d %d %d %d %d %d\n",input_data->ahrs.roll,input_data->ahrs.pitch,input_data->ahrs.yaw,input_data->ahrs.pressure,input_data->ahrs.temperature,input_data->ahrs.altitude);
 
 				atp_thread_unlock(input_data->ahrs_lock_key);
 				return ATP_SUCCESS;

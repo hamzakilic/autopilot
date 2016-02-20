@@ -22,6 +22,9 @@ struct client{
 };
 
 struct client clients[10];
+
+
+
 //static em_int8 client_max_index=1;
 static em_int8 initialized_clients=0;
 void initialize_clients(const char * host,em_uint16 port){
@@ -83,6 +86,7 @@ void atp_log(atp_log_data *log){
 	buf_temp[6]=hash>>16;
 	buf_temp[7]=hash>>24;
 	memcpy(buf_temp+8,log->data,log->data_len);
+
 	em_int32 err=0;
 	err=sendto(clients[0].socket_descriptior,buf_temp,8+log->data_len,0,(struct sockaddr *)&(clients[0].client_address),sizeof(struct sockaddr_in));
 	if(err==-1)
@@ -92,6 +96,7 @@ void atp_log(atp_log_data *log){
 
 
 	}
+
 
 
 

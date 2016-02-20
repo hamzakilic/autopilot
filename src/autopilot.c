@@ -16,8 +16,20 @@
 
 #ifndef COMPILE_TEST_CODES
 
+
+union {
+    int i;
+    char c[sizeof(int)];
+} endian;
+
+
+
 int main(void) {
 
+	endian.i = 1;
+	if(endian.c[0] == 1)
+	    printf("cpu is little-endian\n");
+	else    printf("cpu big-endian\n");
 
 
 
