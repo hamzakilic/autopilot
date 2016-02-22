@@ -9,8 +9,8 @@
 typedef struct {
 	atp_input *input;
 	atp_settings *settings;
-	atp_command_manager *command_manager;
-	atp_command_listener *command_listener;
+	atp_task_manager *task_manager;
+    atp_task_listener *task_listener;
 	em_uint32 service_system_started;
 	atp_motor_controller *motor_controller;
 	em_int32 pilot_started;
@@ -41,42 +41,6 @@ em_uint32 atp_pilot_create(atp_pilot **pilot){
 
     return ATP_SUCCESS;
 }
-
-
-void process_command(atp_command *command){
-
-	if(command->type==ATP_COMMAND_TEST)
-	{
-
-	    atp_command_test *command_test=(atp_command_test *)command->data;
-		#ifdef COMPILE_TEST_CODES
-		puts(command_test->data);
-		#endif
-	}
-
-	if(command->type==ATP_COMMAND_MOTOR)
-	{
-
-       atp_command_motor *motor_control=(atp_command_motor *)command->data;
-       if(pilot_data!=0){
-           atp_motor_controller_set_values(pilot_data->motor_controller,motor_control->values);
-
-       }else{
-			#ifdef COMPILE_TEST_CODES
-            printf("pilot_data is null, cannot process atp_command_motor\n");
-			#endif
-       }
-
-
-	}
-
-	if(command->destroy)
-		command->destroy(command->data);
-	atp_free(command);
-
-}
-
-
 em_uint32 atp_pilot_start(atp_pilot *pilot){
      atp_pilot_data *pilot_data=(atp_pilot_data *)pilot->private_data;
 
@@ -108,21 +72,21 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 	    	    }
 
 
-	    //create command manager
+	    //create task manager
         err=0;
-        if(pilot_data->command_manager==NULL)
-        err=atp_command_manager_create(&pilot_data->command_manager,process_command);
+        if(pilot_data->task_manager==NULL)
+        err=atp_task_manager_create(&pilot_data->task_manager,pilot_data->input,pilot_data->motor_controller,pilot_data->settings);
 	    if(err){
-	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Command Manager System Failed Error:%u\n",err));
+	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Task Manager System Failed Error:%u\n",err));
 	    	    	return ATP_ERROR_START_COMMANDMANAGER;
 	    	    }else{
-	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Command Manager Success \n"));
+	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Task Manager Success \n"));
 	    	    }
 
-	    //create command listener
+	    //create task listener
         err=0;
-        if(pilot_data->command_listener==NULL)
-	    err=atp_command_listener_create(&pilot_data->command_listener,pilot_data->command_manager);
+        if(pilot_data->task_listener==NULL)
+	    err=atp_task_listener_create(&pilot_data->task_listener,pilot_data->task_manager);
 	    if(err){
 	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Command Listener Failed Error:%u\n",err));
 	    	    	    	return ATP_ERROR_START_COMMANDLISTENER;
@@ -164,25 +128,25 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 em_uint32 atp_pilot_stop(atp_pilot *pilot){
 	atp_pilot_data *pilot_data=(atp_pilot_data*)pilot->private_data;
 
-	//stop command listener
+	//stop task listener
 	em_uint32 err=0;
-	        if(pilot_data->command_listener)
-		    err=atp_command_listener_destroy(pilot_data->command_listener);
+	        if(pilot_data->task_listener)
+		    err=atp_task_listener_destroy(pilot_data->task_listener);
 		    if(err)
 		    {
-		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Destroy Command Listener Failed Error:%u\n",err));
+		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Destroy Task Listener Failed Error:%u\n",err));
 		    	return ATP_ERROR_CREATE_INPUT;
 		    }else{
-		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Command Listener Success \n"));
+		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Task Listener Success \n"));
 
 		    }
-		    pilot_data->command_listener=NULL;
+		    pilot_data->task_listener=NULL;
 
 
-		    //stop command manager
+		    //stop task manager
             err=0;
-            if(pilot_data->command_manager)
-		    err=atp_command_manager_destroy(pilot_data->command_manager);
+            if(pilot_data->task_manager)
+		    err=atp_task_manager_destroy(pilot_data->task_manager);
 		    		    if(err)
 		    		    {
 		    		    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Destroy Command Manager Failed Error:%u\n",err));
@@ -191,7 +155,7 @@ em_uint32 atp_pilot_stop(atp_pilot *pilot){
 		    		    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Destroy Command Manager Success \n"));
 
 		    		    }
-		    		    pilot_data->command_manager=NULL;
+		    		    pilot_data->task_manager=NULL;
 
 
 		    		    //stop service system

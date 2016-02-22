@@ -87,7 +87,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 
         }*/
-        for_each_motors(){
+       /* for_each_motors(){
 
 
 
@@ -109,7 +109,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
 
 
 
-        	/*for_each_motors(){
+        	for_each_motors(){
 
                        	err=atp_motor_set_power(motors[index],200);
                           if(err){

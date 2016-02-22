@@ -15,8 +15,11 @@
 #include "../services/atp_service_system.h"
 #include "../controllers/atp_motor_controller.h"
 #include "../log/atp_log.h"
-#include "atp_command_manager.h"
-#include "atp_command_listener.h"
+#include "../task/atp_task_manager.h"
+#include "../task/atp_task_listener.h"
+
+
+
 
 
 typedef struct

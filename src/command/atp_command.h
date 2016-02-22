@@ -13,6 +13,7 @@
 
 typedef void (*destroy_command_func )(void *);
 typedef struct {
+	em_uint16 level;
     em_uint16 type;
     void *data;
     destroy_command_func destroy;
@@ -20,10 +21,12 @@ typedef struct {
 
 
 typedef struct {
+	em_uint16 level;
 	em_byte *data;
 }atp_command_test;
 
 typedef struct{
+	em_uint16 level;
   em_uint16 values[4];
 }atp_command_motor;
 
