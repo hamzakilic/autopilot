@@ -16,6 +16,7 @@
 #include "../input/atp_input.h"
 #include "../controllers/atp_motor_controller.h"
 #include "../settings/atp_settings.h"
+#include "atp_task_echo.h"
 
 
 

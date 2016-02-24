@@ -15,6 +15,7 @@ em_uint32 atp_thread_create(atp_thread_id *thread_id, thread_func func,void *arg
 	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Create Thread Failed Error:%u\n",err));
 	   return ATP_ERROR_CREATE_THREAD;
    }
+
    return ATP_SUCCESS;
 
 

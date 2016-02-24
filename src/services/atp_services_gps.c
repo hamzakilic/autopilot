@@ -98,7 +98,7 @@ inline void calculate_packet_ck(struct ubx *packet,em_uint8 *ck_a,em_uint8 *ck_b
 
 
 void * starttest(void *data){
-
+return NULL;
 }
 
 void add_process_queue(atp_services_gps_data *data, const struct ubx *packet){

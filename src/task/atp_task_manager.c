@@ -18,8 +18,8 @@ typedef struct {
   atp_thread_id thread_id;
   em_uint32 work;
   void *thread_lock;
-  struct task_node *node;
-
+  struct task_node *head_node;
+  em_uint32 count_of_task;
   //these values comes from pilot_data
   atp_input *input;
   atp_motor_controller *motor_controller;
@@ -30,24 +30,42 @@ typedef struct {
 
 
 
-void add_to_task(struct atp_task *task,task_manager_data *data){
-    atp_thread_lock(data->thread_lock);
-	struct task_node *current_node=data->node;
-	struct task_node *previous=data->node;
+em_uint32 add_to_task(struct atp_task *task,task_manager_data *data){
+	em_uint32 err=atp_thread_lock(data->thread_lock);
+
+	struct task_node *current_node=data->head_node;
+
+	struct task_node *previous=data->head_node;
+
+
 			while(current_node)
 			{
 				previous=current_node;
 				current_node=current_node->next;
 
 			}
+
 			if(previous){
+
 				struct task_node *node=atp_new(struct task_node);
 				atp_fill_zero(node,sizeof(struct task_node));
 				node->task=task;
 				node->prev=previous;
+				node->next=NULL;
 				previous->next=node;
+
+			}else{
+
+								struct task_node *node=atp_new(struct task_node);
+								atp_fill_zero(node,sizeof(struct task_node));
+								node->task=task;
+								data->head_node=node;
+
 			}
+
+
     atp_thread_unlock(data->thread_lock);
+    return ATP_SUCCESS;
 
 }
 
@@ -56,78 +74,114 @@ void add_to_task(struct atp_task *task,task_manager_data *data){
 
 
 
-void start_task(struct task_node *node){
+void start_task(struct task_node *node,task_manager_data *data){
 
-  em_uint32 err= atp_thread_create(&node->task->thread_id,node->task->func_exec,node->task->parameter);
-  if(err)
-	  atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Task Faield Error:%d %s\n",err, node->task->name));
+  atp_log(atp_log_create_string(ATP_LOG_DATA_TYPE_INPUT,"Starting Task:%s",node->task->name));
+  node->task->is_started=1;
+  em_uint32 err= atp_thread_create(&node->task->thread_id,node->task->func_exec,node->task);
+  if(err){
+	  node->task->is_started=0;
+	  atp_log(atp_log_create_string(ATP_LOG_FATAL,"Starting Task Failed Error:%d %s\n",err, node->task->name));
+  }
   else
-  atp_log(atp_log_create_string(ATP_LOG_INFO,"Creating Task Success %s\n",node->task->name));
+  atp_log(atp_log_create_string(ATP_LOG_INFO,"Starting Task Success %s\n",node->task->name));
+
 
 }
 
 void finish_task(struct task_node *node,task_manager_data *data){
+
+
    atp_log(atp_log_create_string(ATP_LOG_INFO,"Finishing Task Success %s\n",node->task->name));
-   atp_thread_join(&node->task->thread_id);
-   em_int32 nextcount=0;
+
+   atp_thread_join(&(node->task->thread_id));
+
+   em_uint32 nextcount=0;
+
    for(nextcount=0;nextcount<node->task->next_task_list_count;++nextcount){
       add_to_task(node->task->next_task_list[nextcount],data);
    }
+   em_uint32 err=atp_thread_lock(data->thread_lock);
 
    if(node->task->func_free)
       node->task->func_free(node->task);
-   atp_thread_lock(data->thread_lock);
-   if(node->prev)
-   {
+
+   if(node->prev)   {
+
 	 node->prev->next=node->next;
+	 if(node->next)
+	 node->next->prev=node->prev;
+
    }else{
-     data->node=node->next;
+
+     if(node->next)
+    	 node->next->prev=NULL;
+     data->head_node=node->next;
+
    }
-   atp_thread_unlock(data->thread_lock);
+
    atp_free(node);
+   atp_thread_unlock(data->thread_lock);
+
+
+
+
+
 
 
 }
 
 void waitalltasks(task_manager_data *data){
 
-		struct task_node *current_node=data->node;
+	atp_thread_lock(data->thread_lock);
+		struct task_node *current_node=data->head_node;
 				while(current_node)
 				{
 					if(!current_node->task->is_finished)
-						current_node->task->func_kill();
+						current_node->task->func_kill(current_node->task);
 					current_node=current_node->next;
 				}
 
 
-		   while(data->node)
+		   while(data->head_node)
 		   {
-			 while(!data->node->task->is_finished);//buradaki ; çok önemli
-				finish_task(data->node,data);
+			 while(!data->head_node->task->is_finished);//buradaki ; çok önemli
+				finish_task(data->head_node,data);
 		   }
-
+				atp_thread_unlock(data->thread_lock);
 }
 
 
 void * process_tasks(void *temp_data){
 	task_manager_data *data=atp_convert(temp_data,task_manager_data*);
-	em_int32 index=0;
+	em_int32 count=0;
 
 	while(data->work){
 
-		struct task_node *current_node=data->node;
+
+		struct task_node *current_node=data->head_node;
+		struct task_node *next=NULL;
+		count=0;
+
 		while(current_node)
 		{
 
-			if(!current_node->task->is_started)
-				start_task(current_node);
-			if(current_node->task->is_finished)
+			next=current_node->next;
+			if(!current_node->task->is_started){
+
+				start_task(current_node,data);
+			}
+			if(current_node->task->is_finished){
+
 				finish_task(current_node,data);
-			current_node=current_node->next;
+			}
+
+			current_node=next;
+           count++;
 		}
+		data->count_of_task=count;
 
-
-        em_io_delay_microseconds(10);
+        em_io_delay_microseconds(100);
 
         }
 
@@ -160,6 +214,7 @@ em_uint32 atp_task_manager_destroy(atp_task_manager *task_manager){
     	if(task_manager->private_data){
     		task_manager_data *data=atp_convert(task_manager->private_data,task_manager_data *);
     		data->work=0;
+    		waitalltasks(data);
     		if(data->thread_id)
     			atp_thread_join(&data->thread_id);
     		atp_thread_destory_lock(data->thread_lock);
@@ -170,16 +225,53 @@ em_uint32 atp_task_manager_destroy(atp_task_manager *task_manager){
     return ATP_SUCCESS;
 }
 
+
+em_uint32 check_hash(em_uint8 *data,em_uint32 lenght){
+
+
+	em_uint16 data_type=data[0];
+	data_type|=data[1]<<8;
+	em_uint32 data_length=data[2];
+	data_length|=data[3]<<8;
+	data_length|=data[4]<<16;
+	data_length|=data[5]<<24;
+	em_uint32 sended_hash=data[6];
+	sended_hash|=data[7]<<8;
+	sended_hash|=data[8]<<16;
+	sended_hash|=data[9]<<24;
+	em_uint32 calculated_hash=data[0]+data[1]+data[2]+data[3]+data[4]+data[5];
+	if(sended_hash==calculated_hash & data_length==lenght-10)
+		return 0;
+	atp_log(atp_log_create_string(ATP_LOG_ERROR,"Task is not valid"));
+	return 1;
+}
+
 struct atp_task * create_atp_task(em_uint8* data,em_uint32 length){
-return NULL;
+
+	if(length<=10)
+		return NULL;
+     if(check_hash(data,length))
+    	 return NULL;
+	em_uint16 data_type=data[0];
+	data_type|=data[1]<<8;
+   if(data_type==ATP_TASK_ECHO){
+
+	   return atp_task_echo_create(data+10,length-10);
+
+   }
+   return NULL;
 }
 
 em_uint32 atp_task_manager_add_task(em_uint8 *data,em_uint32 length,atp_task_manager *task_manager){
 
 	task_manager_data *manager_data=atp_convert(task_manager->private_data,task_manager_data *);
 	struct atp_task *task=create_atp_task(data,length);
-	if(task)
-		add_to_task(task,manager_data);
+
+	if(task && manager_data->work){
+
+	   em_uint32 err=add_to_task(task,manager_data);
+
+	}
 	return ATP_SUCCESS;
 
 }

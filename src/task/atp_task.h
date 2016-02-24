@@ -17,8 +17,8 @@
 
 
 typedef void* (*task_exec_func)(void *parameter);
-typedef void (*task_free_func)(void *);
-typedef void (*task_kill_func)();
+typedef void (*task_free_func)(void *parameter);
+typedef void (*task_kill_func)(void *parameter);
 
 
  struct atp_task {
@@ -34,6 +34,8 @@ typedef void (*task_kill_func)();
 	em_uint32 next_task_list_count;
     atp_thread_id thread_id;
 };
+
+#define ATP_TASK_ECHO 0x0001
 
 
 

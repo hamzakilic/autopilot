@@ -10,10 +10,12 @@
 
 #include "atp_task.h"
 
-struct atp_task * atp_task_echo_create(em_uint8 *bytes);
-void * atp_task_echo_exec(void *parameters);
-void atp_task_echo_free(struct atp_task * task);
-void atp_task_echo_kill(void *parameters);
+
+
+struct atp_task * atp_task_echo_create(em_uint8 *bytes,em_uint32 length);
+void * atp_task_echo_exec(void *parameter);
+void atp_task_echo_free(void *parameter);
+void atp_task_echo_kill(void *parameter);
 
 
 

@@ -51,13 +51,14 @@ static em_uint32  atp_create_socket(atp_task_listener_data *data){
 
 void * read_tasks(void *arg){
 	atp_task_listener_data *data=arg;
-	em_byte bytes[1024];
+	em_byte bytes[1048576];
 	em_int32 len=sizeof(data->cliaddr);
 	while(data->work){
 
-		em_int32 received_size= recvfrom(data->sockfd,bytes,1024,0,(struct sockaddr *)&data->cliaddr,&len);
+		em_int32 received_size= recvfrom(data->sockfd,bytes,1048576,0,(struct sockaddr *)&data->cliaddr,&len);
 		if(received_size>0){
-			atp_task_manager_add_task(data->sockfd,received_size,data->manager);
+
+			atp_task_manager_add_task(bytes,received_size,data->manager);
 
 
 		}
