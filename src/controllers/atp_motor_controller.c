@@ -173,3 +173,56 @@ em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller
 	return ATP_SUCCESS;
 }
 
+em_uint32 atp_motor_controller_start_motors(atp_motor_controller *motor_controller){
+	atp_motor **motors=(atp_motor**)motor_controller->private_data;
+	em_uint32 err=ATP_SUCCESS;
+	em_uint8 index;
+		if(motors!=NULL)
+		{
+
+			for_each_motors(){
+				err|=atp_motor_start(motors[index]);
+			}
+		}
+
+		if(err){
+		     for_each_motors(){
+					err|=atp_motor_stop(motors[index]);
+						}
+		}
+		return ATP_SUCCESS;
+}
+em_uint32 atp_motor_controller_start_motor(atp_motor_controller *motor_controller,em_uint32 index){
+
+	atp_motor **motors=(atp_motor**)motor_controller->private_data;
+		em_uint32 err=ATP_SUCCESS;
+			if(motors!=NULL)
+			{
+
+			err|=atp_motor_start(motors[index]);
+
+			}
+			if(err){
+
+			err|=atp_motor_stop(motors[index]);
+
+			}
+			return ATP_SUCCESS;
+}
+
+em_uint32 atp_motor_controller_stop_motor(atp_motor_controller *motor_controller,em_uint32 index){
+
+	atp_motor **motors=(atp_motor**)motor_controller->private_data;
+		em_uint32 err=ATP_SUCCESS;
+			if(motors!=NULL)
+			{
+
+			err|=atp_motor_stop(motors[index]);
+
+			}
+
+			return ATP_SUCCESS;
+}
+
+
+

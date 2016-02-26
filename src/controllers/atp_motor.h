@@ -12,6 +12,13 @@
 #include "../input/atp_input.h"
 #include "../modules/module_Adafruit_PCA9685.h"
 
+
+#define MOTOR_CREATED -1
+#define MOTOR_DESTROYED -2
+#define MOTOR_CALIBRATED -3
+#define MOTOR_STARTED -4
+#define MOTOR_STOPPED -5
+
 typedef struct {
 	//read-only
 	em_uint16 power;

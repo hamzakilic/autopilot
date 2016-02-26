@@ -5,8 +5,8 @@
  *      Author: root
  */
 
-#ifndef ATP_TASK_ECHO_H_
-#define ATP_TASK_ECHO_H_
+#ifndef AUTOPILOTC_SRC_ATP_TASK_ECHO_H_
+#define AUTOPILOTC_SRC_ATP_TASK_ECHO_H_
 
 #include "atp_task.h"
 

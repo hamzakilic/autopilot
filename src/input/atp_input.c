@@ -338,6 +338,19 @@ em_uint32 atp_input_update_motor (atp_input *input,atp_motor_data data){
 	return ATP_SUCCESS;
 }
 
+em_uint32 atp_input_get_motor(atp_input *input,em_uint8 motor_index,atp_motor_data *data){
+	atp_input_data *input_data=atp_convert(input->private_data,atp_input_data*);
+
+	    atp_thread_lock(input_data->motor_lock_key);//lock for multi threads
+
+	    data->motor_index=motor_index;
+	    data->motor_value=input_data->motor.values[data->motor_index];
+
+	    atp_thread_unlock(input_data->motor_lock_key);
+		return ATP_SUCCESS;
+}
+
+
 
 em_uint32 atp_input_create(atp_input **address){
 	atp_input *input=atp_new(atp_input);

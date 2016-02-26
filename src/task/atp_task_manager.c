@@ -24,6 +24,8 @@ typedef struct {
   atp_input *input;
   atp_motor_controller *motor_controller;
   atp_settings *settings;
+  atp_task_share *task_share;
+  em_int32 tasks_count;
 
 }task_manager_data;
 
@@ -62,6 +64,8 @@ em_uint32 add_to_task(struct atp_task *task,task_manager_data *data){
 								data->head_node=node;
 
 			}
+			data->tasks_count++;
+    atp_task_share_count_plus(data->task_share);
 
 
     atp_thread_unlock(data->thread_lock);
@@ -121,6 +125,9 @@ void finish_task(struct task_node *node,task_manager_data *data){
    }
 
    atp_free(node);
+   data->tasks_count--;
+   atp_task_share_count_minus(data->task_share);
+
    atp_thread_unlock(data->thread_lock);
 
 
@@ -194,12 +201,13 @@ void * process_tasks(void *temp_data){
 
 em_uint32 atp_task_manager_create(atp_task_manager **task_manager,atp_input *input,atp_motor_controller *motor_controller,atp_settings *settings){
 
-	atp_task_manager * temp= atp_malloc(sizeof(atp_task_manager));
+	    atp_task_manager * temp= atp_malloc(sizeof(atp_task_manager));
 	    task_manager_data *temp_data=  atp_malloc(sizeof(task_manager_data));
 	    atp_fill_zero(temp_data,sizeof(task_manager_data));
 	    temp_data->input=input;
 	    temp_data->motor_controller=motor_controller;
 	    temp_data->settings=settings;
+	    atp_task_share_create(&temp_data->task_share);
 	    temp->private_data=temp_data;
 	    *task_manager=temp;
 	    temp_data->work=1;
@@ -218,6 +226,7 @@ em_uint32 atp_task_manager_destroy(atp_task_manager *task_manager){
     		if(data->thread_id)
     			atp_thread_join(&data->thread_id);
     		atp_thread_destory_lock(data->thread_lock);
+    		atp_task_share_destroy(data->task_share);
     		atp_free(data);
     	}
     	atp_free(task_manager);
@@ -246,26 +255,30 @@ em_uint32 check_hash(em_uint8 *data,em_uint32 lenght){
 	return 1;
 }
 
-struct atp_task * create_atp_task(em_uint8* data,em_uint32 length){
+struct atp_task * create_atp_task(em_uint8* data,em_uint32 length,task_manager_data *manager_data){
 
-	if(length<=10)
+	if(length<10)
 		return NULL;
      if(check_hash(data,length))
     	 return NULL;
 	em_uint16 data_type=data[0];
 	data_type|=data[1]<<8;
-   if(data_type==ATP_TASK_ECHO){
-
+   switch(data_type){
+   case ATP_TASK_ECHO:
 	   return atp_task_echo_create(data+10,length-10);
-
+   case ATP_TASK_START_MOTORS:
+	   return atp_task_start_motors_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+   case ATP_TASK_STOP_MOTORS:
+   	   return atp_task_stop_motors_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
    }
+
    return NULL;
 }
 
 em_uint32 atp_task_manager_add_task(em_uint8 *data,em_uint32 length,atp_task_manager *task_manager){
 
 	task_manager_data *manager_data=atp_convert(task_manager->private_data,task_manager_data *);
-	struct atp_task *task=create_atp_task(data,length);
+	struct atp_task *task=create_atp_task(data,length,manager_data);
 
 	if(task && manager_data->work){
 
@@ -275,3 +288,4 @@ em_uint32 atp_task_manager_add_task(em_uint8 *data,em_uint32 length,atp_task_man
 	return ATP_SUCCESS;
 
 }
+

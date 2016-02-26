@@ -72,27 +72,7 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 	    	    }
 
 
-	    //create task manager
-        err=0;
-        if(pilot_data->task_manager==NULL)
-        err=atp_task_manager_create(&pilot_data->task_manager,pilot_data->input,pilot_data->motor_controller,pilot_data->settings);
-	    if(err){
-	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Task Manager System Failed Error:%u\n",err));
-	    	    	return ATP_ERROR_START_COMMANDMANAGER;
-	    	    }else{
-	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Task Manager Success \n"));
-	    	    }
 
-	    //create task listener
-        err=0;
-        if(pilot_data->task_listener==NULL)
-	    err=atp_task_listener_create(&pilot_data->task_listener,pilot_data->task_manager);
-	    if(err){
-	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Command Listener Failed Error:%u\n",err));
-	    	    	    	return ATP_ERROR_START_COMMANDLISTENER;
-	    	    	    }else{
-	    	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Command Listener Success \n"));
-	    	    	    }
 
 	    //create service system
         err=0;
@@ -121,6 +101,32 @@ em_uint32 atp_pilot_start(atp_pilot *pilot){
 
 	        	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Motor Controllers Success \n"));
 	        }
+
+
+
+
+	    //create task manager
+	           err=0;
+	           if(pilot_data->task_manager==NULL)
+	           err=atp_task_manager_create(&pilot_data->task_manager,pilot_data->input,pilot_data->motor_controller,pilot_data->settings);
+	   	    if(err){
+	   	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Task Manager System Failed Error:%u\n",err));
+	   	    	    	return ATP_ERROR_START_COMMANDMANAGER;
+	   	    	    }else{
+	   	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Task Manager Success \n"));
+	   	    	    }
+
+	   	    //create task listener
+	           err=0;
+	           if(pilot_data->task_listener==NULL)
+	   	    err=atp_task_listener_create(&pilot_data->task_listener,pilot_data->task_manager);
+	   	    if(err){
+	   	    	atp_log(atp_log_create_string(ATP_LOG_FATAL,"Start Command Listener Failed Error:%u\n",err));
+	   	    	    	    	return ATP_ERROR_START_COMMANDLISTENER;
+	   	    	    	    }else{
+	   	    	    	    	atp_log(atp_log_create_string(ATP_LOG_INFO,"Start Command Listener Success \n"));
+	   	    	    	    }
+
 
 	    return ATP_SUCCESS;
 

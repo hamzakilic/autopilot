@@ -10,7 +10,7 @@
 
 #include "../common/atp_common.h"
 #include "../thread/atp_thread.h"
-
+#include "../task/atp_task_share.h"
 
 
 
@@ -36,6 +36,8 @@ typedef void (*task_kill_func)(void *parameter);
 };
 
 #define ATP_TASK_ECHO 0x0001
+#define ATP_TASK_START_MOTORS 0x0002
+#define ATP_TASK_STOP_MOTORS 0x0003
 
 
 

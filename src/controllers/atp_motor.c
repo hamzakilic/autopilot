@@ -46,11 +46,11 @@ em_uint32 atp_motor_create(atp_motor **motor,atp_input *input, em_uint8 number,e
 	em_io_gpio_write(temp->raspi_pin_number,EM_GPIO_LOW);
 
 	/*update input table*/
-	update_input_motor_table(input,number,-1);
+	update_input_motor_table(input,number,MOTOR_CREATED);
 	return ATP_SUCCESS;
 }
 em_uint32 atp_motor_destroy(atp_motor *motor){
-	update_input_motor_table(motor->input,motor->number,-2);
+	update_input_motor_table(motor->input,motor->number,MOTOR_DESTROYED);
 	atp_free(motor);
 	return ATP_SUCCESS;
 }
@@ -75,7 +75,7 @@ em_uint32 atp_motor_calibrate(atp_motor *motor){
 
 	     em_io_delay_microseconds(5000000);
 
-	     update_input_motor_table(motor->input,motor->number,-3);
+	     update_input_motor_table(motor->input,motor->number,MOTOR_CALIBRATED);
 
 	     return ATP_SUCCESS;
 }
@@ -93,7 +93,7 @@ em_uint32 atp_motor_start(atp_motor *motor){
      em_io_delay_microseconds(6000000);
 
      //update input table, -4 means start
-     update_input_motor_table(motor->input,motor->number,-4);
+     update_input_motor_table(motor->input,motor->number,MOTOR_STARTED);
      return ATP_SUCCESS;
 
 }
@@ -114,7 +114,7 @@ em_uint32 atp_motor_stop(atp_motor *motor){
 		     em_io_gpio_mode(motor->raspi_pin_number,EM_GPIO_LOW);
 
 		     //update input table,-5 means stoped
-		     update_input_motor_table(motor->input,motor->number,-5);
+		     update_input_motor_table(motor->input,motor->number,MOTOR_STOPPED);
 
 
 		     return ATP_SUCCESS;

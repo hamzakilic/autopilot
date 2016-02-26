@@ -31,9 +31,13 @@ typedef struct{
 }atp_motor_controller;
 
 
-em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **motor_controller);
+em_uint32 atp_motor_controller_create(atp_input *input,atp_motor_controller **motor_controller);
 em_uint32 atp_motor_controller_destroy(atp_motor_controller *motor_controller);
 em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller,em_uint16 *values);
+em_uint32 atp_motor_controller_start_motors(atp_motor_controller *motor_controller);
+em_uint32 atp_motor_controller_start_motor(atp_motor_controller *motor_controller,em_uint32 index);
+em_uint32 atp_motor_controller_stop_motor(atp_motor_controller *motor_controller,em_uint32 index);
+
 
 
 
