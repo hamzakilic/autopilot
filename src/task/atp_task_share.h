@@ -19,7 +19,7 @@ typedef struct
 
 em_uint32 atp_task_share_create(atp_task_share **task_share);
 em_uint32 atp_task_share_destroy(atp_task_share *task_share);
-em_int32 atp_task_share_count_get(atp_task_share *task_share);
+em_int32 atp_task_share_task_count_get(atp_task_share *task_share);
 void atp_task_share_count_plus(atp_task_share *task_share);
 void atp_task_share_count_minus(atp_task_share *task_share);
 em_int32 atp_task_share_killall_get(atp_task_share *task_share);

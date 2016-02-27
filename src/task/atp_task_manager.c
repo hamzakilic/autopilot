@@ -266,10 +266,19 @@ struct atp_task * create_atp_task(em_uint8* data,em_uint32 length,task_manager_d
    switch(data_type){
    case ATP_TASK_ECHO:
 	   return atp_task_echo_create(data+10,length-10);
+   case ATP_TASK_EMERGENCY:
+       return atp_task_emergency_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
    case ATP_TASK_START_MOTORS:
 	   return atp_task_start_motors_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
    case ATP_TASK_STOP_MOTORS:
    	   return atp_task_stop_motors_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+   case ATP_TASK_TAKEOFF:
+      	   return atp_task_takeoff_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+   case ATP_TASK_MOTORCALIBRATE:
+         	return atp_task_motorcalibrate_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+   case ATP_TASK_MOTORVALUE:
+            	return atp_task_motorvalue_create(data+10,length-10,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+
    }
 
    return NULL;

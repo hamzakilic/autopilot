@@ -34,9 +34,12 @@ em_uint32 atp_task_share_destroy(atp_task_share *task_share){
 }
 
 em_int32 atp_task_share_killall_get(atp_task_share *task_share){
-	if(task_share && task_share->private)
-	return atp_convert(task_share->private,atp_task_share_data*)->killall;
-	return 0 ;
+	em_int32 val=0;
+	if(task_share && task_share->private){
+	val= atp_convert(task_share->private,atp_task_share_data*)->killall;
+	}
+	printf("task share killall is:%d\n",val);
+	return val;
 }
 
 void atp_task_share_killall_set(atp_task_share *task_share,em_int32 killall){
@@ -45,10 +48,9 @@ void atp_task_share_killall_set(atp_task_share *task_share,em_int32 killall){
 
 }
 
-em_int32 atp_task_share_count_get(atp_task_share *task_share){
+em_int32 atp_task_share_task_count_get(atp_task_share *task_share){
 	if(task_share && task_share->private){
 		em_int32 count= 	 atp_convert(task_share->private,atp_task_share_data*)->tasks_count;
-		printf("task count is%d\n",count);
 		return count;
 	}
 	return 0;

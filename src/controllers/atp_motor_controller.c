@@ -224,5 +224,24 @@ em_uint32 atp_motor_controller_stop_motor(atp_motor_controller *motor_controller
 			return ATP_SUCCESS;
 }
 
+em_uint32 atp_motor_controller_calibrate(atp_motor_controller *motor_controller){
+
+	atp_motor **motors=(atp_motor**)motor_controller->private_data;
+			em_uint32 err=ATP_SUCCESS;
+			em_uint8 index;
+	for_each_motors(){
+
+	        	        err=atp_motor_calibrate(motors[index]);
+
+	                   if(err){
+	                	   atp_log(atp_log_create_string(ATP_LOG_FATAL,"Calibrating Motor %u  failed Errno:%u\n",index,err));
+	                	   return err;
+	                   }
+
+
+	                }
+	return err;
+}
+
 
 

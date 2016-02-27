@@ -46,6 +46,7 @@ void * atp_task_start_motors_exec(void *parameter){
    em_uint32 err;
    em_uint32 index;
    atp_motor_data motor_data;
+   em_uint16 powers[ATP_MOTORS_COUNT]={0,0,0,0};
    for(index=0;index<ATP_MOTORS_COUNT;++index){
 	   if(data->kill)//if process kill set
 		   break;
@@ -53,14 +54,15 @@ void * atp_task_start_motors_exec(void *parameter){
 		   break;
 
 	    motor_data.motor_index=index;
-
         atp_input_get_motor(data->input,index,&motor_data);
-        if(motor_data.motor_value==MOTOR_CREATED || motor_data.motor_value==MOTOR_CALIBRATED){
-
+        if(motor_data.motor_value==MOTOR_CREATED || motor_data.motor_value==MOTOR_STOPPED || motor_data.motor_value==MOTOR_CALIBRATED){
+           powers[index]=80;
         	atp_motor_controller_start_motor(data->motor_controller,index);
+
         }
 
    }
+   //atp_motor_controller_set_values(data->motor_controller,powers);
    task->is_finished=1;
    return ATP_SUCCESS;
 

@@ -36,8 +36,13 @@ typedef void (*task_kill_func)(void *parameter);
 };
 
 #define ATP_TASK_ECHO 0x0001
-#define ATP_TASK_START_MOTORS 0x0002
-#define ATP_TASK_STOP_MOTORS 0x0003
+#define ATP_TASK_EMERGENCY 0x0002
+#define ATP_TASK_START_MOTORS 0x0003
+#define ATP_TASK_STOP_MOTORS 0x0004
+#define ATP_TASK_TAKEOFF 0x0005
+#define ATP_TASK_MOTORCALIBRATE 0x0006
+#define ATP_TASK_MOTORVALUE 0x0007
+
 
 
 

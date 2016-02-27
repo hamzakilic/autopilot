@@ -56,6 +56,7 @@ em_uint32 atp_motor_destroy(atp_motor *motor){
 }
 em_uint32 atp_motor_calibrate(atp_motor *motor){
 	em_uint32 err;
+	em_io_gpio_mode(motor->raspi_pin_number,EM_MODE_GPIO_OUT);
 	     em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_LOW);
 #ifdef COMPILE_PCA9685
 	     err=adafruit_pca9685_set(MAX_SIGNAL_CALIBRATE,motor->pwm_pin_number);
@@ -82,13 +83,18 @@ em_uint32 atp_motor_calibrate(atp_motor *motor){
 
 em_uint32 atp_motor_start(atp_motor *motor){
 	em_uint32 err;
+	em_io_gpio_mode(motor->raspi_pin_number,EM_MODE_GPIO_OUT);
 	em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_LOW);
 #ifdef COMPILE_PCA9685
 	 err=adafruit_pca9685_set(MIN_SIGNAL_WORK,motor->pwm_pin_number);
 #endif
-	          if(err)
-	         	 return err;
+	 if(err){
+
+	  	 return err;
+	 }
+
 	 em_io_delay_microseconds(10000);
+
      em_io_gpio_write(motor->raspi_pin_number,EM_GPIO_HIGH);
      em_io_delay_microseconds(6000000);
 
@@ -106,6 +112,7 @@ em_uint32 atp_motor_start(atp_motor *motor){
 
 em_uint32 atp_motor_stop(atp_motor *motor){
 	em_uint32 err;
+	em_io_gpio_mode(motor->raspi_pin_number,EM_MODE_GPIO_OUT);
 #ifdef COMPILE_PCA9685
 		     err=adafruit_pca9685_set(MIN_SIGNAL_WORK,motor->pwm_pin_number);
 #endif
@@ -128,9 +135,9 @@ em_uint32 atp_motor_stop(atp_motor *motor){
 
 em_uint32 atp_motor_set_power(atp_motor *motor,em_uint16 power_level){
 	         em_uint32 err;
-	         if(power_level>1000)
-	        	 power_level=1000;
-            em_uint16  calc_power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_WORK)*power_level/1000.0f+MIN_SIGNAL_WORK;
+	         if(power_level>MOTOR_MAX_VALUE)
+	        	 power_level=MOTOR_MAX_VALUE;
+            em_uint16  calc_power_level=(MAX_SIGNAL_WORK-MIN_SIGNAL_WORK)*power_level/(MOTOR_MAX_VALUE*1.0f)+MIN_SIGNAL_WORK;
 #ifdef COMPILE_TEST_CODES
             atp_log(atp_log_create_string(ATP_LOG_INFO,"setting motor %d value:%d\n",motor->number,calc_power_level));
 

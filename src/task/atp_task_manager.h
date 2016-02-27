@@ -20,6 +20,10 @@
 #include "atp_task_echo.h"
 #include "atp_task_start_motors.h"
 #include "atp_task_stop_motors.h"
+#include "atp_task_emergency.h"
+#include "atp_task_takeoff.h"
+#include "atp_task_motorcalibrate.h"
+#include "atp_task_motorvalue.h"
 
 
 

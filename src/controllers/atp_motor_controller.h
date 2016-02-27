@@ -37,6 +37,7 @@ em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller
 em_uint32 atp_motor_controller_start_motors(atp_motor_controller *motor_controller);
 em_uint32 atp_motor_controller_start_motor(atp_motor_controller *motor_controller,em_uint32 index);
 em_uint32 atp_motor_controller_stop_motor(atp_motor_controller *motor_controller,em_uint32 index);
+em_uint32 atp_motor_controller_calibrate(atp_motor_controller *motor_controller);
 
 
 

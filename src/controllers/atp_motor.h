@@ -19,6 +19,9 @@
 #define MOTOR_STARTED -4
 #define MOTOR_STOPPED -5
 
+#define MOTOR_MAX_VALUE 1000
+
+
 typedef struct {
 	//read-only
 	em_uint16 power;
