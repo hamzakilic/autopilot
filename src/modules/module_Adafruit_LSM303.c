@@ -11,7 +11,7 @@ static em_float32 _lsm303Accel_MG_LSB     = 0.001F;   // 1, 2, 4 or 12 mg per ls
 static em_float32 _lsm303Mag_Gauss_LSB_XY = 1100.0F;  // Varies with gain
 static em_float32 _lsm303Mag_Gauss_LSB_Z  = 980.0F;   // Varies with gain
 
-#define SENSORS_GRAVITY_EARTH             (9.80665F)              /**< Earth's gravity in m/s^2 */
+#define SENSORS_GRAVITY_EARTH             (9.8029F)              /**< Earth's gravity in m/s^2 */
 #define SENSORS_GRAVITY_MOON              (1.6F)                  /**< The moon's gravity in m/s^2 */
 #define SENSORS_GRAVITY_SUN               (275.0F)                /**< The sun's gravity in m/s^2 */
 #define SENSORS_GRAVITY_STANDARD          (SENSORS_GRAVITY_EARTH)
@@ -87,6 +87,9 @@ inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
 
 
 static frame accel_frames;
+static kalman accel_kalmanx;
+static kalman accel_kalmany;
+static kalman accel_kalmanz;
 
 
 em_uint32 adafruit_lsm303_accel_start(void * param){
@@ -132,6 +135,9 @@ em_uint32 adafruit_lsm303_accel_start(void * param){
 
 	    return ATP_ERROR_HARDWARE_INITIALIZE;
 	  }
+	  start_kalman(&accel_kalmanx);
+	  start_kalman(&accel_kalmany);
+	  start_kalman(&accel_kalmanz);
 
 	return ATP_SUCCESS;
 }
@@ -164,18 +170,36 @@ em_uint32 err;
              accel_frames.y_i16[i-1] =accel_frames.y_i16[i];
              accel_frames.z_i16[i-1] =accel_frames.z_i16[i];
 		  }
-    accel_frames.x_i16[DIMSIZE-1] =(em_int16)(data[0] | (data[1] << 8)) >> 4;
+		  em_int16 xval=(em_int16)(data[0] | (data[1] << 8)) >> 4;
+		  em_int16 yval=(em_int16)(data[2] | (data[3] << 8)) >> 4;
+		  em_int16 zval=(em_int16)(data[4] | (data[5] << 8)) >> 4;
+     accel_frames.x_i16[DIMSIZE-1] =xval;
+     accel_frames.y_i16[DIMSIZE-1] =yval;
+     accel_frames.z_i16[DIMSIZE-1] =zval;
 
-    accel_frames.y_i16[DIMSIZE-1] =(em_int16)(data[2] | (data[3] << 8)) >> 4;
-    accel_frames.z_i16[DIMSIZE-1] =(em_int16)(data[4] | (data[5] << 8)) >> 4;
+     xval=find_mean_i16(accel_frames.x_i16,DIMSIZE);
+     yval=find_mean_i16(accel_frames.y_i16,DIMSIZE);
+     zval=find_mean_i16(accel_frames.z_i16,DIMSIZE);
 
-
-
+     accel_frames.x_i16[DIMSIZE-1] =xval;
+     accel_frames.y_i16[DIMSIZE-1] =yval;
+     accel_frames.z_i16[DIMSIZE-1] =zval;
 
     values[0]=find_median_i16(accel_frames.x_i16,DIMSIZE);
     values[1]=find_median_i16(accel_frames.y_i16,DIMSIZE);
     values[2]=find_median_i16(accel_frames.z_i16,DIMSIZE);
 
+    /*accel_kalmanx.zk=accel_frames.x_i16[DIMSIZE-1];
+    accel_kalmany.zk=accel_frames.y_i16[DIMSIZE-1];
+    accel_kalmanz.zk=accel_frames.z_i16[DIMSIZE-1];
+
+   kalman_calculate(&accel_kalmanx);
+   kalman_calculate(&accel_kalmany);
+   kalman_calculate(&accel_kalmanz);
+
+   values[0]=accel_kalmanx.xk;
+   values[1]=accel_kalmany.xk;
+   values[2]=accel_kalmanz.xk;*/
 
 
 	 return ATP_SUCCESS;
@@ -296,8 +320,11 @@ em_uint32 setMagGain(lsm303MagGain gain)
   return ATP_SUCCESS;
 }
 
-
 static frame mag_frame;
+static kalman mag_kalman_x;
+static kalman mag_kalman_y;
+static kalman mag_kalman_z;
+
 em_uint32 adafruit_lsm303_mag_start(void * param){
 
 	em_uint32 err;
@@ -346,8 +373,9 @@ em_uint32 adafruit_lsm303_mag_start(void * param){
 			  return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
 
-
-
+        start_kalman(&mag_kalman_x);
+        start_kalman(&mag_kalman_y);
+        start_kalman(&mag_kalman_z);
 
 		return ATP_SUCCESS;
 
@@ -379,14 +407,40 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 					  mag_frame.z_i16[i-1]=mag_frame.z_i16[i];
 					  mag_frame.y_i16[i-1]=mag_frame.y_i16[i];
 				  }
-				  mag_frame.x_i16[DIMSIZE-1]=(em_int16)(data[1] | ((em_int16)data[0] << 8));
-				  mag_frame.z_i16[DIMSIZE-1]=(em_int16)(data[3] | ((em_int16)data[2] << 8));
-				  mag_frame.y_i16[DIMSIZE-1]=(em_int16)(data[5] | ((em_int16)data[4] << 8));
+
+				  em_int16 xval=(em_int16)(data[1] | ((em_int16)data[0] << 8));
+				  em_int16 zval=(em_int16)(data[3] | ((em_int16)data[2] << 8));
+				  em_int16 yval=(em_int16)(data[5] | ((em_int16)data[4] << 8));
+
+				  mag_frame.x_i16[DIMSIZE-1]=xval;
+				  mag_frame.z_i16[DIMSIZE-1]=zval;
+				  mag_frame.y_i16[DIMSIZE-1]=yval;
 
 
-				   values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
-				   values[1]=find_median_i16(mag_frame.y_i16,DIMSIZE);
-				   values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);
+				  xval=find_mean_i16(mag_frame.x_i16,DIMSIZE);
+				  yval=find_mean_i16(mag_frame.y_i16,DIMSIZE);
+				  zval=find_mean_i16(mag_frame.z_i16,DIMSIZE);
+
+				  mag_frame.x_i16[DIMSIZE-1]=xval;
+				  mag_frame.z_i16[DIMSIZE-1]=zval;
+				  mag_frame.y_i16[DIMSIZE-1]=yval;
+
+
+				  values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
+				  values[1]=find_median_i16(mag_frame.y_i16,DIMSIZE);
+				  values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);
+				  /*mag_kalman_x.zk=mag_frame.x_i16[DIMSIZE-1];
+				  mag_kalman_y.zk=mag_frame.y_i16[DIMSIZE-1];
+				  mag_kalman_z.zk=mag_frame.z_i16[DIMSIZE-1];
+				  kalman_calculate(&mag_kalman_x);
+				  kalman_calculate(&mag_kalman_y);
+				  kalman_calculate(&mag_kalman_z);
+
+				  values[0]=mag_kalman_x.xk;
+				  values[1]=mag_kalman_y.xk;
+				  values[2]=mag_kalman_z.xk;*/
+
+
 				  return ATP_SUCCESS;
 }
 

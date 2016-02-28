@@ -9,7 +9,7 @@
 #define AUTOPILOTC_SRC_MODULES_MODULE_COMMON_H_
 
 #include "../common/atp_common.h"
-
+#include "../algorithms/kalman.h"
 
 
 #define DIMSIZE 13
@@ -33,6 +33,12 @@ typedef struct{
 inline em_int16 find_median_i16(em_int16 *x,em_int32 n);
 inline em_uint16 find_median_u16(em_uint16 *x,em_int32 n);
 inline em_int32 find_median_i32(em_int32 *x,em_int32 n);
+inline em_int16 find_mean_i16(em_int16 *x,em_int32 n);
+inline em_uint16 find_mean_u16(em_uint16 *x,em_int32 n);
+inline em_int32 find_mean_i32(em_int32 *x,em_int32 n);
+
+
+inline void start_kalman(kalman *k);
 
 
 #endif /* AUTOPILOTC_SRC_MODULES_MODULE_COMMON_H_ */

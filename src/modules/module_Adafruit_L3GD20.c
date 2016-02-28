@@ -48,6 +48,9 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 
 
 static frame gyro_frame;
+static kalman gyro_kalman_x;
+static kalman gyro_kalman_y;
+static kalman gyro_kalman_z;
 
  em_uint32 adafruit_l3gd20_gyro_start(void *parameters){
         	em_uint32 err;
@@ -160,7 +163,9 @@ static frame gyro_frame;
         	  /* ------------------------------------------------------------------ */
 
 
-
+          start_kalman(&gyro_kalman_x);
+          start_kalman(&gyro_kalman_y);
+          start_kalman(&gyro_kalman_z);
 
 
         	return ATP_SUCCESS;
@@ -187,15 +192,36 @@ static frame gyro_frame;
 		  gyro_frame.y_i16[i-1]=gyro_frame.x_i16[i];
 		  gyro_frame.z_i16[i-1]=gyro_frame.z_i16[i];
 	  }
+      em_int16 xval=(em_int16)(data[0] | (data[1] << 8));
+      em_int16 yval=(em_int16) (data[2] | (data[3] << 8));
+      em_int16 zval=(em_int16)(data[4] | (data[5] << 8));
+	  gyro_frame.x_i16[DIMSIZE-1]=xval;
+	  gyro_frame.y_i16[DIMSIZE-1]=yval;
+	  gyro_frame.z_i16[DIMSIZE-1]=zval;
 
-	  gyro_frame.x_i16[DIMSIZE-1]=(em_int16)(data[0] | (data[1] << 8));
-	  gyro_frame.y_i16[DIMSIZE-1]=(em_int16) (data[2] | (data[3] << 8));
-	  gyro_frame.z_i16[DIMSIZE-1]=(em_int16)(data[4] | (data[5] << 8));
-	  //printf("gyro:%8d %8d %8d\n",gyro_frame.x[DIMSIZE-1],gyro_frame.y[DIMSIZE-1],gyro_frame.z[DIMSIZE-1]);
+	  xval=find_mean_i16(gyro_frame.x_i16,DIMSIZE);
+	  yval=find_mean_i16(gyro_frame.y_i16,DIMSIZE);
+	  zval=find_mean_i16(gyro_frame.z_i16,DIMSIZE);
+
+	  gyro_frame.x_i16[DIMSIZE-1]=xval;
+	  gyro_frame.y_i16[DIMSIZE-1]=yval;
+	  gyro_frame.z_i16[DIMSIZE-1]=zval;
+
 
 	  gyro[0]=find_median_i16(gyro_frame.x_i16,DIMSIZE);
 	  gyro[1]=find_median_i16(gyro_frame.y_i16,DIMSIZE);
 	  gyro[2]=find_median_i16(gyro_frame.z_i16,DIMSIZE);
+
+	  /*gyro_kalman_x.zk=gyro_frame.x_i16[DIMSIZE-1];
+	  gyro_kalman_y.zk=gyro_frame.y_i16[DIMSIZE-1];
+	  gyro_kalman_z.zk=gyro_frame.z_i16[DIMSIZE-1];
+	  kalman_calculate(&gyro_kalman_x);
+	  kalman_calculate(&gyro_kalman_y);
+	  kalman_calculate(&gyro_kalman_z);
+
+	  gyro[0]=gyro_kalman_x.xk;
+	  gyro[1]=gyro_kalman_y.xk;
+	  gyro[2]=gyro_kalman_z.xk;*/
 
 	  return ATP_SUCCESS;
 

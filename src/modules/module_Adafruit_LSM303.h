@@ -14,6 +14,7 @@
 #include "../log/atp_log.h"
 #include "module_common.h"
 #include "../common/atp_system_lock.h"
+#include "../algorithms/kalman.h"
 
 
 

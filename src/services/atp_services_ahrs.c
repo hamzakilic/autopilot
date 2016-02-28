@@ -41,6 +41,9 @@ inline em_float32 pressure_to_altitude(em_float32 seaLevel, em_float32 atmospher
 
 volatile float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
 static em_int32 pressure_temprature_read_counter=0;
+static kalman kalman_roll;
+static kalman kalman_pitch;
+static kalman kalman_yaw;
 
 inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read, atp_services_ahrs_data *ahrs_data){
 em_int64 start=atp_datetime_as_microseconds();
@@ -130,6 +133,17 @@ if(++pressure_temprature_read_counter%250==0){
 
 	       ahrs_data_temp.roll  *= 180.0f / PI;
 
+          /* kalman_pitch.zk=ahrs_data_temp.pitch;
+           kalman_roll.zk=ahrs_data_temp.roll;
+           kalman_yaw.zk=ahrs_data_temp.yaw;
+
+           kalman_calculate(&kalman_pitch);
+           kalman_calculate(&kalman_roll);
+           kalman_calculate(&kalman_yaw);
+
+           ahrs_data_temp.pitch=kalman_pitch.xk;
+           ahrs_data_temp.roll=kalman_roll.xk;
+           ahrs_data_temp.yaw=kalman_yaw.xk;*/
 
 
 
@@ -318,7 +332,9 @@ em_uint32 atp_services_ahrs_create(atp_services_ahrs **address,atp_input *input,
 
   			return ATP_ERROR_CREATE_GPS;
   		}
-
+  start_kalman(&kalman_pitch);
+  start_kalman(&kalman_yaw);
+  start_kalman(&kalman_roll);
   return ATP_SUCCESS;
 
 
