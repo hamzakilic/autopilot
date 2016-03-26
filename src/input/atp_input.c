@@ -242,7 +242,7 @@ void* atp_input_log(void *ptr){
 	    log_data->data=atp_malloc(log_data->data_len);
 	    atp_copy(log_data->data,buffer,log_data->data_len);
 	    atp_log(log_data);
-	    em_io_delay_microseconds(1000000);
+	    em_io_delay_microseconds(100000);
 	    }
 	return ATP_SUCCESS;
 }

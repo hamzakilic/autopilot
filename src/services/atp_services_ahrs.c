@@ -60,6 +60,7 @@ em_int32 err=ATP_SUCCESS;
       err |= adafruit_lsm303_mag_read(mag_values);
 
       if(err){
+
     	  atp_log(atp_log_create_string(ATP_LOG_DEBUG,"Read Magnetometer Error:%u\n", err));
           	return ATP_ERROR_HARDWARE_COMMUNICATION;
       }
@@ -92,7 +93,7 @@ if(++pressure_temprature_read_counter%250==0){
 #endif
 
 
-
+        // printf("%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n",accel_values[0],accel_values[1],accel_values[2],gyro_values[0],gyro_values[1],gyro_values[0],mag_values[0],mag_values[1],mag_values[2]);
 
       if(!err){
 #define PI 3.14159f
@@ -108,6 +109,10 @@ if(++pressure_temprature_read_counter%250==0){
     	  dof_data_temp.magx=mag_values[0];
     	  dof_data_temp.magy=mag_values[1];
     	  dof_data_temp.magz=mag_values[2];
+
+
+
+
 
       em_uint64 delta_t=atp_datetime_as_microseconds()- (*last_read);
 
@@ -126,12 +131,12 @@ if(++pressure_temprature_read_counter%250==0){
 
 
 	       ahrs_data_temp.yaw=atan2(2.0f * (q0 * q3 + q1 * q2), 1-2*(q2*q2+q3*q3));
-	       ahrs_data_temp.pitch=asin(2.0f * (q0 * q2 - q3 * q1));
-	       ahrs_data_temp.roll=atan2(2.0f * (q0 * q1 + q2 * q3), 1-2*(q1*q1+q2*q2));
-	       ahrs_data_temp.pitch *= 180.0f / PI;
+	       ahrs_data_temp.roll=asin(2.0f * (q0 * q2 - q3 * q1));
+	       ahrs_data_temp.pitch=atan2(2.0f * (q0 * q1 + q2 * q3), 1-2*(q1*q1+q2*q2));
+	       ahrs_data_temp.roll *= 180.0f / PI;
 	       ahrs_data_temp.yaw   *= 180.0f / PI;
 
-	       ahrs_data_temp.roll  *= 180.0f / PI;
+	       ahrs_data_temp.pitch  *= 180.0f / PI;
 
           /* kalman_pitch.zk=ahrs_data_temp.pitch;
            kalman_roll.zk=ahrs_data_temp.roll;
@@ -145,7 +150,7 @@ if(++pressure_temprature_read_counter%250==0){
            ahrs_data_temp.roll=kalman_roll.xk;
            ahrs_data_temp.yaw=kalman_yaw.xk;*/
 
-
+	       //printf("roll pitch yaw  %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw);
 
 
 	       atp_input_update_dof(ahrs_data->input_table,dof_data_temp);

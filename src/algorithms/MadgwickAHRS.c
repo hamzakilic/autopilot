@@ -21,19 +21,19 @@
 //---------------------------------------------------------------------------------------------------
 // Definitions
 
-#define sampleFreq	25.0f		// sample frequency in Hz
-#define betaDef		0.18f		// 2 * proportional gain
+#define sampleFreq	100.0f		// sample frequency in Hz
+#define betaDef		0.40f		// 2 * proportional gain
 
 //---------------------------------------------------------------------------------------------------
 // Variable definitions
 
-volatile float beta = betaDef;								// 2 * proportional gain (Kp)
-//volatile float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;	// quaternion of sensor frame relative to auxiliary frame
+volatile em_float32 beta = betaDef;								// 2 * proportional gain (Kp)
+//volatile em_float32 q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;	// quaternion of sensor frame relative to auxiliary frame
 
 //---------------------------------------------------------------------------------------------------
 // Function declarations
 
-static float invSqrt(float x);
+static em_float32 invSqrt(em_float32 x);
 
 //====================================================================================================
 // Functions
@@ -41,12 +41,13 @@ static float invSqrt(float x);
 //---------------------------------------------------------------------------------------------------
 // AHRS algorithm update
 
-void MadgwickAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz) {
-	float recipNorm;
-	float s0, s1, s2, s3;
-	float qDot1, qDot2, qDot3, qDot4;
-	float hx, hy;
-	float _2q0mx, _2q0my, _2q0mz, _2q1mx, _2bx, _2bz, _4bx, _4bz, _2q0, _2q1, _2q2, _2q3, _2q0q2, _2q2q3, q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
+void MadgwickAHRSupdate(em_float32 gx, em_float32 gy, em_float32 gz, em_float32 ax, em_float32 ay, em_float32 az, em_float32 mx, em_float32 my, em_float32 mz) {
+
+	em_float32 recipNorm;
+	em_float32 s0, s1, s2, s3;
+	em_float32 qDot1, qDot2, qDot3, qDot4;
+	em_float32 hx, hy;
+	em_float32 _2q0mx, _2q0my, _2q0mz, _2q1mx, _2bx, _2bz, _4bx, _4bz, _2q0, _2q1, _2q2, _2q3, _2q0q2, _2q2q3, q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
 
 	// Use IMU algorithm if magnetometer measurement invalid (avoids NaN in magnetometer normalisation)
 	if((mx == 0.0f) && (my == 0.0f) && (mz == 0.0f)) {
@@ -140,11 +141,11 @@ void MadgwickAHRSupdate(float gx, float gy, float gz, float ax, float ay, float 
 //---------------------------------------------------------------------------------------------------
 // IMU algorithm update
 
-void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, float az) {
-	float recipNorm;
-	float s0, s1, s2, s3;
-	float qDot1, qDot2, qDot3, qDot4;
-	float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2 ,_8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
+void MadgwickAHRSupdateIMU(em_float32 gx, em_float32 gy, em_float32 gz, em_float32 ax, em_float32 ay, em_float32 az) {
+	em_float32 recipNorm;
+	em_float32 s0, s1, s2, s3;
+	em_float32 qDot1, qDot2, qDot3, qDot4;
+	em_float32 _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2 ,_8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
 
 	// Rate of change of quaternion from gyroscope
 	qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
@@ -212,14 +213,17 @@ void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, flo
 // Fast inverse square-root
 // See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
 
-static float invSqrt(float x) {
-	float halfx = 0.5f * x;
-	float y = x;
-	long i = *(long*)&y;
+static em_float32 invSqrt(em_float32 x) {
+	/*em_float32 halfx = 0.5f * x;
+	em_float32 y = x;
+	long  i = *(long *)&y;
 	i = 0x5f3759df - (i>>1);
-	y = *(float*)&i;
+	y = *(em_float32*)&i;
 	y = y * (1.5f - (halfx * y * y));
-	return y;
+	return y;*/
+	em_uint32 i = 0x5F1F1412 - ((*(em_uint32 *)&x) >> 1);
+	em_float32 tmp = *(em_float32*)&i;
+	return tmp * (1.69000231f - 0.714158168f * x * tmp * tmp);
 }
 
 //====================================================================================================

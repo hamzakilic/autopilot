@@ -173,6 +173,7 @@ em_uint32 err;
 		  em_int16 xval=(em_int16)(data[0] | (data[1] << 8)) >> 4;
 		  em_int16 yval=(em_int16)(data[2] | (data[3] << 8)) >> 4;
 		  em_int16 zval=(em_int16)(data[4] | (data[5] << 8)) >> 4;
+		  printf("accel:%4.0d %4.0d %4.0d ",xval,yval,zval);
      accel_frames.x_i16[DIMSIZE-1] =xval;
      accel_frames.y_i16[DIMSIZE-1] =yval;
      accel_frames.z_i16[DIMSIZE-1] =zval;
@@ -188,18 +189,13 @@ em_uint32 err;
     values[0]=find_median_i16(accel_frames.x_i16,DIMSIZE);
     values[1]=find_median_i16(accel_frames.y_i16,DIMSIZE);
     values[2]=find_median_i16(accel_frames.z_i16,DIMSIZE);
+    printf("%4.0d %4.0d %4.0d",(int)values[0],(int)values[1],(int)values[2]);
 
-    /*accel_kalmanx.zk=accel_frames.x_i16[DIMSIZE-1];
-    accel_kalmany.zk=accel_frames.y_i16[DIMSIZE-1];
-    accel_kalmanz.zk=accel_frames.z_i16[DIMSIZE-1];
+   /* values[0]=xval;
+    values[1]=yval;
+    values[2]=zval;*/
 
-   kalman_calculate(&accel_kalmanx);
-   kalman_calculate(&accel_kalmany);
-   kalman_calculate(&accel_kalmanz);
 
-   values[0]=accel_kalmanx.xk;
-   values[1]=accel_kalmany.xk;
-   values[2]=accel_kalmanz.xk;*/
 
 
 	 return ATP_SUCCESS;
@@ -390,7 +386,7 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 			data[0]=LSM303_REGISTER_MAG_OUT_X_H_M;
 			err=lsm303_mag_write8(LSM303_REGISTER_MAG_OUT_X_H_M);
 			 if(err){
-
+				 printf("error is here\n");
 				     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 			 }
 			 em_uint32 lenght=6;
@@ -429,16 +425,12 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 				  values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
 				  values[1]=find_median_i16(mag_frame.y_i16,DIMSIZE);
 				  values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);
-				  /*mag_kalman_x.zk=mag_frame.x_i16[DIMSIZE-1];
-				  mag_kalman_y.zk=mag_frame.y_i16[DIMSIZE-1];
-				  mag_kalman_z.zk=mag_frame.z_i16[DIMSIZE-1];
-				  kalman_calculate(&mag_kalman_x);
-				  kalman_calculate(&mag_kalman_y);
-				  kalman_calculate(&mag_kalman_z);
 
-				  values[0]=mag_kalman_x.xk;
-				  values[1]=mag_kalman_y.xk;
-				  values[2]=mag_kalman_z.xk;*/
+
+				  /*values[0]=xval;
+				  values[1]=yval;
+				  values[2]=zval;*/
+
 
 
 				  return ATP_SUCCESS;
@@ -463,6 +455,7 @@ em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
 		    	err=lsm303_mag_read8(data);
 		    	if(err  || !(data[0] & 0x1) ) {
 		    		 //reading is not valid
+
 		    		 return ATP_ERROR_HARDWARE_COMMUNICATION;
 		    	    }
 		    	err=adafruit_mag_read(values);

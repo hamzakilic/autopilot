@@ -12,7 +12,7 @@
 #include "../algorithms/kalman.h"
 
 
-#define DIMSIZE 13
+#define DIMSIZE 5
 typedef struct{
 
 	em_int16 x_i16[DIMSIZE];

@@ -13,17 +13,19 @@
 #ifndef MadgwickAHRS_h
 #define MadgwickAHRS_h
 
+#include "../common/atp_common.h"
+
 //----------------------------------------------------------------------------------------------------
 // Variable declaration
 
-extern volatile float beta;				// algorithm gain
-extern volatile float q0, q1, q2, q3;	// quaternion of sensor frame relative to auxiliary frame
+extern volatile em_float32 beta;				// algorithm gain
+extern volatile em_float32 q0, q1, q2, q3;	// quaternion of sensor frame relative to auxiliary frame
 
 //---------------------------------------------------------------------------------------------------
 // Function declarations
 
-void MadgwickAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz);
-void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, float az);
+void MadgwickAHRSupdate(em_float32 gx, em_float32 gy, em_float32 gz, em_float32 ax, em_float32 ay, em_float32 az, em_float32 mx, em_float32 my, em_float32 mz);
+void MadgwickAHRSupdateIMU(em_float32 gx, em_float32 gy, em_float32 gz, em_float32 ax, em_float32 ay, em_float32 az);
 
 #endif
 //=====================================================================================================

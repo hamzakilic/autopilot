@@ -21,7 +21,7 @@
 														}\
 													}\
 												}\
-												return temp[n/2];
+												return temp[(n/2)];
 
 #define  find_mean(type,x,n,size,retval)         if(n>size)return retval; \
 											em_int32 c,d; \
