@@ -173,7 +173,7 @@ em_uint32 err;
 		  em_int16 xval=(em_int16)(data[0] | (data[1] << 8)) >> 4;
 		  em_int16 yval=(em_int16)(data[2] | (data[3] << 8)) >> 4;
 		  em_int16 zval=(em_int16)(data[4] | (data[5] << 8)) >> 4;
-		  printf("accel:%4.0d %4.0d %4.0d ",xval,yval,zval);
+		 // printf("accel:%4.0d %4.0d %4.0d ",xval,yval,zval);
      accel_frames.x_i16[DIMSIZE-1] =xval;
      accel_frames.y_i16[DIMSIZE-1] =yval;
      accel_frames.z_i16[DIMSIZE-1] =zval;
@@ -189,7 +189,7 @@ em_uint32 err;
     values[0]=find_median_i16(accel_frames.x_i16,DIMSIZE);
     values[1]=find_median_i16(accel_frames.y_i16,DIMSIZE);
     values[2]=find_median_i16(accel_frames.z_i16,DIMSIZE);
-    printf("%4.0d %4.0d %4.0d",(int)values[0],(int)values[1],(int)values[2]);
+//    printf("%4.0d %4.0d %4.0d",(int)values[0],(int)values[1],(int)values[2]);
 
    /* values[0]=xval;
     values[1]=yval;

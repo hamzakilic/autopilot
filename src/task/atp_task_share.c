@@ -10,6 +10,7 @@
 typedef struct {
   em_int32 killall;
   em_int32 tasks_count;
+  em_int32 can_balance_system;
 }atp_task_share_data;
 
 em_uint32 atp_task_share_create(atp_task_share **task_share){
@@ -38,7 +39,7 @@ em_int32 atp_task_share_killall_get(atp_task_share *task_share){
 	if(task_share && task_share->private){
 	val= atp_convert(task_share->private,atp_task_share_data*)->killall;
 	}
-	printf("task share killall is:%d\n",val);
+	//printf("task share killall is:%d\n",val);
 	return val;
 }
 
@@ -64,7 +65,19 @@ void atp_task_share_count_plus(atp_task_share *task_share){
 }
 void atp_task_share_count_minus(atp_task_share *task_share){
 	if(task_share && task_share->private)
-		 	 atp_convert(task_share->private,atp_task_share_data*)->tasks_count-=1;
+		atp_convert(task_share->private,atp_task_share_data*)->tasks_count-=1;
+
+}
+
+em_int32 atp_task_share_can_balance_system_get(atp_task_share *task_share){
+	if(task_share && task_share->private)
+			atp_convert(task_share->private,atp_task_share_data*)->can_balance_system;
+	return 0;
+}
+
+void atp_task_share_can_balance_system_set(atp_task_share *task_share,em_int32 can){
+	if(task_share && task_share->private)
+				atp_convert(task_share->private,atp_task_share_data*)->can_balance_system=can;
 
 }
 

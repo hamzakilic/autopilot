@@ -277,7 +277,10 @@ struct atp_task * create_atp_task(em_uint8* data,em_uint32 length,task_manager_d
    case ATP_TASK_MOTORCALIBRATE:
          	return atp_task_motorcalibrate_create(NULL,0,manager_data->task_share,manager_data->motor_controller,manager_data->input);
    case ATP_TASK_MOTORVALUE:
-            	return atp_task_motorvalue_create(data+10,length-10,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+        return atp_task_motorvalue_create(data+10,length-10,manager_data->task_share,manager_data->motor_controller,manager_data->input);
+   case ATP_TASK_BALANCE:
+	   return atp_task_balance_create(manager_data->task_share,manager_data->motor_controller,manager_data->input);
+
 
    }
 

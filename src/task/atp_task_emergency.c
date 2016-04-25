@@ -47,7 +47,7 @@ void * atp_task_emergency_exec(void *parameter){
    atp_task_emergency *data=atp_convert(task->parameter,atp_task_emergency*);
    atp_log(atp_log_create_string(ATP_LOG_INFO,"%s Task Execution Starting\n",task->name));
    atp_task_share_killall_set(data->share,1);//say all tasks kill
-
+   //while(atp_task_share_task_count_get(data->share)>1);//wait all tasks to finish
    em_uint32 err;
    em_uint32 index;
    atp_motor_data motor_data;
@@ -56,7 +56,7 @@ void * atp_task_emergency_exec(void *parameter){
        	atp_motor_controller_stop_motor(data->motor_controller,index);
 
    }
-   while(atp_task_share_task_count_get(data->share)>1);
+   while(atp_task_share_task_count_get(data->share)>1) em_io_delay_microseconds(100);
    atp_task_share_killall_set(data->share,0);
    task->is_finished=1;
    return ATP_SUCCESS;

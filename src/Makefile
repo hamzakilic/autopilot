@@ -119,7 +119,8 @@ am_autopilot_OBJECTS = autopilot.$(OBJEXT) autopilot_test.$(OBJEXT) \
 	task/atp_task_emergency.$(OBJEXT) \
 	task/atp_task_takeoff.$(OBJEXT) \
 	task/atp_task_motorcalibrate.$(OBJEXT) \
-	task/atp_task_motorvalue.$(OBJEXT)
+	task/atp_task_motorvalue.$(OBJEXT) \
+	task/atp_task_balance.$(OBJEXT)
 autopilot_OBJECTS = $(am_autopilot_OBJECTS)
 autopilot_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
@@ -273,7 +274,7 @@ target_vendor = raspi
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c  input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c modules/module_Adafruit_PCA9685.c modules/module_common.c modules/module_UBlox_neo6v.c algorithms/MahonyAHRS.c algorithms/MadgwickAHRS.c algorithms/kalman.c common/atp_time.c common/atp_system_lock.c settings/atp_settings.c task/atp_task_listener.c task/atp_task_manager.c task/atp_task.c task/atp_task_echo.c task/atp_task_share.c task/atp_task_start_motors.c task/atp_task_stop_motors.c task/atp_task_emergency.c task/atp_task_takeoff.c task/atp_task_motorcalibrate.c task/atp_task_motorvalue.c  
+autopilot_SOURCES = autopilot.c autopilot_test.c manager/atp_pilot.c  input/atp_input.c services/atp_service_system.c services/atp_services_gps.c log/atp_log.c thread/atp_thread.c common/atp_queue.c controllers/atp_motor_controller.c controllers/atp_motor.c services/atp_services_ahrs.c modules/module_Adafruit_LSM303.c modules/module_Adafruit_L3GD20.c modules/module_Adafruit_BMP085.c modules/module_Adafruit_PCA9685.c modules/module_common.c modules/module_UBlox_neo6v.c algorithms/MahonyAHRS.c algorithms/MadgwickAHRS.c algorithms/kalman.c common/atp_time.c common/atp_system_lock.c settings/atp_settings.c task/atp_task_listener.c task/atp_task_manager.c task/atp_task.c task/atp_task_echo.c task/atp_task_share.c task/atp_task_start_motors.c task/atp_task_stop_motors.c task/atp_task_emergency.c task/atp_task_takeoff.c task/atp_task_motorcalibrate.c task/atp_task_motorvalue.c task/atp_task_balance.c  
 AM_CFLAGS = -I/work/projects/tobor/libtobor_io/include 
 AM_LDFLAGS = -L/work/projects/tobor/libtobor_io/libtoborio/.libs -ltoborio -lpthread -lm
 all: all-am
@@ -485,6 +486,8 @@ task/atp_task_motorcalibrate.$(OBJEXT): task/$(am__dirstamp) \
 	task/$(DEPDIR)/$(am__dirstamp)
 task/atp_task_motorvalue.$(OBJEXT): task/$(am__dirstamp) \
 	task/$(DEPDIR)/$(am__dirstamp)
+task/atp_task_balance.$(OBJEXT): task/$(am__dirstamp) \
+	task/$(DEPDIR)/$(am__dirstamp)
 
 autopilot$(EXEEXT): $(autopilot_OBJECTS) $(autopilot_DEPENDENCIES) $(EXTRA_autopilot_DEPENDENCIES) 
 	@rm -f autopilot$(EXEEXT)
@@ -531,6 +534,7 @@ include services/$(DEPDIR)/atp_services_ahrs.Po
 include services/$(DEPDIR)/atp_services_gps.Po
 include settings/$(DEPDIR)/atp_settings.Po
 include task/$(DEPDIR)/atp_task.Po
+include task/$(DEPDIR)/atp_task_balance.Po
 include task/$(DEPDIR)/atp_task_echo.Po
 include task/$(DEPDIR)/atp_task_emergency.Po
 include task/$(DEPDIR)/atp_task_listener.Po

@@ -77,6 +77,15 @@ em_float32 atp_settings_get_gyroscope_scaley(atp_settings *settings);
 em_float32 atp_settings_get_gyroscope_scalez(atp_settings *settings);
 
 
+/**
+ * @brief get roll pitch yaw bias values
+ */
+em_float32 atp_settings_get_roll_bias(atp_settings *settings);
+em_float32 atp_settings_get_pitch_bias(atp_settings *settings);
+em_float32 atp_settings_get_yaw_bias(atp_settings *settings);
+
+
+
 
 
 

@@ -41,6 +41,12 @@ typedef struct{
 		em_float32  gyroscope_scaley;
 		em_float32  gyroscope_scalez;
 
+		//no need to create a thread lock
+	    //it will change sometimes
+		em_float32 roll_bias;
+		em_float32 pitch_bias;
+		em_float32 yaw_bias;
+
 
 
 
@@ -70,6 +76,9 @@ em_uint32 atp_settings_create(atp_settings **address){
 	data->gyroscope_scalex=1.0f;//28571.4f*2/(19136+18446);
 	data->gyroscope_scaley=1.0f;//32768.0f*2/(19136+18446);
 	data->gyroscope_scalez=1.0f;//32768.0f*2/(19136+18171);
+	data->roll_bias=0.4f;
+	data->pitch_bias=0.65f;
+	data->yaw_bias=0.0f;
 
 
 	atp_thread_create_lock(&data->gravity_lock);
@@ -256,6 +265,36 @@ em_float32 atp_settings_get_sea_level_pressure(atp_settings *settings){
 			return -1;
 
 }
+
+
+em_float32 atp_settings_get_roll_bias(atp_settings *settings){
+	if(settings)
+		if(settings->private_data){
+	 	atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+			return data->roll_bias;
+		}
+	return 0.0f;
+
+}
+em_float32 atp_settings_get_pitch_bias(atp_settings *settings){
+	if(settings)
+		if(settings->private_data){
+	 	atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+			return data->pitch_bias;
+		}
+	return 0.0f;
+
+}
+em_float32 atp_settings_get_yaw_bias(atp_settings *settings){
+	if(settings)
+		if(settings->private_data){
+	 	atp_settings_data *data=atp_convert(settings->private_data,atp_settings_data*);
+			return data->yaw_bias;
+		}
+	return 0.0f;
+
+}
+
 
 
 

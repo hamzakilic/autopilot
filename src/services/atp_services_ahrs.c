@@ -45,7 +45,7 @@ static kalman kalman_roll;
 static kalman kalman_pitch;
 static kalman kalman_yaw;
 
-inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read, atp_services_ahrs_data *ahrs_data){
+inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read,em_float32 roll_bias,em_float32 pitch_bias,em_float32 yaw_bias, atp_services_ahrs_data *ahrs_data){
 em_int64 start=atp_datetime_as_microseconds();
 em_int32 err=ATP_SUCCESS;
 
@@ -116,8 +116,9 @@ if(++pressure_temprature_read_counter%250==0){
 
       em_uint64 delta_t=atp_datetime_as_microseconds()- (*last_read);
 
-      //MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
-       MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+      MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+       //MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+      //MadgwickAHRSupdateIMU(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz);
 
       *last_read=atp_datetime_as_microseconds();
 
@@ -138,17 +139,10 @@ if(++pressure_temprature_read_counter%250==0){
 
 	       ahrs_data_temp.pitch  *= 180.0f / PI;
 
-          /* kalman_pitch.zk=ahrs_data_temp.pitch;
-           kalman_roll.zk=ahrs_data_temp.roll;
-           kalman_yaw.zk=ahrs_data_temp.yaw;
+	       ahrs_data_temp.roll -=roll_bias;
+	       ahrs_data_temp.pitch-=pitch_bias;
+	       ahrs_data_temp.yaw-=yaw_bias;
 
-           kalman_calculate(&kalman_pitch);
-           kalman_calculate(&kalman_roll);
-           kalman_calculate(&kalman_yaw);
-
-           ahrs_data_temp.pitch=kalman_pitch.xk;
-           ahrs_data_temp.roll=kalman_roll.xk;
-           ahrs_data_temp.yaw=kalman_yaw.xk;*/
 
 	       //printf("roll pitch yaw  %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw);
 
@@ -264,6 +258,9 @@ void * start_communication_ahrs(void *data){
 	em_float32 altitude;
 	em_float32 gravity_location=atp_settings_get_gravity(ahrs_data->settings_table);
 	em_float32 sea_level_pressure_location=atp_settings_get_sea_level_pressure(ahrs_data->settings_table);
+	em_float32 roll_bias=atp_settings_get_roll_bias(ahrs_data->settings_table);
+	em_float32 yaw_bias=atp_settings_get_yaw_bias(ahrs_data->settings_table);
+	em_float32 pitch_bias=atp_settings_get_pitch_bias(ahrs_data->settings_table);
 	em_int32 check_settings_counter=0;
 	em_int64 read_start,read_end,last_read=atp_datetime_as_microseconds();
 
@@ -271,7 +268,7 @@ void * start_communication_ahrs(void *data){
     read_start=atp_datetime_as_microseconds();
 		err=ATP_SUCCESS;
       if(!get_calibration_values)
-      err=do_ahrs(accel_values,accel_bias_values,accel_scale_values,  mag_values,gyro_values,gyro_bias_values,gyro_scale_values, &temprature,&pressure,&altitude,gravity_location,sea_level_pressure_location, &last_read, ahrs_data);
+      err=do_ahrs(accel_values,accel_bias_values,accel_scale_values,  mag_values,gyro_values,gyro_bias_values,gyro_scale_values, &temprature,&pressure,&altitude,gravity_location,sea_level_pressure_location, &last_read,roll_bias,pitch_bias,yaw_bias, ahrs_data);
       else
     	 err= write_calibration_values(output,accel_values,mag_values,gyro_values,&temprature,&pressure);
 

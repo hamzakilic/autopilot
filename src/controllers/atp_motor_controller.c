@@ -173,6 +173,18 @@ em_uint32 atp_motor_controller_set_values(atp_motor_controller *motor_controller
 	return ATP_SUCCESS;
 }
 
+em_uint32 atp_motor_controller_set_value(atp_motor_controller *motor_controller,em_uint32 index,em_uint16 value){
+	atp_motor **motors=(atp_motor**)motor_controller->private_data;
+		if(motors!=NULL)
+		{
+
+			atp_motor_set_power(motors[index],value);
+
+		}
+		return ATP_SUCCESS;
+
+}
+
 em_uint32 atp_motor_controller_start_motors(atp_motor_controller *motor_controller){
 	atp_motor **motors=(atp_motor**)motor_controller->private_data;
 	em_uint32 err=ATP_SUCCESS;

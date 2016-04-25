@@ -195,7 +195,7 @@ static kalman gyro_kalman_z;
       em_int16 xval=(em_int16)(data[0] | (data[1] << 8));
       em_int16 yval=(em_int16) (data[2] | (data[3] << 8));
       em_int16 zval=(em_int16)(data[4] | (data[5] << 8));
-      printf("%4.0d %4.0d %4.0d ",xval,yval,zval);
+      //printf("%4.0d %4.0d %4.0d ",xval,yval,zval);
 	  gyro_frame.x_i16[DIMSIZE-1]=xval;
 	  gyro_frame.y_i16[DIMSIZE-1]=yval;
 	  gyro_frame.z_i16[DIMSIZE-1]=zval;
@@ -212,7 +212,7 @@ static kalman gyro_kalman_z;
 	  gyro[0]=find_median_i16(gyro_frame.x_i16,DIMSIZE);
 	  gyro[1]=find_median_i16(gyro_frame.y_i16,DIMSIZE);
 	  gyro[2]=find_median_i16(gyro_frame.z_i16,DIMSIZE);
-	  printf("%4.0d %4.0d %4.0d \n",(int)gyro[0],(int)gyro[1],(int)gyro[2]);
+	  //printf("%4.0d %4.0d %4.0d \n",(int)gyro[0],(int)gyro[1],(int)gyro[2]);
 
  /*gyro[0]=xval;
    gyro[1]=yval;

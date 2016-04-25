@@ -114,6 +114,8 @@ em_uint32 atp_input_update_motor(atp_input *input, atp_motor_data  data);
 em_uint32 atp_input_update_dof(atp_input *input,atp_dof_data data);
 em_uint32 atp_input_update_ahrs(atp_input *input,atp_ahrs_data data);
 em_uint32 atp_input_get_motor(atp_input *input,em_uint8 motor_index,atp_motor_data *data);
+em_uint32 atp_input_get_motors(atp_input *input,atp_motor_data *data);
+em_uint32 atp_input_get_ahrs(atp_input *input,atp_ahrs_data *data);
 
 
 

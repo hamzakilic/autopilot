@@ -283,6 +283,19 @@ em_uint32 atp_input_update_ahrs(atp_input *input,atp_ahrs_data data){
 
 
 }
+em_uint32 atp_input_get_ahrs(atp_input *input,atp_ahrs_data *data){
+	atp_input_data *input_data=atp_convert(input->private_data,atp_input_data*);
+					atp_thread_lock(input_data->ahrs_lock_key);//lock for multi threads
+					data->altitude=input_data->ahrs.altitude/1000.0f;
+					data->pitch=input_data->ahrs.pitch/1000.0f;
+					data->pressure=input_data->ahrs.pressure/1000.0f;
+					data->roll=input_data->ahrs.roll/1000.0f;
+					data->yaw=input_data->ahrs.yaw/1000.0f;
+					data->temperature=input_data->ahrs.temperature/1000.0f;
+
+					atp_thread_unlock(input_data->ahrs_lock_key);
+					return ATP_SUCCESS;
+}
 
 
 
@@ -348,6 +361,19 @@ em_uint32 atp_input_get_motor(atp_input *input,em_uint8 motor_index,atp_motor_da
 
 	    atp_thread_unlock(input_data->motor_lock_key);
 		return ATP_SUCCESS;
+}
+
+em_uint32 atp_input_get_motors(atp_input *input,atp_motor_data *data){
+	atp_input_data *input_data=atp_convert(input->private_data,atp_input_data*);
+           em_int32 i;
+		    atp_thread_lock(input_data->motor_lock_key);//lock for multi threads
+            for(i=0;i<4;++i){
+		    data[i].motor_index=i;
+		    data[i].motor_value=input_data->motor.values[i];
+            }
+
+		    atp_thread_unlock(input_data->motor_lock_key);
+			return ATP_SUCCESS;
 }
 
 

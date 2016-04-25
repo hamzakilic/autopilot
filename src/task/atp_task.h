@@ -42,6 +42,7 @@ typedef void (*task_kill_func)(void *parameter);
 #define ATP_TASK_TAKEOFF 0x0005
 #define ATP_TASK_MOTORCALIBRATE 0x0006
 #define ATP_TASK_MOTORVALUE 0x0007
+#define ATP_TASK_BALANCE 0x0008
 
 
 

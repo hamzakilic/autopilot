@@ -25,6 +25,9 @@ void atp_task_share_count_minus(atp_task_share *task_share);
 em_int32 atp_task_share_killall_get(atp_task_share *task_share);
 void atp_task_share_killall_set(atp_task_share *task_share,em_int32 killall);
 
+em_int32 atp_task_share_can_balance_system_get(atp_task_share *task_share);
+void atp_task_share_can_balance_system_set(atp_task_share *task_share,em_int32 can);
+
 
 
 
