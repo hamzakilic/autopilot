@@ -47,7 +47,7 @@ void * atp_task_motorcalibrate_exec(void *parameter){
    atp_task_motorcalibrate *data=atp_convert(task->parameter,atp_task_motorcalibrate*);
    atp_log(atp_log_create_string(ATP_LOG_INFO,"%s Task Execution Starting\n",task->name));
    atp_task_share_killall_set(data->share,1);//say all tasks kill
-   while(atp_task_share_task_count_get(data->share)>1);//wait all tasks finish
+   while(atp_task_share_task_count_get(data->share)>1)em_io_delay_microseconds(100);//wait all tasks finish
    atp_motor_controller_calibrate(data->motor_controller);
 
 

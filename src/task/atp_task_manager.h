@@ -24,6 +24,7 @@
 #include "atp_task_takeoff.h"
 #include "atp_task_motorcalibrate.h"
 #include "atp_task_motorvalue.h"
+#include "atp_task_balance.h"
 
 
 

@@ -51,7 +51,7 @@ void balance_rollup(atp_task_balance *data){
 		 atp_ahrs_data ahrs_data;
 		 em_int32 work=1;
 
-	     //do{
+	    // do{
 	    	 atp_input_get_motors(data->input,motors);
 	    	 atp_motor_controller_set_value(data->motor_controller,ATP_MOTOR_FRONT_RIGHT,motors[ATP_MOTOR_FRONT_RIGHT].motor_value-2);
 	    	 atp_motor_controller_set_value(data->motor_controller,ATP_MOTOR_BACK_RIGHT,motors[ATP_MOTOR_BACK_RIGHT].motor_value-2);
@@ -62,7 +62,7 @@ void balance_rollup(atp_task_balance *data){
 
 
 
-	    // }while(work);
+	 //    }while(work);
 }
 
 
@@ -73,7 +73,7 @@ void balance_rolldown(atp_task_balance *data){
 		 atp_ahrs_data ahrs_data;
 		 em_int32 work=1;
 
-	     do{
+	   //  do{
 	    	 atp_input_get_motors(data->input,motors);
 	    	 atp_motor_controller_set_value(data->motor_controller,ATP_MOTOR_FRONT_LEFT,motors[ATP_MOTOR_FRONT_LEFT].motor_value-2);
 	    	 atp_motor_controller_set_value(data->motor_controller,ATP_MOTOR_BACK_LEFT,motors[ATP_MOTOR_BACK_LEFT].motor_value-2);
@@ -84,7 +84,7 @@ void balance_rolldown(atp_task_balance *data){
 
 
 
-	     }while(work);
+	//     }while(work);
 }
 
 
@@ -128,7 +128,7 @@ void balance_pitchup(atp_task_balance *data){
 
 
 
-    // }while(work);
+   //  }while(work);
 }
 
 
@@ -141,7 +141,7 @@ void balance_system(atp_task_balance *data){
 
 	    atp_input_get_motors(data->input,motors);
 	   for(index=0;index<ATP_MOTORS_COUNT;++index)
-	         if(motors[index].motor_value <=50000){
+	         if(motors[index].motor_value <=250){
 	         	return;
 	         }
 
@@ -151,20 +151,20 @@ void balance_system(atp_task_balance *data){
 
 
 	       atp_input_get_ahrs(data->input,&ahrs_data);
-	       if(ahrs_data.pitch>0.5f){
+	       if(ahrs_data.pitch>3.0f){
              balance_pitchdown(data);
 	       }
 	       atp_input_get_ahrs(data->input,&ahrs_data);
-	       if(ahrs_data.pitch<-0.5f){
+	       if(ahrs_data.pitch<-3.0f){
 	           balance_pitchup(data);
 	       }
 
 	       atp_input_get_ahrs(data->input,&ahrs_data);
-	       	       if(ahrs_data.roll>0.5f){
+	       	       if(ahrs_data.roll>3.0f){
 	       	           balance_rolldown(data);
 	       	       }
 	       	    atp_input_get_ahrs(data->input,&ahrs_data);
-	       	    	       	       if(ahrs_data.roll<-0.5f){
+	       	    	       	       if(ahrs_data.roll<-3.0f){
 	       	    	       	           balance_rollup(data);
 	       	    	       	       }
 
@@ -176,6 +176,10 @@ void balance_system(atp_task_balance *data){
 }
 
 
+
+
+
+
 void * atp_task_balance_exec(void *parameter){
 
 	 struct atp_task *task=atp_convert(parameter,struct atp_task*);
@@ -183,18 +187,18 @@ void * atp_task_balance_exec(void *parameter){
 
 	   while(data->work){
 		   data->is_working=1;
-		 //  atp_log(atp_log_create_string(ATP_LOG_INFO,"%s \n","Balancing System"));
+
 		   if(atp_task_share_killall_get(data->share)){//if killall tasks setted than break
 
 			   data->work=0;
 			   break;
 		   }
 		   balance_system(data);
-		   em_io_delay_microseconds(250);//every 100 milisecond sleep
+		   em_io_delay_microseconds(100);//every 100 milisecond sleep
 	   }
 	   data->is_working=0;
 	   task->is_finished=1;
-	   printf("finishing exec balance\n");
+
 	   return ATP_SUCCESS;
 
 }
@@ -202,9 +206,7 @@ void atp_task_balance_free(void *parameter){
 
 	struct atp_task *task=atp_convert(parameter,struct atp_task*);
 	atp_task_balance *data=atp_convert(task->parameter,atp_task_balance*);
-	if(data->is_working){//hala çalışıyor ise
-		atp_task_balance_kill(parameter);
-	}
+
 	atp_free(data);
 	atp_free(task);
 
@@ -214,7 +216,7 @@ void atp_task_balance_kill(void *parameter){
 	atp_task_balance *data=atp_convert(task->parameter,atp_task_balance*);
 	data->work=0;
 	while(data->is_working)em_io_delay_microseconds(100);//çalışıyorken bekle
-	printf("destroying2\n");
+
 
 }
 

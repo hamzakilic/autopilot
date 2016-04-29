@@ -93,7 +93,7 @@ void start_task(struct task_node *node,task_manager_data *data){
 
 }
 
-void finish_task(struct task_node *node,task_manager_data *data){
+void finish_task(struct task_node *node,task_manager_data *data,em_int32 lock_data_lock){
 
 
    atp_log(atp_log_create_string(ATP_LOG_INFO,"Finishing Task Success %s\n",node->task->name));
@@ -103,9 +103,12 @@ void finish_task(struct task_node *node,task_manager_data *data){
    em_uint32 nextcount=0;
 
    for(nextcount=0;nextcount<node->task->next_task_list_count;++nextcount){
+
       add_to_task(node->task->next_task_list[nextcount],data);
+
    }
-   em_uint32 err=atp_thread_lock(data->thread_lock);
+   if(lock_data_lock)
+   atp_thread_lock(data->thread_lock);
 
    if(node->task->func_free)
       node->task->func_free(node->task);
@@ -127,7 +130,7 @@ void finish_task(struct task_node *node,task_manager_data *data){
    atp_free(node);
    data->tasks_count--;
    atp_task_share_count_minus(data->task_share);
-
+   if(lock_data_lock)
    atp_thread_unlock(data->thread_lock);
 
 
@@ -144,18 +147,28 @@ void waitalltasks(task_manager_data *data){
 		struct task_node *current_node=data->head_node;
 				while(current_node)
 				{
-					if(!current_node->task->is_finished)
+
+					if(!current_node->task->is_finished){
+
 						current_node->task->func_kill(current_node->task);
+					}
 					current_node=current_node->next;
 				}
 
 
 		   while(data->head_node)
 		   {
-			 while(!data->head_node->task->is_finished);//buradaki ; çok önemli
-				finish_task(data->head_node,data);
+
+			 while(!data->head_node->task->is_finished){//burası boş olmalı
+				 em_io_delay_microseconds(50);
+
+			 }
+
+				finish_task(data->head_node,data,0);
+
 		   }
-				atp_thread_unlock(data->thread_lock);
+
+	atp_thread_unlock(data->thread_lock);
 }
 
 
@@ -180,7 +193,7 @@ void * process_tasks(void *temp_data){
 			}
 			if(current_node->task->is_finished){
 
-				finish_task(current_node,data);
+				finish_task(current_node,data,1);
 			}
 
 			current_node=next;
@@ -257,6 +270,7 @@ em_uint32 check_hash(em_uint8 *data,em_uint32 lenght){
 
 struct atp_task * create_atp_task(em_uint8* data,em_uint32 length,task_manager_data *manager_data){
 
+
 	if(length<10)
 		return NULL;
      if(check_hash(data,length))
@@ -279,12 +293,13 @@ struct atp_task * create_atp_task(em_uint8* data,em_uint32 length,task_manager_d
    case ATP_TASK_MOTORVALUE:
         return atp_task_motorvalue_create(data+10,length-10,manager_data->task_share,manager_data->motor_controller,manager_data->input);
    case ATP_TASK_BALANCE:
-	   return atp_task_balance_create(manager_data->task_share,manager_data->motor_controller,manager_data->input);
+        return atp_task_balance_create(manager_data->task_share,manager_data->motor_controller,manager_data->input);
+   default:
+	   return NULL;
 
 
    }
 
-   return NULL;
 }
 
 em_uint32 atp_task_manager_add_task(em_uint8 *data,em_uint32 length,atp_task_manager *task_manager){

@@ -76,8 +76,8 @@ em_uint32 atp_settings_create(atp_settings **address){
 	data->gyroscope_scalex=1.0f;//28571.4f*2/(19136+18446);
 	data->gyroscope_scaley=1.0f;//32768.0f*2/(19136+18446);
 	data->gyroscope_scalez=1.0f;//32768.0f*2/(19136+18171);
-	data->roll_bias=0.4f;
-	data->pitch_bias=0.65f;
+	data->roll_bias=0.20f;
+	data->pitch_bias=2.55f;
 	data->yaw_bias=0.0f;
 
 
