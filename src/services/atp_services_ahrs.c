@@ -146,7 +146,8 @@ if(++pressure_temprature_read_counter%250==0){
 
 	       //printf("roll pitch yaw  %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw);
 
-
+           dof_data_temp.time=start;
+           ahrs_data_temp.time=start;
 	       atp_input_update_dof(ahrs_data->input_table,dof_data_temp);
 	       atp_input_update_ahrs(ahrs_data->input_table,ahrs_data_temp);
 #ifdef COMPILE_DEBUG_CODES

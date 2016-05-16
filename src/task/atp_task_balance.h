@@ -8,6 +8,7 @@
 #ifndef  AUTOPILOTC_SRC_ATP_TASK_BALANCE_H_
 #define  AUTOPILOTC_SRC_ATP_TASK_BALANCE_H_
 
+#include "../algorithms/atleastsquare.h"
 #include "atp_task.h"
 #include "../controllers/atp_motor.h"
 #include "../controllers/atp_motor_controller.h"

@@ -130,7 +130,26 @@ void balance_pitchup(atp_task_balance *data){
 
    //  }while(work);
 }
+#define BALANCESIZE 5
+static em_float32 pitch_values[BALANCESIZE];
+static em_float32 roll_values[BALANCESIZE];
+static em_int64 time_values[BALANCESIZE];
 
+
+inline static void recalculate_values(atp_ahrs_data *ahrs_data, em_float32 *times){
+	em_int32 index;
+	 for(index=1;index<BALANCESIZE;++index){
+	        	   pitch_values[index-1]=pitch_values[index];
+	        	   roll_values[index-1]=roll_values[index];
+	        	   time_values[index-1]=time_values[index];
+	           }
+	           pitch_values[BALANCESIZE-1]=ahrs_data->pitch;
+	           roll_values[BALANCESIZE-1]=ahrs_data->roll;
+	           time_values[BALANCESIZE-1]=ahrs_data->time;
+	           for(index=0;index<BALANCESIZE;++index){
+	           	      times[index]=time_values[index]-(time_values[0]-1);
+	           }
+}
 
 void balance_system(atp_task_balance *data){
 
@@ -141,16 +160,30 @@ void balance_system(atp_task_balance *data){
 
 	    atp_input_get_motors(data->input,motors);
 	   for(index=0;index<ATP_MOTORS_COUNT;++index)
-	         if(motors[index].motor_value <=250){
+	         if(motors[index].motor_value <=500){
 	         	return;
 	         }
 
 
-
 	    atp_ahrs_data ahrs_data;
+	    atp_input_get_ahrs(data->input,&ahrs_data);
+	    em_float32 times[BALANCESIZE];
+        recalculate_values(&ahrs_data,times);
+
+        em_float32 apitch,bpitch,aroll,broll;
+        atleastsquare(BALANCESIZE,pitch_values,times,&apitch,&bpitch,NULL);
+        em_float32 y1pitch=apitch*2+bpitch;
+        em_float32 y2pitch=apitch*5+bpitch;
+        em_double64 tanjantpitch= atan2((y2pitch-y1pitch),(5-2))*180;
+
+        atleastsquare(BALANCESIZE,roll_values,times,&aroll,&broll,NULL);
+        em_float32  y1roll=aroll*2+broll;
+        em_float32  y2roll=aroll*5+broll;
+        em_double64 tanjantroll= atan2((y2roll-y1roll),(5-2))*180;
+       printf("pitch %4.2f %4.2f %4.2f roll %4.2f %4.2f %4.2f \n",apitch,bpitch,tanjantpitch,aroll,broll,tanjantroll);
 
 
-	       atp_input_get_ahrs(data->input,&ahrs_data);
+
 	       if(ahrs_data.pitch>3.0f){
              balance_pitchdown(data);
 	       }
@@ -184,7 +217,8 @@ void * atp_task_balance_exec(void *parameter){
 
 	 struct atp_task *task=atp_convert(parameter,struct atp_task*);
 	   atp_task_balance *data=atp_convert(task->parameter,atp_task_balance*);
-
+       atp_fill_zero(pitch_values,sizeof(em_float32)*BALANCESIZE);
+       atp_fill_zero(roll_values,sizeof(em_float32)*BALANCESIZE);
 	   while(data->work){
 		   data->is_working=1;
 
@@ -194,7 +228,7 @@ void * atp_task_balance_exec(void *parameter){
 			   break;
 		   }
 		   balance_system(data);
-		   em_io_delay_microseconds(100);//every 100 milisecond sleep
+		   em_io_delay_microseconds(1000000/25);//every 100 milisecond sleep
 	   }
 	   data->is_working=0;
 	   task->is_finished=1;

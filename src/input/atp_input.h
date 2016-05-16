@@ -69,6 +69,7 @@ typedef struct{
 	em_float32 altitude;
 	em_float32 pressure;
 	em_float32 temperature;
+	em_int64 time;
 
 }atp_ahrs_data;
 
@@ -85,6 +86,7 @@ typedef struct{
     em_float32 magx;
     em_float32 magy;
     em_float32 magz;
+    em_int64 time;
 
 
 }atp_dof_data;

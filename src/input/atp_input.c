@@ -44,6 +44,7 @@ typedef struct{
 	em_int32 pressure;
 	em_int32 temperature;
 	em_int32 altitude;
+	em_int64 time;
 
 }atp_input_ahrs;
 
@@ -59,6 +60,7 @@ typedef struct{
 	 em_int32 magx;
 	 em_int32 magy;
 	 em_int32 magz;
+	 em_int64 time;
 }atp_input_dof;
 
 
@@ -260,7 +262,7 @@ em_uint32 atp_input_update_dof(atp_input *input,atp_dof_data data){
 		    input_data->dof.magx=data.magx*1000;
 		    input_data->dof.magy=data.magx*1000;
 		    input_data->dof.magz=data.magx*1000;
-
+            input_data->dof.time=data.time;
 			atp_thread_unlock(input_data->dof_lock_key);
 			return ATP_SUCCESS;
 
@@ -275,7 +277,7 @@ em_uint32 atp_input_update_ahrs(atp_input *input,atp_ahrs_data data){
 			    input_data->ahrs.altitude=data.altitude*1000;
 			    input_data->ahrs.temperature=data.temperature*1000;
 			    input_data->ahrs.pressure=data.pressure*1000;
-
+                input_data->ahrs.time=data.time;
 			    //printf("%d %d %d %d %d %d\n",input_data->ahrs.roll,input_data->ahrs.pitch,input_data->ahrs.yaw,input_data->ahrs.pressure,input_data->ahrs.temperature,input_data->ahrs.altitude);
 
 				atp_thread_unlock(input_data->ahrs_lock_key);
@@ -292,6 +294,7 @@ em_uint32 atp_input_get_ahrs(atp_input *input,atp_ahrs_data *data){
 					data->roll=input_data->ahrs.roll/1000.0f;
 					data->yaw=input_data->ahrs.yaw/1000.0f;
 					data->temperature=input_data->ahrs.temperature/1000.0f;
+					data->time=input_data->ahrs.time;
 
 					atp_thread_unlock(input_data->ahrs_lock_key);
 					return ATP_SUCCESS;
