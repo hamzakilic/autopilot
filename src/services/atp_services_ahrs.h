@@ -21,6 +21,7 @@
 #include "../modules/module_Adafruit_BMP085.h"
 #include "../algorithms/MahonyAHRS.h"
 #include "../algorithms/MadgwickAHRS.h"
+#include "../algorithms/simpleahrs.h"
 //#include "../algorithms/kalman.h"
 //#include "../modules/module_common.h"
 

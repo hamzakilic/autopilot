@@ -9,22 +9,28 @@
         return x*x;
     }
 
-inline em_int32 atleastsquare(em_int32 n, const em_float32 x[], const em_float32 y[], em_float32* a, em_float32* b, em_float32* r){
+ em_int32 atleastsquare(em_int32 n, const em_float32 y[], const em_float32 x[], em_float32* a, em_float32* b, em_float32* r){
 
 	em_float32   sumx = 0.0;                        /* sum of x                      */
 	em_float32   sumx2 = 0.0;                       /* sum of x**2                   */
 	em_float32   sumxy = 0.0;                       /* sum of x * y                  */
 	em_float32   sumy = 0.0;                        /* sum of y                      */
 	em_float32   sumy2 = 0.0;                       /* sum of y**2                   */
+
     em_int32 i;
+
+
        for (i=0;i<n;i++)
           {
           sumx  += x[i];
+
           sumx2 += sqr(x[i]);
+
           sumxy += x[i] * y[i];
           sumy  += y[i];
           sumy2 += sqr(y[i]);
           }
+
 
        em_float32 denom = (n * sumx2 - sqr(sumx));
        if (denom == 0) {

@@ -196,7 +196,7 @@ AM_DEFAULT_VERBOSITY = 1
 AUTOCONF = ${SHELL} /work/projects/tobor/autopilot/missing autoconf
 AUTOHEADER = ${SHELL} /work/projects/tobor/autopilot/missing autoheader
 AUTOMAKE = ${SHELL} /work/projects/tobor/autopilot/missing automake-1.14
-AWK = gawk
+AWK = mawk
 CC = arm-raspi-linux-gnueabi-gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2

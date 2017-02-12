@@ -48,9 +48,7 @@ inline em_uint32 l3gd20_write16(em_byte reg,em_byte val){
 
 
 static frame gyro_frame;
-static kalman gyro_kalman_x;
-static kalman gyro_kalman_y;
-static kalman gyro_kalman_z;
+
 
  em_uint32 adafruit_l3gd20_gyro_start(void *parameters){
         	em_uint32 err;
@@ -163,9 +161,6 @@ static kalman gyro_kalman_z;
         	  /* ------------------------------------------------------------------ */
 
 
-          start_kalman(&gyro_kalman_x);
-          start_kalman(&gyro_kalman_y);
-          start_kalman(&gyro_kalman_z);
 
 
         	return ATP_SUCCESS;
@@ -179,44 +174,45 @@ static kalman gyro_kalman_z;
 	  em_uint32 err;
 	  err=l3gd20_write8(GYRO_REGISTER_OUT_X_L | 0x80);
 	  if(err)return err;
-	  em_io_busy_wait(100);
+	  em_io_busy_wait(1000);
 	  atp_system_lock_i2c();
 	  err=em_io_i2c_read(EM_USE_BSC1,L3GD20_ADDRESS,data,lenght,EM_TIMEOUT_ONE_SECOND);
 	  atp_system_unlock_i2c();
 
 	  if(err) return err;
 
+	  em_int16 xval=(em_int16)(data[0] | (data[1] << 8));
+	        em_int16 yval=(em_int16) (data[2] | (data[3] << 8));
+	        em_int16 zval=(em_int16)(data[4] | (data[5] << 8));
 	  em_int32 i;
 	  for(i=1;i<DIMSIZE;++i){
 		  gyro_frame.x_i16[i-1]=gyro_frame.x_i16[i];
 		  gyro_frame.y_i16[i-1]=gyro_frame.x_i16[i];
 		  gyro_frame.z_i16[i-1]=gyro_frame.z_i16[i];
 	  }
-      em_int16 xval=(em_int16)(data[0] | (data[1] << 8));
-      em_int16 yval=(em_int16) (data[2] | (data[3] << 8));
-      em_int16 zval=(em_int16)(data[4] | (data[5] << 8));
-      //printf("%4.0d %4.0d %4.0d ",xval,yval,zval);
-	  gyro_frame.x_i16[DIMSIZE-1]=xval;
-	  gyro_frame.y_i16[DIMSIZE-1]=yval;
-	  gyro_frame.z_i16[DIMSIZE-1]=zval;
 
-	  xval=find_mean_i16(gyro_frame.x_i16,DIMSIZE);
-	  yval=find_mean_i16(gyro_frame.y_i16,DIMSIZE);
-	  zval=find_mean_i16(gyro_frame.z_i16,DIMSIZE);
 
 	  gyro_frame.x_i16[DIMSIZE-1]=xval;
 	  gyro_frame.y_i16[DIMSIZE-1]=yval;
 	  gyro_frame.z_i16[DIMSIZE-1]=zval;
 
+	  xval=find_median_i16(gyro_frame.x_i16,DIMSIZE);
+	  yval=find_median_i16(gyro_frame.y_i16,DIMSIZE);
+	  zval=find_median_i16(gyro_frame.z_i16,DIMSIZE);
 
-	  gyro[0]=find_median_i16(gyro_frame.x_i16,DIMSIZE);
+	  /*gyro_frame.x_i16[DIMSIZE-1]=xval;
+	  gyro_frame.y_i16[DIMSIZE-1]=yval;
+	  gyro_frame.z_i16[DIMSIZE-1]=zval;*/
+
+
+	  /*gyro[0]=find_median_i16(gyro_frame.x_i16,DIMSIZE);
 	  gyro[1]=find_median_i16(gyro_frame.y_i16,DIMSIZE);
-	  gyro[2]=find_median_i16(gyro_frame.z_i16,DIMSIZE);
-	  //printf("%4.0d %4.0d %4.0d \n",(int)gyro[0],(int)gyro[1],(int)gyro[2]);
+	  gyro[2]=find_median_i16(gyro_frame.z_i16,DIMSIZE);*/
 
- /*gyro[0]=xval;
-   gyro[1]=yval;
-   gyro[2]=zval;*/
+
+     gyro[0]=xval;
+      gyro[1]=yval;
+      gyro[2]=zval;
 
 
 	  return ATP_SUCCESS;
@@ -261,9 +257,9 @@ static kalman gyro_kalman_z;
         	  }
 
         	  /* Convert values to rad/s */
-        	  values[0] *= SENSORS_DPS_TO_RADS;
-        	  values[1] *= SENSORS_DPS_TO_RADS;
-        	  values[2] *= SENSORS_DPS_TO_RADS;
+        	  //values[0] *= SENSORS_DPS_TO_RADS;
+        	  //values[1] *= SENSORS_DPS_TO_RADS;
+        	  //values[2] *= SENSORS_DPS_TO_RADS;
 
 
         	return ATP_SUCCESS;

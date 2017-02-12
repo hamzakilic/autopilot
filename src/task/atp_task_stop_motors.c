@@ -48,6 +48,7 @@ void * atp_task_stop_motors_exec(void *parameter){
    atp_task_share_killall_set(data->share,1);//say all tasks kill
    while(atp_task_share_task_count_get(data->share)>1)
    {
+	   //todo:burası incelenecek
 	   //burası önemli bütün tasklar bitene kadar bekliyoruz bitene kadar
 
    }

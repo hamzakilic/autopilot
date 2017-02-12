@@ -43,7 +43,7 @@ inline em_uint32 lsm303_accel_read8(em_byte *data){
    em_uint32 err;
     em_uint32 length=1;
     atp_system_lock_i2c();
-    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,length,EM_TIMEOUT_ONE_SECOND);
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL_READ,data,length,EM_TIMEOUT_ONE_SECOND);
     atp_system_unlock_i2c();
     return err;
 }
@@ -52,7 +52,7 @@ inline em_uint32 lsm303_accel_read16(em_uint16 *data){
     em_int32 length=2;
     em_uint32 err;
     atp_system_lock_i2c();
-    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,temp,length,EM_TIMEOUT_ONE_SECOND);
+    err= em_io_i2c_read(EM_USE_BSC1,LSM303_ADDRESS_ACCEL_READ,temp,length,EM_TIMEOUT_ONE_SECOND);
     atp_system_unlock_i2c();
     *data=temp[0]<<8||temp[1];
     return err;
@@ -63,7 +63,7 @@ inline em_uint32 lsm303_accel_write8(em_byte val){
 	em_byte data[1];
 	data[0]=val;
 	atp_system_lock_i2c();
-	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,1,EM_TIMEOUT_ONE_SECOND);
+	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL_WRITE,data,1,EM_TIMEOUT_ONE_SECOND);
 	atp_system_unlock_i2c();
 	return err;
 }
@@ -74,7 +74,7 @@ inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
 	data[0]=reg;
 	data[1]=val;
 	atp_system_lock_i2c();
-	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL,data,2,EM_TIMEOUT_ONE_SECOND);
+	err= em_io_i2c_write(EM_USE_BSC1,LSM303_ADDRESS_ACCEL_WRITE,data,2,EM_TIMEOUT_ONE_SECOND);
 	atp_system_unlock_i2c();
 	return err;
 }
@@ -87,9 +87,6 @@ inline em_uint32 lsm303_accel_write16(em_byte reg,em_byte val){
 
 
 static frame accel_frames;
-static kalman accel_kalmanx;
-static kalman accel_kalmany;
-static kalman accel_kalmanz;
 
 
 em_uint32 adafruit_lsm303_accel_start(void * param){
@@ -100,7 +97,7 @@ em_uint32 adafruit_lsm303_accel_start(void * param){
 	// Enable the accelerometer (100Hz)
      em_byte data[2];
 
-	  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG1_A,0x57);
+	  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG1_A,0x57);//burası 100HZ ve x y z enabled
 	  if(err){
 
 		  return ATP_ERROR_HARDWARE_COMMUNICATION;
@@ -121,12 +118,25 @@ em_uint32 adafruit_lsm303_accel_start(void * param){
     	    return ATP_ERROR_HARDWARE_COMMUNICATION;
 	  }
 
+	 /* err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG2_A,0x00);
+	 	  	  if(err){
 
-	  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG4_A,0x0);
+	 	  		  return ATP_ERROR_HARDWARE_COMMUNICATION;
+	 	  	  }
+
+	 		  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG3_A,0x00);
+	 		 	  	  if(err){
+
+	 		 	  		  return ATP_ERROR_HARDWARE_COMMUNICATION;
+	 		 	  	  }*/
+
+
+	  err=lsm303_accel_write16(LSM303_REGISTER_ACCEL_CTRL_REG4_A,0x00);//2g high resolution
 	  	  if(err){
 
 	  		  return ATP_ERROR_HARDWARE_COMMUNICATION;
 	  	  }
+
 
 
 	  em_uint8 reg1_a =data[0];// read8(LSM303_ADDRESS_ACCEL, LSM303_REGISTER_ACCEL_CTRL_REG1_A);
@@ -135,9 +145,7 @@ em_uint32 adafruit_lsm303_accel_start(void * param){
 
 	    return ATP_ERROR_HARDWARE_INITIALIZE;
 	  }
-	  start_kalman(&accel_kalmanx);
-	  start_kalman(&accel_kalmany);
-	  start_kalman(&accel_kalmanz);
+
 
 	return ATP_SUCCESS;
 }
@@ -156,44 +164,48 @@ em_uint32 err;
 	 if(err){
 		     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 	 }
-	 em_io_busy_wait(100);
+	 em_io_busy_wait(1000);
+
 	 em_uint32 lenght=6;
 
-	 err=i2c_read(LSM303_ADDRESS_ACCEL,data,lenght);
+	 err=i2c_read(LSM303_ADDRESS_ACCEL_READ,data,lenght);
 		  if(err){
 		  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
 
+		  em_int16 xval=(em_int16)(data[0] | (data[1] << 8)) >> 4;
+		  em_int16 yval=(em_int16)(data[2] | (data[3] << 8)) >> 4;
+		  em_int16 zval=(em_int16)(data[4] | (data[5] << 8)) >> 4;
  em_int32 i;
 		  for(i=1;i<DIMSIZE;++i){
              accel_frames.x_i16[i-1] =accel_frames.x_i16[i];
              accel_frames.y_i16[i-1] =accel_frames.y_i16[i];
              accel_frames.z_i16[i-1] =accel_frames.z_i16[i];
 		  }
-		  em_int16 xval=(em_int16)(data[0] | (data[1] << 8)) >> 4;
-		  em_int16 yval=(em_int16)(data[2] | (data[3] << 8)) >> 4;
-		  em_int16 zval=(em_int16)(data[4] | (data[5] << 8)) >> 4;
-     //  printf("accel raw:%4.0d %4.0d %4.0d ",xval,yval,zval);
-     accel_frames.x_i16[DIMSIZE-1] =xval;
-     accel_frames.y_i16[DIMSIZE-1] =yval;
-     accel_frames.z_i16[DIMSIZE-1] =zval;
 
-     xval=find_mean_i16(accel_frames.x_i16,DIMSIZE);
-     yval=find_mean_i16(accel_frames.y_i16,DIMSIZE);
-     zval=find_mean_i16(accel_frames.z_i16,DIMSIZE);
 
      accel_frames.x_i16[DIMSIZE-1] =xval;
      accel_frames.y_i16[DIMSIZE-1] =yval;
      accel_frames.z_i16[DIMSIZE-1] =zval;
 
-    values[0]=find_median_i16(accel_frames.x_i16,DIMSIZE);
-    values[1]=find_median_i16(accel_frames.y_i16,DIMSIZE);
-    values[2]=find_median_i16(accel_frames.z_i16,DIMSIZE);
-  //  printf("%4.0d %4.0d %4.0d\n",(int)values[0],(int)values[1],(int)values[2]);
+     xval=find_median_i16(accel_frames.x_i16,DIMSIZE);
+     yval=find_median_i16(accel_frames.y_i16,DIMSIZE);
+     zval=find_median_i16(accel_frames.z_i16,DIMSIZE);
 
-   /* values[0]=xval;
+     /*accel_frames.x_i16[DIMSIZE-1] =xval;
+     accel_frames.y_i16[DIMSIZE-1] =yval;
+     accel_frames.z_i16[DIMSIZE-1] =zval;*/
+
+    /*values[0]=find_mean_i16(accel_frames.x_i16,DIMSIZE);
+    values[1]=find_mean_i16(accel_frames.y_i16,DIMSIZE);
+    values[2]=find_mean_i16(accel_frames.z_i16,DIMSIZE);*/
+
+
+
+    values[0]=xval;
     values[1]=yval;
-    values[2]=zval;*/
+    values[2]=zval;
+	//printf(" accel2 %d %d %d\n",(int)values[0],(int)values[1],(int)values[2]);
 
 
 
@@ -212,9 +224,9 @@ em_uint32 adafruit_lsm303_accel_read(em_float32 *values,const em_float32 *bias_v
      values[0]-=bias_values[0];
      values[1]-=bias_values[1];
      values[2]-=bias_values[2];
-	 values[0]*=_lsm303Accel_MG_LSB ;
-	 values[1]*=_lsm303Accel_MG_LSB ;
-	 values[2]*=_lsm303Accel_MG_LSB ;
+	// values[0]*=_lsm303Accel_MG_LSB ;
+	// values[1]*=_lsm303Accel_MG_LSB ;
+	// values[2]*=_lsm303Accel_MG_LSB ;
 
 	return err;
 }
@@ -317,9 +329,7 @@ em_uint32 setMagGain(lsm303MagGain gain)
 }
 
 static frame mag_frame;
-static kalman mag_kalman_x;
-static kalman mag_kalman_y;
-static kalman mag_kalman_z;
+
 
 em_uint32 adafruit_lsm303_mag_start(void * param){
 
@@ -369,9 +379,7 @@ em_uint32 adafruit_lsm303_mag_start(void * param){
 			  return ATP_ERROR_HARDWARE_COMMUNICATION;
 		  }
 
-        start_kalman(&mag_kalman_x);
-        start_kalman(&mag_kalman_y);
-        start_kalman(&mag_kalman_z);
+
 
 		return ATP_SUCCESS;
 
@@ -380,7 +388,7 @@ em_uint32 adafruit_lsm303_mag_start(void * param){
 
 
 
-em_uint32 adafruit_mag_read(em_float32 *values){
+static em_uint32 adafruit_mag_read(em_float32 *values){
 	em_uint32 err=ATP_SUCCESS;
 			em_byte data[6];
 			data[0]=LSM303_REGISTER_MAG_OUT_X_H_M;
@@ -390,13 +398,15 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 				     	return ATP_ERROR_HARDWARE_COMMUNICATION;
 			 }
 			 em_uint32 lenght=6;
-             em_io_busy_wait(100);
+             em_io_busy_wait(1000);
 			 err=i2c_read(LSM303_ADDRESS_MAG,data,lenght);
 				  if(err){
 
 				  	 	return ATP_ERROR_HARDWARE_COMMUNICATION;
 				  }
-
+				  em_int16 xval=(em_int16)(data[1] | ((em_int16)data[0] << 8));
+				  				  em_int16 zval=(em_int16)(data[3] | ((em_int16)data[2] << 8));
+				  				  em_int16 yval=(em_int16)(data[5] | ((em_int16)data[4] << 8));
 				  em_int32 i;
 				  for(i=1;i<DIMSIZE;++i){
 					  mag_frame.x_i16[i-1]=mag_frame.x_i16[i];
@@ -404,32 +414,30 @@ em_uint32 adafruit_mag_read(em_float32 *values){
 					  mag_frame.y_i16[i-1]=mag_frame.y_i16[i];
 				  }
 
-				  em_int16 xval=(em_int16)(data[1] | ((em_int16)data[0] << 8));
-				  em_int16 zval=(em_int16)(data[3] | ((em_int16)data[2] << 8));
-				  em_int16 yval=(em_int16)(data[5] | ((em_int16)data[4] << 8));
+
 
 				  mag_frame.x_i16[DIMSIZE-1]=xval;
 				  mag_frame.z_i16[DIMSIZE-1]=zval;
 				  mag_frame.y_i16[DIMSIZE-1]=yval;
 
 
-				  xval=find_mean_i16(mag_frame.x_i16,DIMSIZE);
-				  yval=find_mean_i16(mag_frame.y_i16,DIMSIZE);
-				  zval=find_mean_i16(mag_frame.z_i16,DIMSIZE);
+				  xval=find_median_i16(mag_frame.x_i16,DIMSIZE);
+				  yval=find_median_i16(mag_frame.y_i16,DIMSIZE);
+				  zval=find_median_i16(mag_frame.z_i16,DIMSIZE);
 
-				  mag_frame.x_i16[DIMSIZE-1]=xval;
+				  /*mag_frame.x_i16[DIMSIZE-1]=xval;
 				  mag_frame.z_i16[DIMSIZE-1]=zval;
-				  mag_frame.y_i16[DIMSIZE-1]=yval;
+				  mag_frame.y_i16[DIMSIZE-1]=yval;*/
 
 
-				  values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
+				 /* values[0]=find_median_i16(mag_frame.x_i16,DIMSIZE);
 				  values[1]=find_median_i16(mag_frame.y_i16,DIMSIZE);
-				  values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);
+				  values[2]=find_median_i16(mag_frame.z_i16,DIMSIZE);*/
 
 
-				  /*values[0]=xval;
+				  values[0]=xval;
 				  values[1]=yval;
-				  values[2]=zval;*/
+				  values[2]=zval;
 
 
 
@@ -471,9 +479,9 @@ em_uint32 adafruit_lsm303_mag_read_raw(em_float32 *values){
 
 em_uint32 adafruit_lsm303_mag_read(em_float32 *values){
        em_uint32 err=adafruit_lsm303_mag_read_raw(values);
-	    values[0] = values[0]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
-	    values[1] =  values[1]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
-	    values[2] = values[2]/ _lsm303Mag_Gauss_LSB_Z * SENSORS_GAUSS_TO_MICROTESLA;
+	 //   values[0] = values[0]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
+	 //   values[1] =  values[1]/_lsm303Mag_Gauss_LSB_XY * SENSORS_GAUSS_TO_MICROTESLA;
+	 //   values[2] = values[2]/ _lsm303Mag_Gauss_LSB_Z * SENSORS_GAUSS_TO_MICROTESLA;
        return err;
 
    }

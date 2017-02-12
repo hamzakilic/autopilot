@@ -112,13 +112,14 @@ em_uint32 atp_motor_start(atp_motor *motor){
 
 em_uint32 atp_motor_stop(atp_motor *motor){
 	em_uint32 err;
-	em_io_gpio_mode(motor->raspi_pin_number,EM_MODE_GPIO_OUT);
+
+		em_io_gpio_mode(motor->raspi_pin_number,EM_MODE_GPIO_OUT);
+
 #ifdef COMPILE_PCA9685
-		     err=adafruit_pca9685_set(MIN_SIGNAL_WORK,motor->pwm_pin_number);
+		     err=adafruit_pca9685_set(MIN_SIGNAL_WORK-50,motor->pwm_pin_number);
 #endif
-		     if(err)
-		    	 return err;
-		     em_io_gpio_mode(motor->raspi_pin_number,EM_GPIO_LOW);
+
+		     err=em_io_gpio_mode(motor->raspi_pin_number,EM_GPIO_LOW);
 
 		     //update input table,-5 means stoped
 		     update_input_motor_table(motor->input,motor->number,MOTOR_STOPPED);

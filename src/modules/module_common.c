@@ -7,6 +7,7 @@
 
 #include "module_common.h"
 
+
 #define  find_median(type,x,n,size,retval)         if(n>size)return retval; \
 											em_int32 c,d; \
 											type t; \
@@ -29,7 +30,7 @@
 											for (c = 0 ; c <  n; c++){\
 												t+=x[c];\
 												}\
-												return t/n;
+												return t/(type)n;
 
 
 

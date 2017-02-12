@@ -32,7 +32,7 @@ em_uint32  atp_motor_controller_create(atp_input *input,atp_motor_controller **m
         motors=atp_malloc(ATP_MOTORS_COUNT*sizeof(struct atp_motor*));
 
 
-        err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],input,ATP_MOTOR_FRONT_LEFT,EM_GPIO_7,4);
+        err=atp_motor_create(&motors[ATP_MOTOR_FRONT_LEFT],input,ATP_MOTOR_FRONT_LEFT,EM_GPIO_7,0);
                if(err){
                atp_log(atp_log_create_string(ATP_LOG_FATAL,"Creating Motor %u  failed Errno:%u\n",ATP_MOTOR_FRONT_LEFT,err));
                atp_free(motors[ATP_MOTOR_FRONT_RIGHT]);

@@ -39,11 +39,11 @@ inline em_float32 pressure_to_altitude(em_float32 seaLevel, em_float32 atmospher
 }
 #endif
 
-volatile float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
+volatile em_float32 q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
 static em_int32 pressure_temprature_read_counter=0;
-static kalman kalman_roll;
-static kalman kalman_pitch;
-static kalman kalman_yaw;
+
+static em_int32 counter=0;
+static em_int64 start_time;
 
 inline em_int32 do_ahrs(em_float32 *accel_values, em_float32 *accel_bias_values, em_float32 *accel_scale_values, em_float32 *mag_values,em_float32 *gyro_values,em_float32 *gyro_bias_values,em_float32* gyro_scale_values,em_float32 *temperature,em_float32 *pressure,em_float32 *altitude,em_float32 gravity,em_float32 sea_level_pressure, em_uint64 *last_read,em_float32 roll_bias,em_float32 pitch_bias,em_float32 yaw_bias, atp_services_ahrs_data *ahrs_data){
 em_int64 start=atp_datetime_as_microseconds();
@@ -93,7 +93,7 @@ if(++pressure_temprature_read_counter%250==0){
 #endif
 
 
-        // printf("%8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n",accel_values[0],accel_values[1],accel_values[2],gyro_values[0],gyro_values[1],gyro_values[0],mag_values[0],mag_values[1],mag_values[2]);
+
 
       if(!err){
 #define PI 3.14159f
@@ -116,8 +116,8 @@ if(++pressure_temprature_read_counter%250==0){
 
       em_uint64 delta_t=atp_datetime_as_microseconds()- (*last_read);
 
-      MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
-       //MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+      //MahonyAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
+      MadgwickAHRSupdate(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz);
       //MadgwickAHRSupdateIMU(dof_data_temp.gyrox*PI/180.0f,dof_data_temp.gyroy*PI/180.0f,dof_data_temp.gyroz*PI/180.0f,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz);
 
       *last_read=atp_datetime_as_microseconds();
@@ -139,19 +139,34 @@ if(++pressure_temprature_read_counter%250==0){
 
 	       ahrs_data_temp.pitch  *= 180.0f / PI;
 
+	       ahrs_data_temp.roll -= roll_bias;
+	       ahrs_data_temp.pitch -= pitch_bias;
+	       ahrs_data_temp.yaw -= yaw_bias;
+
+
+
+      /* float roll,pitch,yaw;
+       simpleahrs_update(dof_data_temp.gyrox,dof_data_temp.gyroy,dof_data_temp.gyroz,dof_data_temp.accx,dof_data_temp.accy,dof_data_temp.accz,dof_data_temp.magx,dof_data_temp.magy,dof_data_temp.magz,&roll,&pitch,&yaw);
+           ahrs_data_temp.roll=roll*180.0f/PI;
+           ahrs_data_temp.pitch=pitch*180.0f/PI;
+           ahrs_data_temp.yaw=yaw*180.0f/PI;
 	       ahrs_data_temp.roll -=roll_bias;
 	       ahrs_data_temp.pitch-=pitch_bias;
-	       ahrs_data_temp.yaw-=yaw_bias;
+	       ahrs_data_temp.yaw-=yaw_bias;*/
 
 
-	       //printf("roll pitch yaw  %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw);
+
 
            dof_data_temp.time=start;
            ahrs_data_temp.time=start;
 	       atp_input_update_dof(ahrs_data->input_table,dof_data_temp);
 	       atp_input_update_ahrs(ahrs_data->input_table,ahrs_data_temp);
+
+      counter++;
+
+     // fprintf(stdout,"%10llu %10d %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f\n",*last_read-start_time,counter, accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],*pressure,*temperature);
 #ifdef COMPILE_DEBUG_CODES
-	   atp_log(atp_log_create_string(ATP_LOG_DEBUG,"roll pitch yaw pressure tempreature altitude %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw,ahrs_data_temp.pressure,ahrs_data_temp.temperature,ahrs_data_temp.altitude));
+	  // atp_log(atp_log_create_string(ATP_LOG_DEBUG,"roll pitch yaw pressure tempreature altitude %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f\n",ahrs_data_temp.roll,ahrs_data_temp.pitch,ahrs_data_temp.yaw,ahrs_data_temp.pressure,ahrs_data_temp.temperature,ahrs_data_temp.altitude));
 #endif
 
 
@@ -160,10 +175,11 @@ if(++pressure_temprature_read_counter%250==0){
     	  //todo:what will happen if error occures,continues too much
     	  //printf("ahrs system exception\n");
       }
+      return err;
 }
 
 
-inline em_int32 write_calibration_values(FILE *output, float *accel_values,float *mag_values,float *gyro_values,float *temperature,float *pressure){
+inline em_int32 write_calibration_values(FILE *output, float *accel_values,float *mag_values,float *gyro_values,float *temperature,float *pressure,em_int64 read_start){
 	em_int32 err=ATP_SUCCESS;
 
 	#ifdef COMPILE_LSM303
@@ -176,14 +192,15 @@ inline em_int32 write_calibration_values(FILE *output, float *accel_values,float
 
 	#endif
 	#ifdef COMPILE_BMP085
-	      err |= adafruit_bmp085_temp_press_read_raw(temperature,pressure);
+	      //err |= adafruit_bmp085_temp_press_read_raw(temperature,pressure);
 
 
 	#endif
 
+	      em_int64 dif=(atp_datetime_as_microseconds()-read_start);
 
 
- fprintf(output,"%12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],*pressure,*temperature);
+ fprintf(output,"%12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12.5f %12d\n",accel_values[0],accel_values[1],accel_values[2],mag_values[0],mag_values[1],mag_values[2],gyro_values[0],gyro_values[1],gyro_values[2],*pressure,*temperature,dif);
 
 	      return err;
 }
@@ -264,14 +281,14 @@ void * start_communication_ahrs(void *data){
 	em_float32 pitch_bias=atp_settings_get_pitch_bias(ahrs_data->settings_table);
 	em_int32 check_settings_counter=0;
 	em_int64 read_start,read_end,last_read=atp_datetime_as_microseconds();
-
+    start_time=atp_datetime_as_microseconds();
 	while(ahrs_data->work){
-    read_start=atp_datetime_as_microseconds();
+         read_start=atp_datetime_as_microseconds();
 		err=ATP_SUCCESS;
       if(!get_calibration_values)
       err=do_ahrs(accel_values,accel_bias_values,accel_scale_values,  mag_values,gyro_values,gyro_bias_values,gyro_scale_values, &temprature,&pressure,&altitude,gravity_location,sea_level_pressure_location, &last_read,roll_bias,pitch_bias,yaw_bias, ahrs_data);
       else
-    	 err= write_calibration_values(output,accel_values,mag_values,gyro_values,&temprature,&pressure);
+    	 err= write_calibration_values(output,accel_values,mag_values,gyro_values,&temprature,&pressure,start_time);
 
 
       //sometimes reload some values from settings again
@@ -302,7 +319,7 @@ void * start_communication_ahrs(void *data){
       em_int64 valoftime=((em_int64)(1000000/25))-dif;
 
       if(valoftime>0){
-      em_io_delay_microseconds(valoftime);
+      //em_io_delay_microseconds(valoftime);
       }else{
     	  atp_log(atp_log_create_string(ATP_LOG_INFO,"ahrs service is so slow dif time is %lld\n",dif));
 
@@ -335,9 +352,7 @@ em_uint32 atp_services_ahrs_create(atp_services_ahrs **address,atp_input *input,
 
   			return ATP_ERROR_CREATE_GPS;
   		}
-  start_kalman(&kalman_pitch);
-  start_kalman(&kalman_yaw);
-  start_kalman(&kalman_roll);
+
   return ATP_SUCCESS;
 
 
